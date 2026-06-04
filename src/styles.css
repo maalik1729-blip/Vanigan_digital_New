@@ -499,7 +499,7 @@
 
   /* === CARD VARIANTS === */
   .card-base {
-    background: var(--color-card);
+    background-color: var(--color-card);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-card);
     box-shadow: var(--shadow-sm);
@@ -791,5 +791,51 @@
   }
 }
 
+/* === PROGRESS BAR ANIMATION === */
+@keyframes progress-bar {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+.animate-progress-bar {
+  animation: progress-bar 2s infinite linear;
+}
 
+/* === SPLASH LOADING ANIMATIONS === */
+@keyframes breathe-premium {
+  0%, 100% {
+    transform: scale(0.96);
+  }
+  50% {
+    transform: scale(1.04);
+  }
+}
+@keyframes ambient-glow-premium {
+  0%, 100% {
+    opacity: 0.15;
+    transform: scale(0.95);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(1.15);
+  }
+}
 
+.animate-breathe-premium {
+  animation: breathe-premium 3s ease-in-out infinite;
+}
+.animate-ambient-glow-premium {
+  animation: ambient-glow-premium 3s ease-in-out infinite;
+}
+
+/* === UNITY IMAGE ROTATION === */
+@keyframes slow-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.animate-slow-spin {
+  animation: slow-spin 20s linear infinite;
+}

@@ -15,6 +15,7 @@ import { Route as TermsConditionsRouteImport } from './routes/terms-conditions'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as MembershipRouteImport } from './routes/membership'
+import { Route as LoadingRouteImport } from './routes/loading'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AssistantRouteImport } from './routes/assistant'
@@ -51,6 +52,11 @@ const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
 const MembershipRoute = MembershipRouteImport.update({
   id: '/membership',
   path: '/membership',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoadingRoute = LoadingRouteImport.update({
+  id: '/loading',
+  path: '/loading',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -96,6 +102,7 @@ export interface FileRoutesByFullPath {
   '/assistant': typeof AssistantRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
+  '/loading': typeof LoadingRoute
   '/membership': typeof MembershipRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/services': typeof ServicesRoute
@@ -111,6 +118,7 @@ export interface FileRoutesByTo {
   '/assistant': typeof AssistantRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
+  '/loading': typeof LoadingRoute
   '/membership': typeof MembershipRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/services': typeof ServicesRoute
@@ -127,6 +135,7 @@ export interface FileRoutesById {
   '/assistant': typeof AssistantRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
+  '/loading': typeof LoadingRoute
   '/membership': typeof MembershipRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/services': typeof ServicesRoute
@@ -144,6 +153,7 @@ export interface FileRouteTypes {
     | '/assistant'
     | '/contact'
     | '/dashboard'
+    | '/loading'
     | '/membership'
     | '/privacy-policy'
     | '/services'
@@ -159,6 +169,7 @@ export interface FileRouteTypes {
     | '/assistant'
     | '/contact'
     | '/dashboard'
+    | '/loading'
     | '/membership'
     | '/privacy-policy'
     | '/services'
@@ -174,6 +185,7 @@ export interface FileRouteTypes {
     | '/assistant'
     | '/contact'
     | '/dashboard'
+    | '/loading'
     | '/membership'
     | '/privacy-policy'
     | '/services'
@@ -190,6 +202,7 @@ export interface RootRouteChildren {
   AssistantRoute: typeof AssistantRoute
   ContactRoute: typeof ContactRoute
   DashboardRoute: typeof DashboardRoute
+  LoadingRoute: typeof LoadingRoute
   MembershipRoute: typeof MembershipRoute
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   ServicesRoute: typeof ServicesRoute
@@ -241,6 +254,13 @@ declare module '@tanstack/react-router' {
       path: '/membership'
       fullPath: '/membership'
       preLoaderRoute: typeof MembershipRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/loading': {
+      id: '/loading'
+      path: '/loading'
+      fullPath: '/loading'
+      preLoaderRoute: typeof LoadingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -302,6 +322,7 @@ const rootRouteChildren: RootRouteChildren = {
   AssistantRoute: AssistantRoute,
   ContactRoute: ContactRoute,
   DashboardRoute: DashboardRoute,
+  LoadingRoute: LoadingRoute,
   MembershipRoute: MembershipRoute,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
   ServicesRoute: ServicesRoute,

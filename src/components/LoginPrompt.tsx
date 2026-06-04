@@ -3,37 +3,89 @@ import { Link } from "@tanstack/react-router";
 import { LogIn, IdCard, ArrowRight } from "lucide-react";
 import { setSession } from "@/lib/session";
 import { toast } from "sonner";
+import votersData from "@/data/voters.json";
 
 export function LoginPrompt({ onLogin }: { onLogin: (epic: string) => void }) {
   const [value, setValue] = useState("");
   const [error, setError] = useState("");
 
-  /* ────────────────────────────────────────────────
-     Validate EPIC ID or Mobile Number
-     Must match a record saved during registration.
-  ──────────────────────────────────────────────── */
+  const findLocalMember = (input: string) => {
+    const cleanInput = input.trim().toUpperCase();
+    
+    // 1. Direct EPIC match
+    const directMember = localStorage.getItem(`tnvs_member_${cleanInput}`);
+    if (directMember) {
+      try { return JSON.parse(directMember); } catch { return null; }
+    }
+    
+    // 2. Mobile number search
+    const cleanMobile = cleanInput.replace(/\D/g, "");
+    if (cleanMobile.length === 10) {
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith("tnvs_member_")) {
+          try {
+            const profile = JSON.parse(localStorage.getItem(key) || "");
+            if (profile && profile.mobile === cleanMobile) {
+              return profile;
+            }
+          } catch {}
+        }
+      }
+    }
+    return null;
+  };
+
+  const findMockVoter = (input: string) => {
+    const cleanInput = input.trim().toUpperCase();
+    const cleanMobile = input.replace(/\D/g, "");
+    
+    return votersData.find(v => 
+      v.EPIC_NO?.toUpperCase() === cleanInput || 
+      (cleanMobile.length === 10 && v.MOBILE_NUMBER === cleanMobile)
+    );
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
     const raw = value.trim();
-    const mobileClean = raw.replace(/\D/g, "").slice(-10);
-    const epicClean = raw.toUpperCase().replace(/\s/g, "");
-
     if (!raw) {
-      setError("Please enter your EPIC ID or registered Mobile Number.");
+      const emptyMsg = "Please enter your EPIC ID or registered Mobile Number.";
+      setError(emptyMsg);
+      toast.error(emptyMsg);
       return;
     }
 
-    // Use mobile (10-digit) or EPIC as-is
-    const epic = mobileClean.length === 10 ? mobileClean : epicClean;
+    // 1. Lookup dynamic registered profile
+    const dynamicProfile = findLocalMember(raw);
+    if (dynamicProfile) {
+      const epic = dynamicProfile.epic;
+      setSession(epic);
+      toast.success("Login successful! Welcome back.");
+      setTimeout(() => {
+        onLogin(epic);
+      }, 150);
+      return;
+    }
 
-    // ✅ Grant access
-    setSession(epic);
-    toast.success("Login successful! Welcome back.");
-    setTimeout(() => {
-      onLogin(epic);
-    }, 150);
+    // 2. Lookup preloaded mock voters
+    const mockVoter = findMockVoter(raw);
+    if (mockVoter) {
+      const epic = mockVoter.EPIC_NO;
+      setSession(epic);
+      toast.success("Login successful! Welcome back.");
+      setTimeout(() => {
+        onLogin(epic);
+      }, 150);
+      return;
+    }
+
+    // 3. Fail validation
+    const errorMsg = "No registered member found with this EPIC ID or Mobile Number. Please check your credentials.";
+    setError(errorMsg);
+    toast.error(errorMsg);
   };
 
   const inp = "w-full border border-input bg-background rounded-md px-3 py-3 text-base md:text-sm focus:outline-none focus:ring-2 focus:ring-ring/40 focus:border-primary transition min-h-[44px]";
@@ -55,7 +107,7 @@ export function LoginPrompt({ onLogin }: { onLogin: (epic: string) => void }) {
         <form onSubmit={handleSubmit} className="mt-6 space-y-4 text-left" noValidate>
           <label className="flex flex-col gap-1.5">
             <span className="text-xs font-medium text-foreground/80">
-              EPIC ID / Mobile Number
+              EPIC ID / Registered Mobile Number
             </span>
             <input
               autoFocus
@@ -73,7 +125,7 @@ export function LoginPrompt({ onLogin }: { onLogin: (epic: string) => void }) {
 
           <button
             type="submit"
-            className="w-full bg-primary text-primary-foreground py-3 rounded-lg font-semibold hover:bg-primary/90 transition inline-flex items-center justify-center gap-2 min-h-[44px]"
+            className="w-full bg-primary text-primary-foreground py-3 rounded-lg font-semibold hover:bg-primary/90 transition inline-flex items-center justify-center gap-2 min-h-[44px] cursor-pointer"
           >
             <LogIn className="w-4 h-4" /> Login
           </button>

@@ -45,7 +45,7 @@ function TermsConditions() {
             </h3>
             <ul className="list-disc pl-5 text-sm text-slate-600 space-y-1.5">
               <li>By using our services, you confirm that you are a registered business entity or trader operating in Tamil Nadu, or an authorized representative.</li>
-              <li>You agree to provide accurate and complete details when applying for membership or welfare schemes.</li>
+              <li>You agree to provide accurate and complete details when applying for membership or business loans.</li>
               <li>Any misuse, fraudulent activity, or violation of these terms may result in suspension of membership services.</li>
             </ul>
           </div>
@@ -57,7 +57,7 @@ function TermsConditions() {
               2. Services & Fees
             </h3>
             <ul className="list-disc pl-5 text-sm text-slate-600 space-y-1.5">
-              <li>We specialize in providing trade advocacy, stamp certifications, digital voter identity cards (EPIC ID), and welfare benefits for registered traders.</li>
+              <li>We specialize in providing trade advocacy, stamp certifications, digital voter identity cards (EPIC ID), and business support for registered traders.</li>
               <li>All service fees listed on the website (e.g., membership entry or annual renewal fees) are transparently listed in Indian Rupees (INR ₹) and are subject to association bylaws.</li>
               <li>We reserve the right to correct any errors in listings, descriptions, or pricing, and may cancel affected registrations with full refunds where applicable.</li>
             </ul>
@@ -85,7 +85,7 @@ function TermsConditions() {
             </h3>
             <ul className="list-disc pl-5 text-sm text-slate-600 space-y-1.5">
               <li>Digital voter identity cards (EPIC IDs) are generated instantly upon verified application submission.</li>
-              <li>Welfare claims (such as health coverage cards or subsidized loan reviews) are verified and processed in compliance with regional auditor schedules.</li>
+              <li>Subsidized loan reviews are verified and processed in compliance with regional auditor schedules.</li>
               <li>We are not liable for external network delays, server outages, or incorrect detail inputs.</li>
             </ul>
           </div>
@@ -97,7 +97,7 @@ function TermsConditions() {
               5. Cancellations & Fees
             </h3>
             <p className="text-sm text-slate-600 leading-relaxed pl-2">
-              All membership fees, renewals, and welfare contributions are non-refundable. In cases of duplicate payment charges, verified claims will be resolved with direct refunds within 5–7 business days.
+              All membership fees and renewals are non-refundable. In cases of duplicate payment charges, verified claims will be resolved with direct refunds within 5–7 business days.
             </p>
           </div>
 

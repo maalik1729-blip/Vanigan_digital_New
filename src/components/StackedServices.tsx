@@ -36,6 +36,36 @@ export function StackedServices({ services }: StackedServicesProps) {
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
   const hoveredIdxRef = useRef<number | null>(null);
 
+  const cardStyles = [
+    {
+      bg: "bg-slate-950 text-white border-slate-900/60 shadow-2xl",
+      title: "text-white",
+      desc: "text-slate-300 font-tamil",
+      pill: "bg-slate-900 border border-slate-800 text-gold",
+      iconBg: "bg-slate-900 text-gold group-hover:bg-gold group-hover:text-slate-950",
+      link: "text-gold hover:text-gold/90",
+      imageBg: "#020617"
+    },
+    {
+      bg: "bg-blue-900 text-white border-blue-800/60 shadow-2xl",
+      title: "text-white",
+      desc: "text-blue-200/70 font-tamil",
+      pill: "bg-blue-950 border border-blue-850 text-blue-200",
+      iconBg: "bg-blue-950 text-gold group-hover:bg-gold group-hover:text-blue-950",
+      link: "text-gold hover:text-gold/90",
+      imageBg: "#1e3a8a"
+    },
+    {
+      bg: "bg-white text-slate-900 border-slate-200/80 shadow-2xl",
+      title: "text-slate-900",
+      desc: "text-slate-500 font-tamil",
+      pill: "bg-slate-50 border border-slate-200 text-primary",
+      iconBg: "bg-primary/8 text-primary group-hover:bg-primary group-hover:text-white",
+      link: "text-primary hover:text-primary/90",
+      imageBg: "#ffffff"
+    }
+  ];
+
   // Sync ref with hover state so the scroll event loop always has instant, non-stale state access
   const setHovered = (val: number | null) => {
     setHoveredIdx(val);
@@ -66,11 +96,18 @@ export function StackedServices({ services }: StackedServicesProps) {
           return;
         }
 
+        const parentRect = card.parentElement?.getBoundingClientRect();
+        if (!parentRect) return;
+
         const cardRect = card.getBoundingClientRect();
         const stickyTop = HEADER_OFFSET + i * STACK_OFFSET;
 
-        // How far past its sticky-top coordinate is the card?
-        const pushed = Math.max(0, stickyTop - cardRect.top);
+        // Layout top of card relative to the viewport (ignoring stickiness)
+        const cardY = card.offsetTop;
+        const cardViewportTop = parentRect.top + cardY;
+
+        // How far past its sticky-top coordinate is the card scroll-pushed?
+        const pushed = Math.max(0, stickyTop - cardViewportTop);
         const cardH  = Math.max(cardRect.height, 1);
         const progress = Math.min(1, pushed / cardH);
 
@@ -116,85 +153,98 @@ export function StackedServices({ services }: StackedServicesProps) {
 
   return (
     <div className="relative space-y-6 md:space-y-0 md:pb-[180px] w-full">
-      {services.map((s, idx) => (
-        <div
-          key={s.e}
-          ref={(el) => { cardRefs.current[idx] = el; }}
-          className="md:sticky"
-          style={{
-            top: `${HEADER_OFFSET + idx * STACK_OFFSET}px`,
-            zIndex: hoveredIdx === idx ? 100 : 10 + idx,
-            // Spacing offset before cards begin stacking
-            paddingBottom: idx < services.length - 1 ? "2rem" : 0,
-          }}
-        >
-          <Link
-            to={s.to}
-            id={`service-card-${idx}`}
-            onMouseEnter={() => setHovered(idx)}
-            onMouseLeave={() => setHovered(null)}
-            className="card-base card-interactive group flex flex-col md:flex-row items-stretch overflow-hidden w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 bg-card border border-border shadow-2xl transition duration-300"
+      {services.map((s, idx) => {
+        const styles = cardStyles[2];
+
+        return (
+          <div
+            key={s.e}
+            ref={(el) => { cardRefs.current[idx] = el; }}
+            className="md:sticky"
             style={{
-              borderRadius: "1.5rem",
-              borderTop: `3px solid oklch(${0.55 + idx * 0.08} 0.14 ${252 - idx * 30} / ${0.35 + idx * 0.05})`,
+              top: `${HEADER_OFFSET + idx * STACK_OFFSET}px`,
+              zIndex: hoveredIdx === idx ? 100 : 10 + idx,
+              // Spacing offset before cards begin stacking
+              paddingBottom: idx < services.length - 1 ? "2.5rem" : 0,
             }}
           >
-            {/* Left Side: Crisp, highly readable text layout */}
-            <div className="w-full md:w-3/5 p-6 sm:p-8 flex flex-col justify-between text-left space-y-4 md:space-y-6">
-              <div className="space-y-3 sm:space-y-4">
-                {/* Animated Icon bubble */}
-                <div className="w-12 h-12 rounded-2xl bg-primary/8 grid place-items-center text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300 transform group-hover:scale-110 shrink-0">
-                  <s.i className="w-6 h-6" aria-hidden="true" />
-                </div>
-                <div>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="font-display text-xl sm:text-2xl font-bold text-ink leading-snug">
-                      {t(s.t, s.e)}
-                    </h3>
-                    {s.badge && (
-                      <span className="text-[10px] font-bold text-primary bg-primary/8 border border-primary/20 px-2.5 py-0.5 rounded-full uppercase tracking-wider whitespace-nowrap">
-                        {s.badge}
-                      </span>
-                    )}
+            <a
+              href={s.to}
+              id={`service-card-${idx}`}
+              onMouseEnter={() => setHovered(idx)}
+              onMouseLeave={() => setHovered(null)}
+              className={`card-interactive group flex flex-col md:flex-row items-stretch overflow-hidden w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 border shadow-2xl transition duration-300 no-underline ${styles.bg}`}
+              style={{
+                borderRadius: "1.5rem",
+              }}
+            >
+              {/* Left Side: Crisp, highly readable text layout */}
+              <div className="w-full md:w-3/5 p-6 sm:p-8 flex flex-col justify-between text-left space-y-4 md:space-y-6">
+                <div className="space-y-3 sm:space-y-4">
+                  {/* Animated Icon bubble */}
+                  <div className={`w-12 h-12 rounded-2xl grid place-items-center transition-all duration-300 transform group-hover:scale-110 shrink-0 ${styles.iconBg}`}>
+                    <s.i className="w-6 h-6" aria-hidden="true" />
                   </div>
-                  <p className="mt-2 text-sm text-muted-foreground leading-relaxed font-tamil">
-                    {t(s.td, s.d)}
-                  </p>
-                </div>
-              </div>
-              
-              <div className="inline-flex items-center gap-1.5 text-sm font-bold text-primary group-hover:gap-2.5 transition-all duration-300">
-                {t("தொடரவும்", "Proceed")}
-                <ArrowRight className="w-4 h-4" aria-hidden="true" />
-              </div>
-            </div>
-
-            {/* Right Side: Photograph blending seamlessly into the card background */}
-            <div className="w-full md:w-2/5 relative min-h-[200px] md:min-h-auto bg-card flex items-center justify-center">
-              {/* Fade mask overlay: blends the photo into the left side clean card bg */}
-              <div className="hidden md:block absolute inset-y-0 -left-3 w-28 bg-gradient-to-r from-card via-card to-transparent z-10" />
-              {/* Fade mask overlay for mobile top bleed */}
-              <div className="block md:hidden absolute inset-x-0 -top-3 h-20 bg-gradient-to-b from-card via-card to-transparent z-10" />
-
-              {getCardImage(idx, s.to) === "mockup" ? (
-                <div className="w-full h-full p-6 flex items-center justify-center bg-linear-to-br from-slate-900 to-slate-950">
-                  <div className="w-full max-w-[280px] transform group-hover:scale-105 transition-transform duration-500">
-                    <MockupCard />
+                  <div>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h3 className={`font-display text-xl sm:text-2xl font-bold leading-snug ${styles.title}`}>
+                        {t(s.t, s.e)}
+                      </h3>
+                      {s.badge && (
+                        <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider whitespace-nowrap ${styles.pill}`}>
+                          {s.badge}
+                        </span>
+                      )}
+                    </div>
+                    <p className={`mt-2 text-sm leading-relaxed ${styles.desc}`}>
+                      {t(s.td, s.d)}
+                    </p>
                   </div>
                 </div>
-              ) : (
-                <img
-                  src={getCardImage(idx, s.to) as string}
-                  alt={s.e}
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100"
+                
+                <div className={`inline-flex items-center gap-1.5 text-sm font-bold group-hover:gap-2.5 transition-all duration-300 ${styles.link}`}>
+                  {t("தொடரவும்", "Proceed")}
+                  <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                </div>
+              </div>
+
+              {/* Right Side: Photograph blending seamlessly into the card background */}
+              <div 
+                className="w-full md:w-2/5 relative min-h-[200px] md:min-h-auto flex items-center justify-center"
+                style={{ backgroundColor: styles.imageBg }}
+              >
+                {/* Fade mask overlay: blends the photo into the left side clean card bg */}
+                <div 
+                  className="hidden md:block absolute inset-y-0 -left-3 w-28 z-10" 
+                  style={{ backgroundImage: `linear-gradient(to right, ${styles.imageBg} 0%, ${styles.imageBg} 40%, transparent 100%)` }}
                 />
-              )}
-            </div>
-          </Link>
-        </div>
-      ))}
+                {/* Fade mask overlay for mobile top bleed */}
+                <div 
+                  className="block md:hidden absolute inset-x-0 -top-3 h-20 z-10"
+                  style={{ backgroundImage: `linear-gradient(to bottom, ${styles.imageBg} 0%, ${styles.imageBg} 40%, transparent 100%)` }}
+                />
+
+                {getCardImage(idx, s.to) === "mockup" ? (
+                  <div className="w-full h-full p-6 flex items-center justify-center bg-linear-to-br from-slate-900 to-slate-950">
+                    <div className="w-full max-w-[280px] transform group-hover:scale-105 transition-transform duration-500">
+                      <MockupCard />
+                    </div>
+                  </div>
+                ) : (
+                  <img
+                    src={getCardImage(idx, s.to) as string}
+                    alt={s.e}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100"
+                  />
+                )}
+              </div>
+            </a>
+          </div>
+        );
+      })}
+
     </div>
   );
 }

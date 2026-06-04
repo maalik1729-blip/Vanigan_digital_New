@@ -37,7 +37,7 @@ const stats = [
   { v: "1,24,560+", l: "Registered Members", t: "உறுப்பினர்கள்" },
   { v: "38",         l: "Districts Covered",  t: "மாவட்டங்கள்" },
   { v: "12+",        l: "Years of Service",   t: "ஆண்டுகள்" },
-  { v: "₹8.4Cr",    l: "Welfare Disbursed",  t: "நலன் நிதி" },
+  { v: "100%",       l: "Digital Verified",   t: "டிஜிட்டல் அட்டை" },
 ];
 
 const faqs = [
@@ -93,11 +93,11 @@ const TOP_SERVICES = [
     isTall: true,
   },
   {
-    i: Award,
-    t: "உறுப்பினர் நலத்திட்டங்கள்",
-    e: "Welfare Schemes",
-    d: "Insurance, scholarships and emergency aid for members and their families across Tamil Nadu.",
-    td: "காப்பீடு, உதவித்தொகை மற்றும் அவசர நிவாரணம் — உங்களுக்கும் குடும்பத்திற்கும்.",
+    i: ShieldCheck,
+    t: "வணிகப் பாதுகாப்பு",
+    e: "Trade Protection",
+    d: "Advocacy, legal support, and trade rights mediation for all registered traders.",
+    td: "வணிகர்களுக்கான சட்ட உதவி, வர்த்தக உரிமைப் பாதுகாப்பு மற்றும் ஆலோசனைகள்.",
     to: "/services",
     badge: null,
     className: "md:col-span-1",
@@ -116,9 +116,8 @@ const TOP_SERVICES = [
 
 const HOW_IT_WORKS = [
   { n: "01", t: "தகவல் நிரப்புக", e: "Fill your details",    td: "பெயர், கைபேசி, மாவட்டம், வணிக வகை.", d: "Name, mobile, district, business type." },
-  { n: "02", t: "ஆவணம் சமர்ப்பிக்க", e: "Upload documents", td: "அடையாளச் சான்று, கடை புகைப்படம், வணிகச் சான்று.", d: "ID proof, shop photo, business proof." },
-  { n: "03", t: "பணம் செலுத்தவும்", e: "Pay the fee",        td: "பாதுகாப்பான UPI கட்டணம் — ₹500/ஆண்டு.", d: "Secure UPI payment — ₹500/year." },
-  { n: "04", t: "சான்றிதழ் பெறு", e: "Get certificate",      td: "உடனடி டிஜிட்டல் சான்றிதழ் + EPIC அடையாள அட்டை.", d: "Instant digital certificate + EPIC ID." },
+  { n: "02", t: "புகைப்படம் பதிவேற்றவும்", e: "Upload photo", td: "அடையாள அட்டைக்கு தெளிவான முன்பக்கப் புகைப்படம்.", d: "A clear front-facing photo for your ID card." },
+  { n: "03", t: "சான்றிதழ் பெறு", e: "Get certificate",      td: "உடனடி டிஜிட்டல் சான்றிதழ் + EPIC அடையாள அட்டை.", d: "Instant digital certificate + EPIC ID." },
 ];
 
 function Home() {
@@ -140,7 +139,7 @@ function Home() {
   const handleVoterSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate({ to: "/voter-id", search: { q: searchQuery.trim() } });
+      navigate({ to: "/voter-id", search: { epic: searchQuery.trim() } });
     }
   };
 
@@ -195,8 +194,8 @@ function Home() {
 
             <p className="mt-3 sm:mt-4 text-sm sm:text-base text-muted-foreground max-w-xl leading-relaxed">
               {t(
-                "உறுப்பினர் சேர்க்கைக்கு விண்ணப்பிக்கவும், உங்கள் அதிகாரப்பூர்வ சான்றிதழைப் பதிவிறக்கவும், நலத்திட்டங்களை அணுகவும் — அனைத்தும் ஒரே நம்பகமான போர்ட்டலில்.",
-                "Apply for membership, download your official certificate, access welfare schemes — all from one trusted portal."
+                "உறுப்பினர் சேர்க்கைக்கு விண்ணப்பிக்கவும், உங்கள் அதிகாரப்பூர்வ சான்றிதழைப் பதிவிறக்கவும், வணிக ஆதரவை அணுகவும் — அனைத்தும் ஒரே நம்பகமான போர்ட்டலில்.",
+                "Apply for membership, download your official certificate, access business support — all from one trusted portal."
               )}
             </p>
 
@@ -212,7 +211,7 @@ function Home() {
               </Link>
               <Link
                 to="/voter-id"
-                search={{ q: undefined }}
+                search={{ epic: undefined }}
                 className="text-sm font-semibold text-primary hover:underline inline-flex items-center justify-center sm:justify-start gap-1.5 py-2"
               >
                 <IdCard className="w-4 h-4" aria-hidden="true" />
@@ -509,7 +508,7 @@ function Home() {
               <div className="mt-4 flex flex-wrap gap-2 text-xs text-primary-foreground/70">
                 {[
                   t("உடனடி சான்றிதழ்", "Instant certificate"),
-                  t("₹2 லட்சம் காப்பீடு", "₹2L health cover"),
+                  t("சட்ட ஆலோசனை", "Legal advisory"),
                   t("₹500/ஆண்டு", "₹500/year"),
                   t("38 மாவட்டங்கள்", "38 districts"),
                 ].map((item) => (

@@ -1,363 +1,283 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, useRef, useEffect, type FormEvent } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Printer, MapPin, Building2, Hash,
-  Phone, Share2, User, UserPlus, Upload, Camera, ArrowLeft
+  Phone, Share2, User, Download, Lock, ArrowLeft, Camera, RefreshCw, Key
 } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { toast } from "sonner";
-import { Section, SectionLabel } from "@/components/Section";
 import { VoterIdCard, type Voter } from "@/components/VoterIdCard";
 import votersData from "@/data/voters.json";
-import { FieldError } from "@/components/FieldError";
-import { Skeleton } from "@/components/Skeleton";
+import { WINGS } from "@/data/wings";
+import ownerPhoto from "@/assets/349b584e-1b60-469e-9e5d-8d124cb057cb.png";
+import orgLogo from "@/assets/ChatGPT Image Mar 25, 2026, 05_31_25 PM (1).png";
+import signImg from "@/assets/8bb61dfb-f349-4e0b-8501-560feae9f000.png";
 
 export const Route = createFileRoute("/voter-id")({
   validateSearch: (search: Record<string, unknown>) => {
     return {
-      q: search.q ? (search.q as string) : undefined,
+      epic: search.epic ? (search.epic as string) : undefined,
     };
   },
   head: () => ({
     meta: [
-      { title: "Sangamam Membership Card · TNVS Portal" },
-      { name: "description", content: "Generate Tamilnadu Vanigargalin Sangamam membership ID cards." },
+      { title: "Download Certificate & Card · TNVS Portal" },
+      { name: "description", content: "Verify your PIN to download your official membership certificate and print your ID card." },
     ],
   }),
-  component: VoterIdPage,
+  component: SecureDownloadPage,
 });
 
-function VoterIdPage() {
+function SecureDownloadPage() {
   const { t, language } = useLanguage();
-  const { q } = Route.useSearch();
-  
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<Voter[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
-  const [hasSearched, setHasSearched] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [showForm, setShowForm] = useState(true);
-  const [formStep, setFormStep] = useState<1 | 2>(1);
-  const [isCompilingCard, setIsCompilingCard] = useState(false);
+  const { epic: searchEpic } = Route.useSearch();
 
-  const [formData, setFormData] = useState<Partial<Voter>>({
-    VOTER_NAME: "",
-    EPIC_NO: "",
-    MOBILE_NUMBER: "",
-    POLLING_STATION_ADDRESS: "",
-    PHOTO_URL: "",
-    AGE: "",
-    DOB: "",
-    GENDER: "Male",
-    BLOOD_GROUP: "O+",
-    ASSEMBLY_NAME: "",
-    DISTRICT: "Chennai",
-    BUSINESS_TYPE: "Retail",
-  });
-
-  const handleFieldChange = (field: keyof Voter, value: string) => {
-    setFormData(prev => {
-      const next = { ...prev, [field]: value };
-      if (field === "DOB" && value) {
-        const birthDate = new Date(value);
-        if (!isNaN(birthDate.getTime())) {
-          const today = new Date();
-          let calculatedAge = today.getFullYear() - birthDate.getFullYear();
-          const m = today.getMonth() - birthDate.getMonth();
-          if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-            calculatedAge--;
-          }
-          if (calculatedAge >= 0 && calculatedAge <= 120) {
-            next.AGE = calculatedAge.toString();
-            if (errors.AGE) {
-              setErrors(errs => {
-                const nextErrs = { ...errs };
-                delete nextErrs.AGE;
-                return nextErrs;
-              });
-            }
-          }
-        }
-      }
-      return next;
-    });
-    if (errors[field]) {
-      setErrors(prev => {
-        const next = { ...prev };
-        delete next[field];
-        return next;
-      });
-    }
-  };
-
-  const [selected, setSelected] = useState<Voter | null>(null);
+  const [epicInput, setEpicInput] = useState(searchEpic || "");
+  const [pinInput, setPinInput] = useState("");
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [verifiedVoter, setVerifiedVoter] = useState<Voter | null>(null);
   const [shareMsg, setShareMsg] = useState("");
-  const cardRef = useRef<HTMLDivElement>(null);
+
   const frontRef = useRef<HTMLDivElement>(null);
   const backRef = useRef<HTMLDivElement>(null);
 
-  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error(t("புகைப்படம் 5MB-க்குள் இருக்க வேண்டும்", "Photo must be under 5MB"));
-        return;
-      }
-      const allowed = ["image/jpeg", "image/png", "image/webp"];
-      if (!allowed.includes(file.type)) {
-        toast.error(t("தயவுசெய்து JPG, PNG அல்லது WebP படத்தை பதிவேற்றவும்", "Please upload a JPG, PNG or WebP image"));
-        return;
-      }
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData(prev => ({ ...prev, PHOTO_URL: reader.result as string }));
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const populateForm = (v: Voter) => {
-    let fallbackDob = "";
-    if (v.AGE) {
-      const birthYear = new Date().getFullYear() - parseInt(v.AGE);
-      fallbackDob = `${birthYear}-01-01`;
-    }
-
-    setFormData({
-      VOTER_NAME: v.VOTER_NAME,
-      RELATION_TYPE: v.RELATION_TYPE || "Father",
-      RELATION_NAME: v.RELATION_NAME || "",
-      EPIC_NO: v.EPIC_NO,
-      MOBILE_NUMBER: v.MOBILE_NUMBER || "",
-      AGE: v.AGE,
-      DOB: v.DOB || fallbackDob,
-      GENDER: v.GENDER || "Male",
-      BLOOD_GROUP: v.BLOOD_GROUP || "O+",
-      HOUSE_NO: v.HOUSE_NO || "",
-      POLLING_STATION_ADDRESS: v.POLLING_STATION_ADDRESS || "",
-      ASSEMBLY_NAME: v.ASSEMBLY_NAME || "",
-      DISTRICT: v.DISTRICT || "",
-      PIN_CODE: v.PIN_CODE || "",
-      PHOTO_URL: v.PHOTO_URL || "",
-    });
-    setErrors({});
-    setShowForm(true);
-    toast.success(t("விவரங்கள் தானாக நிரப்பப்பட்டன", "Details populated successfully!"));
-  };
-
-  useEffect(() => {
-    if (q) {
-      setSearchQuery(q);
-      const autoSearch = async () => {
-        setIsSearching(true);
-        try {
-          const res = await fetch(`/api/voter-search?epic=${encodeURIComponent(q)}`);
-          if (!res.ok) throw new Error("API failed");
-          const data = await res.json();
-          if (data.voters && data.voters.length > 0) {
-            populateForm(data.voters[0]);
-            return;
-          }
-        } catch (err) {
-          // Fallback to client-side local search
-          const match = (votersData as Voter[]).find(v => v.EPIC_NO?.toUpperCase() === q.toUpperCase());
-          if (match) {
-            populateForm(match);
-          }
-        } finally {
-          setIsSearching(false);
-        }
-      };
-      autoSearch();
-    }
-  }, [q]);
-
-  const handleSearch = async () => {
-    const queryTerm = searchQuery.trim();
-    if (!queryTerm) return;
-    setSearchResults([]);
-    setIsSearching(true);
-    try {
-      const params = new URLSearchParams();
-      if (/^[a-zA-Z0-9]{3,20}$/.test(queryTerm)) {
-        params.append("epic", queryTerm);
-      } else {
-        params.append("name", queryTerm);
-      }
-
-      const res = await fetch(`/api/voter-search?${params.toString()}`);
-      if (!res.ok) throw new Error("API failed");
-      const data = await res.json();
-      if (data.voters) {
-        setSearchResults(data.voters);
-        if (data.voters.length === 0) {
-          toast.info(t("பொருந்தும் பதிவுகள் எதுவும் கிடைக்கவில்லை", "No matching records found"));
-          setShowForm(true);
-        }
-        return;
-      }
-    } catch (err) {
-      // Fallback to client-side local search
-      const queryLower = queryTerm.toLowerCase();
-      const isEpic = /^[a-zA-Z0-9]{3,20}$/.test(queryTerm);
-      const filtered = (votersData as Voter[]).filter(v => {
-        if (isEpic) {
-          return v.EPIC_NO?.toLowerCase() === queryLower;
-        } else {
-          return v.VOTER_NAME?.toLowerCase().includes(queryLower);
-        }
-      });
-      setSearchResults(filtered);
-      if (filtered.length === 0) {
-        toast.info(t("பொருந்தும் பதிவுகள் எதுவும் கிடைக்கவில்லை", "No matching records found"));
-        setShowForm(true);
-      }
-    } finally {
-      setIsSearching(false);
-      setHasSearched(true);
-    }
-  };
-
-  const selectVoter = (v: Voter) => {
-    populateForm(v);
-    setSearchResults([]);
-    setSearchQuery("");
-  };
-
-  const validate = (): boolean => {
-    const newErrors: Record<string, string> = {};
-
-    const name = (formData.VOTER_NAME || "").trim();
-    const epic = (formData.EPIC_NO || "").trim();
-    const age = (formData.AGE || "").trim();
-    const dob = (formData.DOB || "").trim();
-    const mobile = (formData.MOBILE_NUMBER || "").trim();
-    const assembly = (formData.ASSEMBLY_NAME || "").trim();
-    const district = (formData.DISTRICT || "").trim();
-    const address = (formData.POLLING_STATION_ADDRESS || "").trim();
-
-    if (!name) {
-      newErrors.VOTER_NAME = t("தயவுசெய்து உங்கள் முழுப் பெயரை உள்ளிடவும்", "Please enter your full name");
-    } else if (!/^[a-zA-Z\s.\u0B80-\u0BFF]+$/.test(name)) {
-      newErrors.VOTER_NAME = t("பெயரில் எழுத்துக்கள் மற்றும் இடைவெளிகள் மட்டுமே இருக்க வேண்டும்", "Full name can only contain letters, dots, and spaces");
-    }
-
-    if (!epic) {
-      newErrors.EPIC_NO = t("தயவுசெய்து EPIC / ID எண்ணை உள்ளிடவும்", "Please enter EPIC / ID No");
-    } else if (!/^[a-zA-Z]{3}\d{7}$/.test(epic)) {
-      newErrors.EPIC_NO = t(
-        "EPIC எண் வடிவத்தில் இருக்க வேண்டும்: முதல் 3 எழுத்துக்கள் மற்றும் அடுத்த 7 எண்கள் (எ.கா: RJE1234567)",
-        "EPIC No must be in the format: first 3 letters followed by 7 digits (e.g. RJE1234567)"
-      );
-    }
-
-    if (mobile && !/^[6-9]\d{9}$/.test(mobile)) {
-      newErrors.MOBILE_NUMBER = t("சரியான 10 இலக்க கைபேசி எண்ணை உள்ளிடவும்", "Mobile number must be a valid 10-digit number starting with 6-9");
-    }
-
-    if (!dob) {
-      newErrors.DOB = t("தயவுசெய்து உங்கள் பிறந்த தேதியை உள்ளிடவும்", "Please enter your date of birth");
-    }
-
-    if (!age) {
-      newErrors.AGE = t("தயவுசெய்து உங்கள் வயதை உள்ளிடவும்", "Please enter your age");
-    } else {
-      const ageNum = parseInt(age);
-      if (isNaN(ageNum) || ageNum < 18 || ageNum > 120) {
-        newErrors.AGE = t("வயது 18 முதல் 120 வரை இருக்க வேண்டும்", "Age must be between 18 and 120");
-      }
-    }
-
-    if (assembly && !/^[a-zA-Z\s.\u0B80-\u0BFF]+$/.test(assembly)) {
-      newErrors.ASSEMBLY_NAME = t("தொகுதி பெயரில் எழுத்துக்கள் மற்றும் இடைவெளிகள் மட்டுமே இருக்க வேண்டும்", "Assembly name should contain only letters, dots, and spaces");
-    }
-
-    if (district && !/^[a-zA-Z\s.\u0B80-\u0BFF]+$/.test(district)) {
-      newErrors.DISTRICT = t("மாவட்ட பெயரில் எழுத்துக்கள் மற்றும் இடைவெளிகள் மட்டுமே இருக்க வேண்டும்", "District should contain only letters, dots, and spaces");
-    }
-
-    if (!address) {
-      newErrors.POLLING_STATION_ADDRESS = t("தயவுசெய்து உங்கள் முகவரியை உள்ளிடவும்", "Please enter your address");
-    }
-
-    setErrors(newErrors);
-
-    const errorKeys = Object.keys(newErrors);
-    if (errorKeys.length > 0) {
-      const firstErrorField = errorKeys[0];
-      toast.error(newErrors[firstErrorField]);
-      return false;
-    }
-
-    return true;
-  };
-
-  const handleDetailsNext = () => {
-    if (validate()) {
-      setFormStep(2);
-    }
-  };
-
-  const handleGenerate = (e: FormEvent) => {
+  // Verification Logic
+  const handleVerify = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!formData.PHOTO_URL) {
-      toast.error(t("தயவுசெய்து புகைப்படத்தை பதிவேற்றவும்", "Please upload a photo"));
+    const inputVal = epicInput.trim().toUpperCase();
+    if (!inputVal) {
+      toast.error(language === "ta" ? "தயவுசெய்து EPIC ID அல்லது மொபைல் எண்ணை உள்ளிடவும்" : "Please enter EPIC ID or Mobile Number");
+      return;
+    }
+    if (pinInput.length !== 4) {
+      toast.error(language === "ta" ? "தயவுசெய்து 4-இலக்க பாதுகாப்பு PIN ஐ உள்ளிடவும்" : "Please enter a valid 4-digit Security PIN");
       return;
     }
 
-    if (!validate()) return;
-    
-    // Auto-generate some required placeholder fields for the card design
-    const generatedVoter: Voter = {
-      ID: Math.floor(Math.random() * 10000),
-      ASSEMBLY_NO: "25",
-      ASSEMBLY_NAME: formData.ASSEMBLY_NAME || "Mylapore",
-      PART_NO: "1",
-      SECTION_NO: "1",
-      SERIAL_NO: Math.floor(Math.random() * 100).toString(),
-      HOUSE_NO: formData.HOUSE_NO || "",
-      VOTER_NAME: formData.VOTER_NAME || "",
-      RELATION_TYPE: formData.RELATION_TYPE || "Father",
-      RELATION_NAME: formData.RELATION_NAME || "",
-      EPIC_NO: formData.EPIC_NO || "RJE" + Math.floor(Math.random() * 10000000),
-      MOBILE_NUMBER: formData.MOBILE_NUMBER || "",
-      AGE: formData.AGE || "30",
-      DOB: formData.DOB || "",
-      BUSINESS_TYPE: formData.BUSINESS_TYPE || "Retail",
-      GENDER: formData.GENDER || "Male",
-      BLOOD_GROUP: formData.BLOOD_GROUP || "O+",
-      PART_NAME: "TNVS Zone",
-      POLLING_STATION_NAME: formData.POLLING_STATION_ADDRESS || "Chennai",
-      POLLING_STATION_ADDRESS: formData.POLLING_STATION_ADDRESS || "",
-      MAIN_TOWN: formData.DISTRICT || "CHENNAI",
-      WARD: "",
-      POST_OFFICE: "",
-      POLICE_STATION: "",
-      DISTRICT: formData.DISTRICT || "CHENNAI",
-      PIN_CODE: formData.PIN_CODE || "600000",
-      PHOTO_URL: formData.PHOTO_URL,
-    };
-    
-    setIsCompilingCard(true);
-    setSelected(generatedVoter);
-    
+    setIsVerifying(true);
+
     setTimeout(() => {
-      setIsCompilingCard(false);
-      setTimeout(() => {
-        cardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 50);
-    }, 800);
+      let resolvedEpic = inputVal;
+      let foundDynamicMember = null;
+      let foundMockVoter: any = null;
+
+      // Check if input is a 10-digit mobile number
+      const cleanMobile = inputVal.replace(/\D/g, "");
+      if (cleanMobile.length === 10) {
+        // Search dynamic localStorage members by mobile
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && key.startsWith("tnvs_member_")) {
+            try {
+              const profile = JSON.parse(localStorage.getItem(key) || "");
+              if (profile && profile.mobile === cleanMobile) {
+                foundDynamicMember = profile;
+                resolvedEpic = profile.epic.toUpperCase();
+                break;
+              }
+            } catch {}
+          }
+        }
+
+        // If not found in dynamic members, search mock voters
+        if (!foundDynamicMember) {
+          foundMockVoter = votersData.find(v => v.MOBILE_NUMBER === cleanMobile);
+          if (foundMockVoter) {
+            resolvedEpic = foundMockVoter.EPIC_NO.toUpperCase();
+          }
+        }
+      } else {
+        // Direct search by EPIC ID
+        const savedMemberStr = localStorage.getItem(`tnvs_member_${inputVal}`);
+        if (savedMemberStr) {
+          try { foundDynamicMember = JSON.parse(savedMemberStr); } catch {}
+        } else {
+          foundMockVoter = votersData.find(v => v.EPIC_NO?.toUpperCase() === inputVal);
+        }
+      }
+
+      // Check PIN verification for the resolved member
+      if (foundDynamicMember) {
+        const savedPin = localStorage.getItem(`tnvs_pin_${resolvedEpic}`);
+        if (savedPin === pinInput) {
+          const voterObj: Voter = {
+            ID: 8888,
+            ASSEMBLY_NO: "25",
+            ASSEMBLY_NAME: foundDynamicMember.assembly || "Mylapore",
+            PART_NO: "1",
+            SECTION_NO: "1",
+            SERIAL_NO: "12",
+            HOUSE_NO: "",
+            VOTER_NAME: foundDynamicMember.name,
+            RELATION_TYPE: "Father",
+            RELATION_NAME: "",
+            EPIC_NO: foundDynamicMember.epic,
+            MOBILE_NUMBER: foundDynamicMember.mobile,
+            AGE: foundDynamicMember.age || "30",
+            DOB: foundDynamicMember.dob,
+            BUSINESS_TYPE: foundDynamicMember.type || "Retail",
+            GENDER: foundDynamicMember.gender || "Male",
+            BLOOD_GROUP: foundDynamicMember.bloodGroup || "O+",
+            PART_NAME: "TNVS Zone",
+            POLLING_STATION_NAME: foundDynamicMember.address || "",
+            POLLING_STATION_ADDRESS: foundDynamicMember.address || "",
+            MAIN_TOWN: foundDynamicMember.district || "CHENNAI",
+            WARD: "",
+            POST_OFFICE: "",
+            POLICE_STATION: "",
+            DISTRICT: foundDynamicMember.district || "CHENNAI",
+            PIN_CODE: "",
+            PHOTO_URL: foundDynamicMember.photoUrl || ownerPhoto,
+          };
+          setVerifiedVoter(voterObj);
+          toast.success(language === "ta" ? "பாதுகாப்பு PIN சரிபார்க்கப்பட்டது! அணுகல் அனுமதிக்கப்பட்டது." : "Security PIN verified! Access granted.");
+        } else {
+          toast.error(language === "ta" ? "தவறான பாதுகாப்பு PIN. மீண்டும் முயலவும்." : "Invalid Security PIN. Please try again.");
+        }
+      } else if (foundMockVoter) {
+        // Default PIN for mock database voters is '1234'
+        if (pinInput === "1234") {
+          const voterObj: Voter = {
+            ID: foundMockVoter.ID,
+            ASSEMBLY_NO: foundMockVoter.ASSEMBLY_NO || "25",
+            ASSEMBLY_NAME: foundMockVoter.ASSEMBLY_NAME || "Mylapore",
+            PART_NO: foundMockVoter.PART_NO || "1",
+            SECTION_NO: foundMockVoter.SECTION_NO || "1",
+            SERIAL_NO: foundMockVoter.SERIAL_NO || "12",
+            HOUSE_NO: foundMockVoter.HOUSE_NO || "",
+            VOTER_NAME: foundMockVoter.VOTER_NAME,
+            RELATION_TYPE: foundMockVoter.RELATION_TYPE || "Father",
+            RELATION_NAME: foundMockVoter.RELATION_NAME || "",
+            EPIC_NO: foundMockVoter.EPIC_NO,
+            MOBILE_NUMBER: foundMockVoter.MOBILE_NUMBER || "",
+            AGE: foundMockVoter.AGE || "35",
+            DOB: foundMockVoter.DOB || "",
+            BUSINESS_TYPE: foundMockVoter.BUSINESS_TYPE || "Retail",
+            GENDER: foundMockVoter.GENDER || "Male",
+            BLOOD_GROUP: foundMockVoter.BLOOD_GROUP || "O+",
+            PART_NAME: foundMockVoter.PART_NAME || "TNVS Zone",
+            POLLING_STATION_NAME: foundMockVoter.POLLING_STATION_NAME || foundMockVoter.POLLING_STATION_ADDRESS || "",
+            POLLING_STATION_ADDRESS: foundMockVoter.POLLING_STATION_ADDRESS || "",
+            MAIN_TOWN: foundMockVoter.MAIN_TOWN || foundMockVoter.DISTRICT || "Chennai",
+            WARD: foundMockVoter.WARD || "",
+            POST_OFFICE: foundMockVoter.POST_OFFICE || "",
+            POLICE_STATION: foundMockVoter.POLICE_STATION || "",
+            DISTRICT: foundMockVoter.DISTRICT || "Chennai",
+            PIN_CODE: foundMockVoter.PIN_CODE || "",
+            PHOTO_URL: foundMockVoter.PHOTO_URL || ownerPhoto,
+          };
+          setVerifiedVoter(voterObj as any);
+          toast.success(language === "ta" ? "பாதுகாப்பு PIN சரிபார்க்கப்பட்டது! அணுகல் அனுமதிக்கப்பட்டது." : "Security PIN verified! Access granted.");
+        } else {
+          toast.error(language === "ta" ? "தவறான பாதுகாப்பு PIN. மீண்டும் முயலவும்." : "Invalid Security PIN. Please try again.");
+        }
+      } else {
+        toast.error(language === "ta" ? "உறுப்பினர் கணக்கு அல்லது EPIC ID காணப்படவில்லை." : "Membership record or EPIC ID not found.");
+      }
+      setIsVerifying(false);
+    }, 1200);
   };
 
-  const mno = (v: Voter) =>
-    `TNVS-${v.EPIC_NO.replace(/[^A-Z0-9]/gi,"").toUpperCase().slice(-6)}${parseInt(v.SERIAL_NO||"1").toString(16).padStart(2,"0").toUpperCase()}`;
+  // Certificate download logic (using canvas)
+  const downloadCertificate = () => {
+    if (!verifiedVoter) return;
+    const W = 900, H = 700;
+    const canvas = document.createElement("canvas");
+    canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext("2d")!;
+
+    const draw = () => {
+      ctx.fillStyle = "#1e3a8a"; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = "#fff"; ctx.fillRect(16, 16, W - 32, H - 32);
+      ctx.fillStyle = "#ebdca5"; ctx.fillRect(16, 16, W - 32, 8);
+      ctx.fillStyle = "#1e3a8a"; ctx.textAlign = "center"; ctx.font = "bold 24px Georgia, serif";
+      ctx.fillText("TAMILNADU VANIGARGALIN SANGAMAM", W / 2, 60);
+      ctx.fillStyle = "#d4b26f"; ctx.font = "bold 15px Georgia, serif";
+      ctx.fillText("MEMBERSHIP CERTIFICATE", W / 2, 90);
+      ctx.fillStyle = "#333"; ctx.font = "italic 16px Georgia, serif";
+      ctx.fillText("This is to certify that", W / 2, 140);
+      ctx.fillStyle = "#1e3a8a"; ctx.font = "bold 26px Georgia, serif";
+      ctx.fillText(verifiedVoter.VOTER_NAME.toUpperCase(), W / 2, 185);
+      ctx.fillStyle = "#333"; ctx.font = "italic 15px Georgia, serif";
+      ctx.fillText("is officially enrolled as an esteemed member of", W / 2, 230);
+      ctx.fillText("Tamilnadu Vanigargalin Sangamam.", W / 2, 252);
+      ctx.strokeStyle = "#e2e8f0"; ctx.lineWidth = 1.5;
+      ctx.strokeRect(100, 290, W - 200, 200);
+      ctx.textAlign = "left"; ctx.fillStyle = "#555"; ctx.font = "15px Georgia, serif";
+      ctx.fillText("Membership ID / EPIC:", 120, 330);
+      ctx.fillStyle = "#1e3a8a"; ctx.font = "bold 16px monospace";
+      ctx.fillText(verifiedVoter.EPIC_NO, 310, 330);
+      ctx.fillStyle = "#555"; ctx.font = "15px Georgia, serif";
+      ctx.fillText("District / Location:", 120, 370);
+      ctx.fillStyle = "#1e3a8a"; ctx.font = "bold 15px Georgia, serif";
+      ctx.fillText(verifiedVoter.DISTRICT, 310, 370);
+      
+      const wingData = WINGS.find(w => w.id === verifiedVoter.BUSINESS_TYPE); // or wing match
+      ctx.fillStyle = "#555"; ctx.font = "15px Georgia, serif";
+      ctx.fillText("Business Division / Type:", 120, 410);
+      ctx.fillStyle = "#1e3a8a"; ctx.font = "bold 15px Georgia, serif";
+      ctx.fillText(verifiedVoter.BUSINESS_TYPE || "Retail", 310, 410);
+      
+      if (verifiedVoter.POLLING_STATION_NAME) {
+        ctx.fillStyle = "#555"; ctx.font = "15px Georgia, serif";
+        ctx.fillText("Shop Address:", 120, 450);
+        ctx.fillStyle = "#1e3a8a"; ctx.font = "bold 13px Georgia, serif";
+        ctx.fillText(verifiedVoter.POLLING_STATION_ADDRESS.slice(0, 55), 310, 450);
+      }
+      ctx.textAlign = "center"; ctx.fillStyle = "#666"; ctx.font = "13px Georgia, serif";
+      const date = new Date().toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" });
+      ctx.fillText("Issued on: " + date, W / 2, 530);
+      ctx.strokeStyle = "#1e3a8a"; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(W / 2 - 80, 545); ctx.lineTo(W / 2 + 80, 545); ctx.stroke();
+      ctx.fillStyle = "#1e3a8a"; ctx.font = "bold 12px Georgia, serif"; ctx.textAlign = "center";
+      ctx.fillText("SENTHIL KUMAR N", W / 2, 570);
+      ctx.fillStyle = "#555"; ctx.font = "11px Georgia, serif";
+      ctx.fillText("Founder & State President", W / 2, 586);
+      ctx.fillText("Tamilnadu Vanigargalin Sangamam", W / 2, 601);
+      ctx.fillText("No 5/79, Saidapet, Chennai - 600015", W / 2, 617);
+    };
+
+    const imgLeft = new Image(); imgLeft.src = verifiedVoter.PHOTO_URL || ownerPhoto;
+    const imgRight = new Image(); imgRight.src = orgLogo;
+    const imgSign = new Image(); imgSign.src = signImg;
+    let loaded = 0;
+    const handleComplete = () => {
+      loaded++;
+      if (loaded === 3) {
+        draw();
+        const ph = 72, pw = 72;
+        if (imgLeft.complete && imgLeft.naturalWidth > 0) {
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(45 + pw / 2, 40 + ph / 2, ph / 2, 0, Math.PI * 2);
+          ctx.clip();
+          ctx.drawImage(imgLeft, 45, 40, pw, ph);
+          ctx.restore();
+        }
+        if (imgRight.complete && imgRight.naturalWidth > 0) {
+          ctx.drawImage(imgRight, W - 45 - pw, 40, pw, ph);
+        }
+        if (imgSign.complete && imgSign.naturalWidth > 0) {
+          const sw = 110, h = 44;
+          ctx.drawImage(imgSign, W / 2 - sw / 2, 545 - h - 3, sw, h);
+        }
+        
+        const link = document.createElement("a");
+        link.download = "membership-certificate-" + verifiedVoter.EPIC_NO + ".png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      }
+    };
+    imgLeft.onload = imgLeft.onerror = 
+    imgRight.onload = imgRight.onerror = 
+    imgSign.onload = imgSign.onerror = handleComplete;
+  };
 
   const handlePrint = () => {
-    if (!frontRef.current || !backRef.current || !selected) return;
-    const name = selected.VOTER_NAME.replace(/\s*-\s*$/, "").trim();
+    if (!frontRef.current || !backRef.current || !verifiedVoter) return;
+    const name = verifiedVoter.VOTER_NAME.replace(/\s*-\s*$/, "").trim();
     const frontHtml = frontRef.current.innerHTML;
     const backHtml = backRef.current.innerHTML;
 
@@ -433,7 +353,6 @@ function VoterIdPage() {
                 border-radius: 0;
                 page-break-inside: avoid;
               }
-              /* Ensure colored backgrounds print correctly */
               * {
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
@@ -456,568 +375,273 @@ function VoterIdPage() {
     w.document.close();
   };
 
-  const handleShare = async () => {
-    if (!selected) return;
-    const name = selected.VOTER_NAME.replace(/\s*-\s*$/, "").trim();
-    const text = `சங்கம உறுப்பினர் அட்டை\nPer: ${name}\nMembership: ${mno(selected)}\nAssembly: ${selected.ASSEMBLY_NAME}, ${selected.DISTRICT}`;
+  const handleShare = (mno: string) => {
+    if (!verifiedVoter) return;
+    const name = verifiedVoter.VOTER_NAME.replace(/\s*-\s*$/, "").trim();
+    const text = `சங்கம உறுப்பினர் அட்டை\nPer: ${name}\nMembership: ${mno}\nAssembly: ${verifiedVoter.ASSEMBLY_NAME}, ${verifiedVoter.DISTRICT}`;
     if (navigator.share) {
-      await navigator.share({ title: `Sangamam Card — ${name}`, text, url: window.location.href }).catch(() => null);
+      navigator.share({ title: `Sangamam Card — ${name}`, text, url: window.location.href }).catch(() => null);
     } else {
-      await navigator.clipboard.writeText(text).catch(() => null);
-      setShareMsg("நகலெடுக்கப்பட்டது / Copied!");
-      setTimeout(() => setShareMsg(""), 2500);
+      navigator.clipboard.writeText(text).then(() => {
+        setShareMsg(language === "ta" ? "நகலெடுக்கப்பட்டது / Copied!" : "Copied!");
+        setTimeout(() => setShareMsg(""), 2500);
+      }).catch(() => null);
     }
   };
 
+  const generatedMno = verifiedVoter
+    ? `TNVS-${verifiedVoter.EPIC_NO.replace(/[^A-Z0-9]/gi, "").toUpperCase().slice(-6)}12`
+    : "";
+
   return (
-    <div className="relative min-h-screen overflow-x-hidden">
-      {/* Hero */}
-      <section className="border-b border-border bg-secondary/40">
-        <div className="max-w-6xl mx-auto px-5 sm:px-6 py-8 sm:py-12 w-full">
-          <div className="mb-3 sm:mb-4">
+    <div className="relative min-h-screen overflow-x-hidden bg-slate-50/50 pb-12">
+      {/* Page Header */}
+      <section className="bg-slate-900 text-white border-b border-slate-800 shadow-xs relative overflow-hidden">
+        <div className="absolute inset-0 bg-radial-at-t from-primary/30 to-transparent pointer-events-none" />
+        <div className="max-w-6xl mx-auto px-5 sm:px-6 py-8 sm:py-10 w-full relative z-10">
+          <div className="mb-3">
             <Breadcrumb
               items={[
                 { label: "Services", labelTa: "சேவைகள்", to: "/services" },
-                { label: "Member Card", labelTa: "உறுப்பினர் அட்டை" },
+                { label: "Certificate Download", labelTa: "சான்றிதழ் பதிவிறக்கம்" },
               ]}
             />
           </div>
-          <SectionLabel>தமிழ்நாடு வணிகர்களின் சங்கமம்</SectionLabel>
-          <h1 className="mt-3 font-display font-semibold text-ink">
-            Sangamam Membership Card Generator
+          <div className="flex">
+            <div className="inline-flex items-center gap-1.5 bg-primary/25 text-blue-300 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider mb-1.5 border border-primary/30">
+              Secure Access · பாதுகாப்பான அணுகல்
+            </div>
+          </div>
+          <h1 className="font-display font-semibold text-white">
+            Certificate & Card Download
           </h1>
-          <p className="font-tamil text-base sm:text-lg text-foreground/70 mt-1">சங்கம அட்டை உருவாக்கி</p>
-          <p className="mt-3 text-sm text-muted-foreground max-w-xl font-tamil leading-relaxed">
-            {t("பதிவு விவரங்களை உள்ளிட்டு, சங்கமத்தின் உத்தியோகபூர்வ உறுப்பினர் அட்டையை முன்பக்க மற்றும் பின்பக்கத்துடன் உடனடியாக உருவாக்குங்கள்.", "Fill in your details to instantly generate a printable Tamilnadu Vanigargalin Sangamam (TNVS) membership ID card — Front and Back.")}
+          <p className="font-tamil text-sm sm:text-base text-slate-400 mt-1">
+            டிஜிட்டல் உறுப்பினர் சான்றிதழ் மற்றும் அடையாள அட்டை பதிவிறக்கம்
           </p>
         </div>
       </section>
 
-      <Section className="py-6 sm:py-10">
-        <div className="max-w-3xl mx-auto">
-          {/* Form Card */}
-          <div className="paper rounded-xl p-4 sm:p-6 md:p-8 mb-8 sm:mb-10 border border-border shadow-sm">
-            <div className="mb-5 sm:mb-6 border-b border-border pb-4">
-              <h2 className="font-display font-semibold flex items-center gap-2">
-                <UserPlus className="w-5 h-5 text-primary" /> Member Details
-              </h2>
-              <p className="text-sm text-muted-foreground mt-1">Enter the member's information below.</p>
-            </div>
-
-            {/* Search Database Box */}
-            <div className="mb-6 bg-slate-50 border border-slate-200/80 rounded-lg p-4">
-              <label className="block text-xs font-semibold text-primary uppercase tracking-wider mb-2">
-                {t("உறுப்பினர் தேடல் (விருப்பத்தேர்வு)", "Search Member Database (Optional)")}
-              </label>
-              <div className="flex flex-col sm:flex-row gap-2">
-                <input
-                  type="text"
-                  placeholder={t("EPIC ID அல்லது பெயரை உள்ளிடவும்...", "Enter EPIC ID or name...")}
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleSearch())}
-                  className="flex-1 border border-input bg-background rounded-md px-3 py-2.5 text-base md:text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 min-h-[44px]"
-                />
-                <button
-                  type="button"
-                  onClick={handleSearch}
-                  disabled={isSearching}
-                  className="bg-primary text-white hover:bg-primary/95 px-4 py-2 rounded-md text-sm font-semibold transition shrink-0 min-h-[44px]"
-                >
-                  {isSearching ? t("தேடுகிறது...", "Searching...") : t("தேடுக", "Search")}
-                </button>
-                {!showForm && (
-                  <button
-                    type="button"
-                    onClick={() => setShowForm(true)}
-                    className="bg-muted text-muted-foreground hover:bg-muted/80 px-4 py-2 rounded-md text-sm font-semibold transition shrink-0 min-h-[44px]"
-                  >
-                    {t("தவிர்க்கவும்", "Enter Manually")}
-                  </button>
-                )}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
+        <AnimatePresence mode="wait">
+          {!verifiedVoter ? (
+            /* ─── SECURITY ACCESS LOCK SCREEN ─── */
+            <motion.div
+              key="lock-screen"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="max-w-md mx-auto bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 shadow-md"
+            >
+              <div className="text-center mb-6">
+                <div className="w-14 h-14 bg-blue-50 text-[#002B7F] rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
+                  <Lock className="w-6 h-6" />
+                </div>
+                <h2 className="font-display text-xl font-bold text-slate-900">Enter Security PIN</h2>
+                <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                  {language === "ta"
+                    ? "உங்கள் உறுப்பினர் அட்டை மற்றும் சான்றிதழைப் பெற 4-இலக்க பாதுகாப்பு PIN மற்றும் EPIC ID அல்லது மொபைல் எண்ணை உள்ளிடவும்."
+                    : "Verify your EPIC ID / Mobile Number and 4-digit Security PIN to access your digital membership certificate & card."}
+                </p>
               </div>
-              <p className="text-xs text-muted-foreground mt-1.5">
-                {t("குறிப்பு: 'Senthil Kumar' அல்லது 'RJE1234567' எனத் தட்டச்சு செய்து கோப்பில் சேமிக்கப்பட்ட விவரங்களை மீட்டெடுக்கவும்.", "Tip: Search 'Senthil Kumar' or 'RJE1234567' to load pre-configured voter profiles.")}
-              </p>
 
-              {/* Search Results Dropdown */}
-              {hasSearched && !isSearching && searchResults.length === 0 && (
-                <div className="mt-4 p-4 rounded-xl bg-secondary/60 border border-border text-center animate-fade-in">
-                  <p className="text-sm text-muted-foreground font-tamil" lang={language === "ta" ? "ta" : "en"}>
-                    {t("பதிவு எண் கண்டுபிடிக்கவில்லை.", "No membership record found.")}
-                  </p>
-                  <p className="mt-2 text-sm font-tamil" lang={language === "ta" ? "ta" : "en"}>
-                    {t("இன்னும் உறுப்பினர் இல்லையா?", "Not a member yet?")}{" "}
-                    <Link
-                      to="/membership"
-                      search={{
-                        name: !/^[a-zA-Z]{3}\d{7}$/i.test(searchQuery.trim()) ? searchQuery.trim() : undefined,
-                        epic: /^[a-zA-Z]{3}\d{7}$/i.test(searchQuery.trim()) ? searchQuery.trim().toUpperCase() : undefined,
-                      }}
-                      className="text-primary font-semibold hover:underline"
-                    >
-                      {t("இப்போதே இணையுங்கள் →", "Join now →")}
-                    </Link>
-                  </p>
-                </div>
-              )}
-
-              {searchResults.length > 0 && (
-                <div className="mt-3 border border-border bg-card rounded-md divide-y divide-border overflow-hidden max-h-48 overflow-y-auto">
-                  {searchResults.map((v) => (
-                    <button
-                      key={v.ID}
-                      type="button"
-                      onClick={() => selectVoter(v)}
-                      className="w-full text-left px-3 py-2.5 hover:bg-muted/60 transition flex justify-between items-center text-xs"
-                    >
-                      <div>
-                        <span className="font-semibold text-slate-800">{v.VOTER_NAME}</span>
-                        <span className="text-slate-400 mx-2">|</span>
-                        <span className="font-mono text-primary font-medium">{v.EPIC_NO}</span>
-                      </div>
-                      <div className="text-muted-foreground">
-                        {v.ASSEMBLY_NAME}, {v.DISTRICT}
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              )}
-
-              {/* Search Skeletons */}
-              {isSearching && (
-                <div className="mt-3 border border-border bg-card rounded-md divide-y divide-border overflow-hidden p-3 space-y-4">
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2 w-full">
-                      <Skeleton className="w-1/3 h-4" />
-                      <span className="text-slate-200">|</span>
-                      <Skeleton className="w-1/4 h-4" />
-                    </div>
-                    <Skeleton className="w-1/4 h-4 text-right" />
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2 w-full">
-                      <Skeleton className="w-1/4 h-4" />
-                      <span className="text-slate-200">|</span>
-                      <Skeleton className="w-1/3 h-4" />
-                    </div>
-                    <Skeleton className="w-1/5 h-4 text-right" />
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2 w-full">
-                      <Skeleton className="w-2/5 h-4" />
-                      <span className="text-slate-200">|</span>
-                      <Skeleton className="w-1/5 h-4" />
-                    </div>
-                    <Skeleton className="w-1/4 h-4 text-right" />
-                  </div>
-                </div>
-              )}
-            </div>
-            
-            {showForm && (
-              <form onSubmit={handleGenerate} noValidate className="space-y-5">
-                {formStep === 1 && (
-                  <>
-                  <div className="grid md:grid-cols-2 gap-5">
+              <form onSubmit={handleVerify} className="space-y-5">
+                {/* EPIC ID / Mobile Number */}
                 <div className="space-y-1.5">
-                  <label className="text-sm font-medium">Full Name (பெயர்) *</label>
-                  <input 
-                    required 
-                    type="text"
-                    pattern="^[a-zA-Z\s.\u0B80-\u0BFF]+$"
-                    title="Name should contain only letters, dots, and spaces (பெயரில் எழுத்துக்கள் மற்றும் இடைவெளிகள் மட்டுமே இருக்க வேண்டும்)"
-                    value={formData.VOTER_NAME} 
-                    onChange={e => handleFieldChange("VOTER_NAME", e.target.value)} 
-                    className={`w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 ${
-                      errors.VOTER_NAME 
-                        ? "border-red-500 bg-red-50/10 focus:ring-red-200" 
-                        : "border-input bg-background focus:ring-primary/40"
-                    }`}
-                    placeholder="e.g. Senthil Kumar / செந்தில் குமார்" 
-                  />
-                  {errors.VOTER_NAME && (
-                    <FieldError message={errors.VOTER_NAME} />
-                  )}
-                </div>
-                
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium">EPIC / ID No *</label>
-                  <input 
-                    required 
-                    type="text"
-                    pattern="^[a-zA-Z]{3}\d{7}$"
-                    title="EPIC No must be 3 letters followed by 7 digits (எ.கா: RJE1234567)"
-                    value={formData.EPIC_NO} 
-                    onChange={e => handleFieldChange("EPIC_NO", e.target.value.toUpperCase())} 
-                    className={`w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 uppercase ${
-                      errors.EPIC_NO 
-                        ? "border-red-500 bg-red-50/10 focus:ring-red-200" 
-                        : "border-input bg-background focus:ring-primary/40"
-                    }`}
-                    placeholder="e.g. RJE1234567" 
-                  />
-                  {errors.EPIC_NO && (
-                    <FieldError message={errors.EPIC_NO} />
-                  )}
-                </div>
- 
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium">Mobile Number (கைபேசி எண்)</label>
-                  <input 
-                    type="tel"
-                    pattern="^[6-9]\d{9}$"
-                    maxLength={10}
-                    title="Please enter a valid 10-digit mobile number starting with 6-9 (6-9 இல் தொடங்கும் 10 இலக்க கைபேசி எண்)"
-                    value={formData.MOBILE_NUMBER} 
-                    onChange={e => handleFieldChange("MOBILE_NUMBER", e.target.value.replace(/\D/g, ""))} 
-                    className={`w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 ${
-                      errors.MOBILE_NUMBER 
-                        ? "border-red-500 bg-red-50/10 focus:ring-red-200" 
-                        : "border-input bg-background focus:ring-primary/40"
-                    }`}
-                    placeholder="e.g. 9876543210" 
-                  />
-                  {errors.MOBILE_NUMBER && (
-                    <FieldError message={errors.MOBILE_NUMBER} />
-                  )}
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium">Date of Birth (பிறந்த தேதி) *</label>
-                  <input 
-                    required 
-                    type="date"
-                    value={formData.DOB} 
-                    onChange={e => handleFieldChange("DOB", e.target.value)} 
-                    className={`w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 ${
-                      errors.DOB 
-                        ? "border-red-500 bg-red-50/10 focus:ring-red-200" 
-                        : "border-input bg-background focus:ring-primary/40"
-                    }`}
-                  />
-                  {errors.DOB && (
-                    <FieldError message={errors.DOB} />
-                  )}
-                </div>
- 
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium">Age (வயது) *</label>
-                  <input 
-                    type="number" 
-                    required 
-                    min="18"
-                    max="120"
-                    title="Age must be between 18 and 120 (வயது 18 முதல் 120 வரை இருக்க வேண்டும்)"
-                    value={formData.AGE} 
-                    onChange={e => handleFieldChange("AGE", e.target.value)} 
-                    className={`w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 ${
-                      errors.AGE 
-                        ? "border-red-500 bg-red-50/10 focus:ring-red-200" 
-                        : "border-input bg-background focus:ring-primary/40"
-                    }`}
-                    placeholder="Age" 
-                  />
-                  {errors.AGE && (
-                    <FieldError message={errors.AGE} />
-                  )}
-                </div>
- 
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium">Gender (பாலினம்)</label>
-                  <select 
-                    value={formData.GENDER} 
-                    onChange={e => handleFieldChange("GENDER", e.target.value)} 
-                    className="w-full border border-input bg-background rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
-                  >
-                    <option>Male</option>
-                    <option>Female</option>
-                    <option>Other</option>
-                  </select>
-                </div>
- 
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium">Blood Group (இரத்த வகை)</label>
-                  <select 
-                    value={formData.BLOOD_GROUP} 
-                    onChange={e => handleFieldChange("BLOOD_GROUP", e.target.value)} 
-                    className="w-full border border-input bg-background rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
-                  >
-                    <option>O+</option>
-                    <option>O-</option>
-                    <option>A+</option>
-                    <option>A-</option>
-                    <option>B+</option>
-                    <option>B-</option>
-                    <option>AB+</option>
-                    <option>AB-</option>
-                  </select>
-                </div>
- 
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium">Assembly Name (தொகுதி)</label>
-                  <input 
-                    type="text"
-                    pattern="^[a-zA-Z\s.\u0B80-\u0BFF]+$"
-                    title="Assembly should contain only letters, dots, and spaces (தொகுதி பெயர் எழுத்துக்கள் மற்றும் இடைவெளிகளில் இருக்க வேண்டும்)"
-                    value={formData.ASSEMBLY_NAME} 
-                    onChange={e => handleFieldChange("ASSEMBLY_NAME", e.target.value)} 
-                    className={`w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 ${
-                      errors.ASSEMBLY_NAME 
-                        ? "border-red-500 bg-red-50/10 focus:ring-red-200" 
-                        : "border-input bg-background focus:ring-primary/40"
-                    }`}
-                    placeholder="e.g. Mylapore / மயிலாப்பூர்" 
-                  />
-                  {errors.ASSEMBLY_NAME && (
-                    <FieldError message={errors.ASSEMBLY_NAME} />
-                  )}
-                </div>
- 
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium">District (மாவட்டம்)</label>
-                  <input 
-                    type="text"
-                    pattern="^[a-zA-Z\s.\u0B80-\u0BFF]+$"
-                    title="District should contain only letters, dots, and spaces (மாவட்டம் பெயர் எழுத்துக்கள் மற்றும் இடைவெளிகளில் இருக்க வேண்டும்)"
-                    value={formData.DISTRICT} 
-                    onChange={e => handleFieldChange("DISTRICT", e.target.value)} 
-                    className={`w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 ${
-                      errors.DISTRICT 
-                        ? "border-red-500 bg-red-50/10 focus:ring-red-200" 
-                        : "border-input bg-background focus:ring-primary/40"
-                    }`}
-                    placeholder="e.g. Chennai / சென்னை" 
-                  />
-                  {errors.DISTRICT && (
-                    <FieldError message={errors.DISTRICT} />
-                  )}
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium">Business Type (வணிக வகை)</label>
-                  <select 
-                    value={formData.BUSINESS_TYPE} 
-                    onChange={e => handleFieldChange("BUSINESS_TYPE", e.target.value)} 
-                    className="w-full border border-input bg-background rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
-                  >
-                    <option>Retail</option>
-                    <option>Wholesale</option>
-                    <option>Manufacturing</option>
-                    <option>Service</option>
-                    <option>Online</option>
-                  </select>
-                </div>
- 
-                <div className="md:col-span-2 space-y-1.5">
-                  <label className="text-sm font-medium">Address (முகவரி)</label>
-                  <textarea 
-                    rows={2} 
-                    required
-                    value={formData.POLLING_STATION_ADDRESS} 
-                    onChange={e => handleFieldChange("POLLING_STATION_ADDRESS", e.target.value)} 
-                    className={`w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 ${
-                      errors.POLLING_STATION_ADDRESS 
-                        ? "border-red-500 bg-red-50/10 focus:ring-red-200" 
-                        : "border-input bg-background focus:ring-primary/40"
-                    }`}
-                    placeholder="Full address (e.g. கதவு எண், தெரு பெயர், ஊர், பின்கோடு)..." 
-                  />
-                  {errors.POLLING_STATION_ADDRESS && (
-                    <FieldError message={errors.POLLING_STATION_ADDRESS} />
-                  )}
-                </div>
-              </div>
-              <div className="pt-4 flex justify-end">
-                <button type="button" onClick={handleDetailsNext} className="bg-primary text-primary-foreground px-6 py-2.5 rounded-md font-medium hover:bg-primary/90 transition shadow-sm">
-                  {t("அடுத்து (புகைப்படம்)", "Next (Upload Photo)")}
-                </button>
-              </div>
-              </>
-            )}
-
-            {formStep === 2 && (
-              <>
-                {/* Photo Upload Section */}
-                <div className="flex flex-col items-center justify-center p-4 border border-dashed border-border rounded-lg bg-muted/30 mb-4">
-                  {formData.PHOTO_URL ? (
-                    <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-primary mb-3">
-                      <img src={formData.PHOTO_URL} alt="Preview" className="w-full h-full object-cover" />
-                      <button type="button" onClick={() => setFormData(prev => ({ ...prev, PHOTO_URL: "" }))} className="absolute inset-0 bg-black/40 text-white flex items-center justify-center text-xs opacity-0 hover:opacity-100 transition-opacity">Remove</button>
-                    </div>
-                  ) : (
-                    <div className="w-24 h-24 rounded-full border border-dashed border-border flex flex-col items-center justify-center bg-card mb-3 text-muted-foreground">
-                      <Camera className="w-8 h-8 mb-1" />
-                      <span className="text-xs">No Photo</span>
-                    </div>
-                  )}
-                  <label className="cursor-pointer inline-flex items-center gap-1.5 bg-primary/10 text-primary hover:bg-primary/20 px-3 py-1.5 rounded-md text-xs font-medium transition">
-                    <Upload className="w-3.5 h-3.5" />
-                    Upload Photo (உரிமையாளர் படம்)
-                    <input type="file" accept="image/*" onChange={handlePhotoChange} className="hidden" aria-label="உங்களை அடையாளப்படுத்தும் புகைப்படம் / Upload your identification photo" />
+                  <label className="text-xs font-semibold text-slate-700 block">
+                    {language === "ta" ? "EPIC ID / அலைபேசி எண் (EPIC ID / Mobile Number) *" : "EPIC ID / Mobile Number *"}
                   </label>
+                  <input
+                    required
+                    type="text"
+                    value={epicInput}
+                    onChange={(e) => setEpicInput(e.target.value)}
+                    className="w-full border border-[#EADCC9] bg-[#FAF8F5] text-slate-800 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#002B7F]/40 focus:border-[#002B7F] min-h-[44px]"
+                    placeholder="e.g. RJE1234567 or 9876543210"
+                  />
                 </div>
-                  <div className="pt-4 flex justify-between">
-                    <button type="button" onClick={() => setFormStep(1)} className="bg-muted text-muted-foreground px-5 py-2.5 rounded-md font-semibold hover:bg-muted/80 transition shadow-sm min-h-[44px]">
-                      {t("பின்செல்க", "Back")}
-                    </button>
-                    <button type="submit" className="bg-primary text-primary-foreground px-5 py-2.5 rounded-md font-semibold hover:bg-primary/90 transition shadow-sm min-h-[44px]">
-                      {t("அடையாள அட்டை உருவாக்கு", "Generate ID Card")}
-                    </button>
-                  </div>
-                </>
-              )}
-            </form>
-            )}
-          </div>
 
-          {/* Card generator panel */}
-          <AnimatePresence>
-            {isCompilingCard && (
-              <motion.div
-                key="skeleton-generator"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="paper rounded-xl overflow-hidden mt-8 border border-border shadow-sm"
-              >
-                <div className="gov-stripe h-1" />
-                <div className="p-6 md:p-8">
-                  <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-                    <div className="space-y-2 w-1/3">
-                      <Skeleton className="h-4 w-1/2" />
-                      <Skeleton className="h-6 w-3/4" />
-                      <Skeleton className="h-4 w-1/3" />
-                    </div>
-                    <div className="flex gap-2">
-                      <Skeleton className="h-10 w-28" />
-                      <Skeleton className="h-10 w-28" />
-                    </div>
-                  </div>
-                  <div className="grid lg:grid-cols-12 gap-8">
-                    {/* Voter details skeleton */}
-                    <div className="lg:col-span-5 space-y-4">
-                      <Skeleton className="h-4 w-1/3" />
-                      <div className="space-y-3">
-                        <Skeleton className="h-10 w-full" />
-                        <Skeleton className="h-10 w-full" />
-                        <Skeleton className="h-10 w-full" />
-                        <Skeleton className="h-10 w-full" />
-                        <Skeleton className="h-10 w-full" />
-                      </div>
-                    </div>
-                    {/* Voter card templates skeleton */}
-                    <div className="lg:col-span-7 flex flex-col items-center gap-6">
-                      <div className="w-full">
-                        <Skeleton className="h-4 w-1/4 mx-auto mb-2" />
-                        <div className="flex justify-center">
-                          <Skeleton className="h-[210px] w-full max-w-[340px] rounded-xl" />
-                        </div>
-                      </div>
-                      <div className="w-full border-t border-border/60 pt-5">
-                        <Skeleton className="h-4 w-1/4 mx-auto mb-2" />
-                        <div className="flex justify-center">
-                          <Skeleton className="h-[210px] w-full max-w-[340px] rounded-xl" />
-                        </div>
-                      </div>
+                {/* 4-Digit Security PIN */}
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-slate-700 block">
+                    {language === "ta" ? "பாதுகாப்பு PIN (Security PIN) *" : "Security PIN *"}
+                  </label>
+                  
+                  <div className="relative inline-block w-full">
+                    <input
+                      type="text"
+                      pattern="[0-9]*"
+                      maxLength={4}
+                      value={pinInput}
+                      onChange={e => setPinInput(e.target.value.replace(/\D/g, ""))}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                      autoComplete="one-time-code"
+                    />
+                    <div className="flex gap-3 justify-center">
+                      {[0, 1, 2, 3].map(index => {
+                        const char = pinInput[index] || "";
+                        const isFocused = pinInput.length === index;
+                        return (
+                          <div
+                            key={index}
+                            className={`w-12 h-14 rounded-2xl border-2 text-xl font-extrabold flex items-center justify-center transition-all duration-300 ${
+                              isFocused
+                                ? "border-primary ring-4 ring-primary/15 scale-105 bg-white shadow-md shadow-primary/5"
+                                : char
+                                ? "border-emerald-400 bg-emerald-50 text-emerald-850"
+                                : "border-slate-200 bg-slate-50 text-slate-300"
+                            }`}
+                          >
+                            {char ? "•" : ""}
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
-              </motion.div>
-            )}
 
-            {(selected && !isCompilingCard) && (
-              <motion.div
-                ref={cardRef}
-                key="generator"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 20 }}
-                transition={{ duration: 0.3 }}
-                className="paper rounded-xl overflow-hidden mt-8"
-              >
-                <div className="gov-stripe h-1" />
-                <div className="p-6 md:p-8">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4 border-b border-slate-100 pb-5">
+                {/* Submit button */}
+                <button
+                  type="submit"
+                  disabled={isVerifying}
+                  className="btn-primary w-full justify-center mt-2 cursor-pointer shadow-md py-3 rounded-xl"
+                >
+                  {isVerifying ? (
+                    <><RefreshCw className="w-4 h-4 animate-spin" /> Verifying PIN...</>
+                  ) : (
+                    <><Key className="w-4 h-4" /> Verify & Access</>
+                  )}
+                </button>
+              </form>
+
+              <div className="mt-6 pt-5 border-t border-slate-100 text-center text-[10px] text-slate-400">
+                <p>
+                  {language === "ta" 
+                    ? "டெமோ: வாக்காளர் 'RJE1234567' மற்றும் PIN '1234' கொண்டு சோதிக்கலாம்." 
+                    : "Demo Account: Use EPIC 'RJE1234567' and PIN '1234' to unlock default voter details."}
+                </p>
+                <Link to="/membership" className="text-[#002B7F] font-bold hover:underline block mt-2">
+                  Not a member? Apply for membership now
+                </Link>
+              </div>
+            </motion.div>
+          ) : (
+            /* ─── SECURE CERTIFICATE & ID CARD DOWNLOAD SCREEN (UNLOCKED) ─── */
+            <motion.div
+              key="download-screen"
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="grid lg:grid-cols-12 gap-8 items-start animate-fadeIn"
+            >
+              {/* Left Column: Member Details Summary card */}
+              <div className="lg:col-span-5 bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-6">
+                <div className="flex justify-between items-start gap-4 pb-4 border-b border-slate-100">
+                  <div className="flex items-center gap-3">
+                    {/* Circle photo */}
+                    <div className="w-14 h-14 rounded-full overflow-hidden border border-slate-200 bg-slate-50">
+                      <img src={verifiedVoter.PHOTO_URL} alt="Profile" className="w-full h-full object-cover" />
+                    </div>
                     <div>
-                      <SectionLabel>ID Card Generated · அட்டை தயார்</SectionLabel>
-                      <h2 className="mt-1.5 font-display text-xl sm:text-2xl font-bold">{selected.VOTER_NAME.replace(/\s*-\s*$/, "").trim()}</h2>
-                      <p className="font-mono text-xs sm:text-sm text-primary mt-0.5">{`TNVS-${selected.EPIC_NO.replace(/[^A-Z0-9]/gi,"").toUpperCase().slice(-6)}${parseInt(selected.SERIAL_NO||"1").toString(16).padStart(2,"0").toUpperCase()}`}</p>
-                    </div>
-                    <div className="flex flex-wrap gap-2 items-center">
-                      {shareMsg && <span className="text-xs text-primary font-medium w-full md:w-auto">{shareMsg}</span>}
-                      <Link
-                        to="/membership"
-                        search={{
-                          name: selected.VOTER_NAME,
-                          epic: selected.EPIC_NO,
-                          mobile: selected.MOBILE_NUMBER || "",
-                          district: selected.DISTRICT || "",
-                          assembly: selected.ASSEMBLY_NAME || "",
-                          address: selected.POLLING_STATION_ADDRESS || "",
-                        }}
-                        className="inline-flex items-center justify-center gap-2 bg-slate-950 text-gold px-3.5 py-2 rounded-md font-semibold text-xs hover:bg-slate-900 transition shadow-sm border border-slate-800 min-h-[38px] w-full sm:w-auto"
-                      >
-                        🌟 Premium Member Card
-                      </Link>
-                      <button onClick={handleShare} className="inline-flex items-center justify-center gap-2 border border-border bg-card px-3.5 py-2 rounded-md font-semibold text-xs sm:text-sm hover:bg-muted transition min-h-[38px] w-full sm:w-auto">
-                        <Share2 className="w-3.5 h-3.5" /> Share
-                      </button>
-                      <button onClick={handlePrint} className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-md font-semibold text-xs sm:text-sm hover:bg-primary/90 transition min-h-[38px] w-full sm:w-auto">
-                        <Printer className="w-3.5 h-3.5" /> Print / PDF
-                      </button>
+                      <h2 className="font-display text-lg font-bold text-slate-850">{verifiedVoter.VOTER_NAME}</h2>
+                      <span className="text-[10px] uppercase font-mono bg-blue-50 text-primary border border-blue-100 px-2 py-0.5 rounded-md font-bold tracking-wider">{verifiedVoter.EPIC_NO}</span>
                     </div>
                   </div>
+                  <button
+                    onClick={() => {
+                      setVerifiedVoter(null);
+                      setPinInput("");
+                    }}
+                    className="text-[10px] font-bold text-slate-450 hover:text-red-650 bg-slate-100 hover:bg-red-50 border border-slate-200 hover:border-red-150 px-2.5 py-1.5 rounded-xl transition cursor-pointer"
+                  >
+                    Lock Session
+                  </button>
+                </div>
 
-                  <div className="grid lg:grid-cols-12 gap-8">
-                    {/* Voter details */}
-                    <div className="lg:col-span-5">
-                      <h3 className="font-medium text-sm text-muted-foreground uppercase tracking-wider mb-4">Member Details · உறுப்பினர் விவரம்</h3>
-                      <div className="space-y-3">
-                        <DetailRow icon={<User className="w-4 h-4" />} label="Member Name" value={selected.VOTER_NAME.replace(/\s*-\s*$/, "").trim()} />
-                        <DetailRow icon={<Hash className="w-4 h-4" />} label="EPIC Number" value={selected.EPIC_NO} mono />
-                        <DetailRow icon={<Hash className="w-4 h-4" />} label="Age / Gender / Blood" value={`${selected.AGE} yrs · ${selected.GENDER} · ${selected.BLOOD_GROUP || "—"}`} />
-                        <DetailRow icon={<Building2 className="w-4 h-4" />} label="Assembly" value={`${selected.ASSEMBLY_NAME}`} />
-                        <DetailRow icon={<MapPin className="w-4 h-4" />} label="District" value={`${selected.DISTRICT}`} />
-                        <DetailRow icon={<MapPin className="w-4 h-4" />} label="Address" value={selected.POLLING_STATION_ADDRESS} />
-                        {selected.MOBILE_NUMBER && selected.MOBILE_NUMBER !== "-" && (
-                          <DetailRow icon={<Phone className="w-4 h-4" />} label="Mobile" value={selected.MOBILE_NUMBER} />
-                        )}
+                <div className="space-y-3.5">
+                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Member Credentials</h3>
+                  
+                  <div className="grid grid-cols-2 gap-3">
+                    {[
+                      { label: "Mobile", value: verifiedVoter.MOBILE_NUMBER || "—", icon: Phone },
+                      { label: "Age / Gender", value: `${verifiedVoter.AGE} yrs · ${verifiedVoter.GENDER}`, icon: User },
+                      { label: "Blood Group", value: verifiedVoter.BLOOD_GROUP || "—", icon: Hash },
+                      { label: "Business Type", value: verifiedVoter.BUSINESS_TYPE || "Retail", icon: Building2 },
+                      { label: "Assembly Name", value: verifiedVoter.ASSEMBLY_NAME, icon: Building2 },
+                      { label: "District Location", value: verifiedVoter.DISTRICT, icon: MapPin },
+                    ].map(({ label, value, icon: Icon }) => (
+                      <div key={label} className="bg-[#FAF8F5] border border-slate-100 rounded-xl p-3 shadow-xxs">
+                        <div className="text-[9px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                          <Icon className="w-3.5 h-3.5 text-slate-400" />
+                          {label}
+                        </div>
+                        <div className="text-xs text-slate-800 font-bold mt-1.5 truncate">{value}</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {verifiedVoter.POLLING_STATION_ADDRESS && (
+                    <div className="bg-[#FAF8F5] border border-slate-100 rounded-xl p-3 shadow-xxs">
+                      <div className="text-[9px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                        <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                        Shop Address
+                      </div>
+                      <div className="text-xs text-slate-800 font-bold mt-1.5 leading-relaxed">{verifiedVoter.POLLING_STATION_ADDRESS}</div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Print & Download Action Sidebar */}
+                <div className="pt-4 border-t border-slate-100 flex flex-col gap-3">
+                  {shareMsg && <span className="text-xs text-primary font-medium text-center">{shareMsg}</span>}
+                  <button
+                    onClick={downloadCertificate}
+                    className="btn-primary w-full justify-center shadow-md cursor-pointer py-3 rounded-xl flex items-center gap-2"
+                  >
+                    <Download className="w-4 h-4" /> Download Certificate
+                  </button>
+                  <button
+                    onClick={handlePrint}
+                    className="bg-slate-900 hover:bg-slate-800 text-white w-full justify-center py-3 rounded-xl font-bold text-xs flex items-center gap-2 border-none cursor-pointer shadow-xs"
+                  >
+                    <Printer className="w-4 h-4" /> Print / PDF Membership Card
+                  </button>
+                  <button
+                    onClick={() => handleShare(generatedMno)}
+                    className="bg-slate-100 hover:bg-slate-200 text-slate-700 w-full justify-center py-3 rounded-xl font-bold text-xs flex items-center gap-2 border border-slate-200 cursor-pointer shadow-xxs"
+                  >
+                    <Share2 className="w-4 h-4" /> Share Membership
+                  </button>
+                </div>
+              </div>
+
+              {/* Right Column: ID Card Render templates (Front/Back) */}
+              <div className="lg:col-span-7 bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
+                <h3 className="font-display text-lg font-bold text-slate-900 border-b border-slate-100 pb-3 mb-6">
+                  Membership ID Card Preview
+                </h3>
+                
+                <div className="flex flex-col items-center gap-6 rounded-2xl p-4 bg-slate-50/50 border border-slate-200/60">
+                  <div className="w-full">
+                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2 text-center">முன்பக்கம் · FRONT</p>
+                    <div ref={frontRef} className="card-scale-wrapper">
+                      <div className="responsive-card-scale">
+                        <VoterIdCard voter={verifiedVoter} template="front" />
                       </div>
                     </div>
-
-                    {/* Both cards */}
-                    <div className="lg:col-span-7">
-                      <h3 className="font-medium text-sm text-muted-foreground uppercase tracking-wider mb-5">
-                        உறுப்பினர் அட்டை · Membership Card
-                      </h3>
-                      <div className="flex flex-col items-center gap-6 rounded-xl p-2">
-                        <div className="w-full">
-                          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-2.5 text-center">முன்பக்கம் · FRONT</p>
-                          <div ref={frontRef} className="card-scale-wrapper">
-                            <div className="responsive-card-scale">
-                              <VoterIdCard voter={selected} template="front" />
-                            </div>
-                          </div>
-                        </div>
-                        <div className="w-full border-t border-border/60 pt-5">
-                          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-2.5 text-center">பின்பக்கம் · BACK</p>
-                          <div ref={backRef} className="card-scale-wrapper">
-                            <div className="responsive-card-scale">
-                              <VoterIdCard voter={selected} template="back" />
-                            </div>
-                          </div>
-                        </div>
+                  </div>
+                  <div className="w-full border-t border-slate-200 pt-5">
+                    <p className="text-xs font-semibold text-slate-550 uppercase tracking-widest mb-2 text-center">பின்பக்கம் · BACK</p>
+                    <div ref={backRef} className="card-scale-wrapper">
+                      <div className="responsive-card-scale">
+                        <VoterIdCard voter={verifiedVoter} template="back" />
                       </div>
                     </div>
                   </div>
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </Section>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   );
 }

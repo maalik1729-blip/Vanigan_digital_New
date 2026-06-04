@@ -11,7 +11,7 @@ export const Route = createFileRoute("/assistant")({
   head: () => ({
     meta: [
       { title: "Support Center · TN Vanigargalin Sangamam" },
-      { name: "description", content: "Get instant help, verify membership status, view welfare schemes, and read FAQs in Tamil and English." },
+      { name: "description", content: "Get instant help, verify membership status, and read FAQs in Tamil and English." },
     ],
   }),
   component: Assistant,
@@ -60,27 +60,6 @@ export function Assistant() {
     }, 800);
   };
 
-  const welfareSchemes = [
-    {
-      title: t("சுகாதார காப்பீடு", "Health Insurance"),
-      desc: t("உங்களுக்கும் உங்கள் குடும்பத்திற்கும் ₹2,00,000 வரை ரொக்கமில்லா மருத்துவமனை அனுமதி.", "Cashless hospitalization up to ₹2,00,000 for your family."),
-      icon: <Heart className="w-5 h-5 text-rose-500" aria-hidden="true" />,
-      bg: "bg-rose-50/50 border-rose-100"
-    },
-    {
-      title: t("கல்வி உதவித்தொகை", "Educational Scholarship"),
-      desc: t("செயலில் உள்ள வணிகர்களின் குழந்தைகளுக்கு ஆண்டுக்கு ₹15,000 வரை உதவித்தொகை.", "Up to ₹15,000 per year for children of active traders."),
-      icon: <GraduationCap className="w-5 h-5 text-indigo-500" aria-hidden="true" />,
-      bg: "bg-indigo-50/50 border-indigo-100"
-    },
-    {
-      title: t("அவசர நிவாரண நிதி", "Emergency Relief Fund"),
-      desc: t("கடை தீ விபத்து அல்லது இயற்கை பேரிடர் ஏற்பட்டால் 48 மணி நேரத்திற்குள் உடனடி நிவாரணம்.", "Immediate disaster/shop fire support within 48 hours."),
-      icon: <ShieldAlert className="w-5 h-5 text-amber-500" aria-hidden="true" />,
-      bg: "bg-amber-50/50 border-amber-100"
-    }
-  ];
-
   const faqs = [
     {
       q: t("தேவையான ஆவணங்கள் என்னென்ன?", "What documents are required for application?"),
@@ -89,10 +68,6 @@ export function Assistant() {
     {
       q: t("உறுப்பினர் சேர்க்கை மற்றும் புதுப்பித்தல் கட்டணம் எவ்வளவு?", "How much is the membership registration fee?"),
       a: t("வருடாந்திர உறுப்பினர் கட்டணம் ₹500 மட்டுமே. வருடாந்திர புதுப்பித்தல் கட்டணமும் ₹500 ஆகும். இரண்டையும் ஆன்லைனில் பாதுகாப்பாக செலுத்தலாம்.", "The annual membership registration fee is ₹500 only. Renewal fees are also ₹500 per year, payable securely online.")
-    },
-    {
-      q: t("நலத்திட்டங்கள் பெற தகுதி என்ன?", "What is the eligibility for welfare schemes?"),
-      a: t("நலத்திட்டங்களுக்கு தகுதி பெற, நீங்கள் குறைந்தபட்சம் 6 மாதங்கள் செயலில் உள்ள உறுப்பினராக இருக்க வேண்டும் மற்றும் உங்கள் சந்தாக்கள் நிலுவையின்றி இருக்க வேண்டும்.", "To qualify for welfare, you must be a registered member for at least 6 months, and hold an Active Membership Card (no pending dues).")
     },
     {
       q: t("உறுப்பினர் சான்றிதழை எவ்வாறு பதிவிறக்கம் செய்வது?", "How do I download my membership certificate?"),
@@ -120,15 +95,15 @@ export function Assistant() {
         </h1>
         <p className="text-xs md:text-sm text-slate-500 leading-relaxed font-tamil">
           {t(
-            "உறுப்பினர் சேர்க்கை, நலத்திட்டங்கள் மற்றும் கணக்கு சரிபார்ப்புகளை விரைவாக செய்ய உங்கள் உத்தியோகபூர்வ உதவி மையம்.",
-            "Your official support center to check membership, verify status, and explore welfare schemes instantly."
+            "உறுப்பினர் சேர்க்கை, வணிகப் பிரிவுகள் மற்றும் கணக்கு சரிபார்ப்புகளை விரைவாக செய்ய உங்கள் உத்தியோகபூர்வ உதவி மையம்.",
+            "Your official support center to check membership, verify status, and explore specialized wings instantly."
           )}
         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        {/* LEFT COLUMN: Interactive Widgets (Reordered: FAQ -> Status Checker -> Welfare Schemes) */}
+        {/* LEFT COLUMN: Interactive Widgets (Reordered: FAQ -> Status Checker) */}
         <div className="lg:col-span-2 space-y-6">
           
           {/* FAQ - Progressive Accordions */}
@@ -296,7 +271,7 @@ export function Assistant() {
                   <div className="flex flex-wrap gap-2 pt-4 border-t border-slate-100">
                     <Link 
                       to="/voter-id" 
-                      search={{ q: checkedProfile.epic }}
+                      search={{ epic: checkedProfile.epic }}
                       className="text-xs bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-bold inline-flex items-center gap-1.5 transition shadow-sm active:scale-95 cursor-pointer min-h-[38px]"
                     >
                       {t("அட்டை பெறுக", "Get ID Card")} <ArrowRight className="w-3.5 h-3.5" />
@@ -310,54 +285,6 @@ export function Assistant() {
                   </div>
                 </div>
               )}
-          </div>
- 
-          {/* Welfare Schemes */}
-          <div className="bg-white border border-slate-200/80 rounded-2xl p-5 md:p-6 shadow-sm space-y-5">
-            <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
-              <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100">
-                <Heart className="w-4 h-4" aria-hidden="true" />
-              </div>
-              <h3 className="font-display font-bold text-base text-slate-800">
-                {t("சங்கமத்தின் சிறப்பு நலத்திட்டங்கள்", "Official Welfare Schemes")}
-              </h3>
-            </div>
-
-            <p className="text-xs text-slate-500 leading-relaxed font-tamil">
-              {t(
-                "தமிழ்நாடு வணிகர்களின் சங்கமம் உறுப்பினர்களுக்கு 3 முக்கிய நலத்திட்டங்களை வழங்குகிறது:",
-                "Tamilnadu Vanigargalin Sangamam offers three core welfare schemes to all verified active members:"
-              )}
-            </p>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {welfareSchemes.map((scheme, idx) => (
-                <div 
-                  key={idx} 
-                  className={`p-4 border rounded-2xl shadow-xs hover:shadow-sm transition flex flex-col justify-between space-y-3 ${scheme.bg}`}
-                >
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <div className="p-1.5 bg-white rounded-lg border border-slate-100 shrink-0">
-                        {scheme.icon}
-                      </div>
-                      <h4 className="font-display font-bold text-xs text-slate-800 leading-tight">
-                        {scheme.title}
-                      </h4>
-                    </div>
-                    <p className="text-xs text-slate-600 leading-relaxed font-tamil">
-                      {scheme.desc}
-                    </p>
-                  </div>
-                  <Link 
-                    to="/services" 
-                    className="text-xs text-primary font-bold hover:underline inline-flex items-center gap-1 pt-1 cursor-pointer"
-                  >
-                    {t("மேலும் அறிய →", "Learn more →")}
-                  </Link>
-                </div>
-              ))}
-            </div>
           </div>
 
         </div>
@@ -425,8 +352,8 @@ export function Assistant() {
             </h4>
             <p className="text-xs text-slate-500 leading-relaxed font-tamil">
               {t(
-                "நலத்திட்டங்கள் அல்லது அவசர நிவாரணம் பற்றிய கூடுதல் சந்தேகங்களுக்கு எங்கள் மாவட்ட அலுவலகத்தை அழைக்கவும்:",
-                "For further queries regarding emergency fire relief, education, or insurance claims, call our official helpline:"
+                "உறுப்பினர் சேர்க்கை அல்லது கூடுதல் சந்தேகங்களுக்கு எங்கள் மாவட்ட அலுவலகத்தை அழைக்கவும்:",
+                "For further queries regarding membership, account verification, or other issues, call our official helpline:"
               )}
             </p>
             <div className="bg-white p-3 rounded-xl border border-slate-200/60 flex items-center gap-2.5">

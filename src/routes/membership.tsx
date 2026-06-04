@@ -24,6 +24,12 @@ import {
   MapPin,
   Lock,
   CreditCard,
+  Printer,
+  Share2,
+  Hash,
+  Heart,
+  Calendar,
+  Clock,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -31,15 +37,12 @@ import { Breadcrumb } from "@/components/Breadcrumb";
 import ownerPhoto from "@/assets/349b584e-1b60-469e-9e5d-8d124cb057cb.png";
 import orgLogo from "@/assets/ChatGPT Image Mar 25, 2026, 05_31_25 PM (1).png";
 import signImg from "@/assets/8bb61dfb-f349-4e0b-8501-560feae9f000.png";
-import { FloatingInput, FloatingTextarea, FloatingSelect } from "@/components/FloatingInput";
+import kittenTeacup from "@/assets/kitten_teacup.png";
+import unityHands from "@/assets/unity-hands.png";
+import { VoterIdCard, type Voter } from "@/components/VoterIdCard";
+import votersData from "@/data/voters.json";
 import { z } from "zod";
 import { WINGS } from "@/data/wings";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 
 const membershipSearchSchema = z.object({
   wing: z.string().optional(),
@@ -65,41 +68,41 @@ export const Route = createFileRoute("/membership")({
 const STEPS = [
   {
     n: 1,
-    t: "Personal & Contact Details",
-    ta: "தனிநபர் & தொடர்பு விவரங்கள்",
+    t: "Member Details",
+    ta: "உறுப்பினர் விவரங்கள்",
     icon: User,
-    desc: "Your name, mobile number, email, and district",
-    descTa: "உங்கள் பெயர், கைபேசி, மின்னஞ்சல் மற்றும் மாவட்டம்",
-    tip: "Use your Aadhaar-linked mobile number for easier verification.",
-    tipTa: "சரிபார்க்க உங்கள் ஆதார் இணைந்த கைபேசி எண்ணை பயன்படுத்தவும்.",
+    desc: "Enter the member's information below. You can search the database to load pre-configured profiles.",
+    descTa: "உறுப்பினரின் விவரங்களை கீழே உள்ளிடவும். முன்பே சேமிக்கப்பட்ட விவரங்களை மீட்டெடுக்க தேடல் பெட்டியைப் பயன்படுத்தலாம்.",
+    tip: "Tip: Search 'Senthil Kumar' or 'RJE1234567' to load pre-configured voter profiles.",
+    tipTa: "குறிப்பு: 'Senthil Kumar' அல்லது 'RJE1234567' எனத் தட்டச்சு செய்து விவரங்களை மீட்டெடுக்கவும்.",
   },
   {
     n: 2,
-    t: "Business Details",
-    ta: "வணிக விவரங்கள்",
-    icon: Briefcase,
-    desc: "Shop name, type, wing, address, and years in business",
-    descTa: "கடை பெயர், வகை, பிரிவு, முகவரி மற்றும் வணிக ஆண்டுகள்",
-    tip: "Select the wing that best matches your business activity.",
-    tipTa: "உங்கள் வணிக நடவடிக்கைக்கு பொருந்தும் பிரிவைத் தேர்ந்தெடுக்கவும்.",
+    t: "Upload Photo",
+    ta: "புகைப்படம் பதிவேற்றம்",
+    icon: Camera,
+    desc: "Upload or capture your passport size identification photo.",
+    descTa: "உங்கள் பாஸ்போர்ட் அளவிலான அடையாளப் புகைப்படத்தைப் பதிவேற்றவும் அல்லது எடுக்கவும்.",
+    tip: "A clear front-facing photo is required for the digital ID card.",
+    tipTa: "டிஜிட்டல் அடையாள அட்டைக்கு தெளிவான முன்பக்கப் புகைப்படம் தேவை.",
   },
   {
     n: 3,
-    t: "Documents & Review",
-    ta: "ஆவணங்கள் & சரிபார்",
+    t: "Review & Security",
+    ta: "சரிபார் & பாதுகாப்பு",
     icon: FolderOpen,
-    desc: "Upload documents, verify details, and set security PIN",
-    descTa: "ஆவணங்களைப் பதிவேற்றவும், விவரங்களை சரிபார்க்கவும், பாதுகாப்பு PIN ஐ அமைக்கவும்",
-    tip: "All files must be under 5 MB. JPG, PNG and PDF formats are accepted.",
-    tipTa: "அனைத்து கோப்புகளும் 5 MB க்கும் குறைவாக இருக்க வேண்டும். JPG, PNG மற்றும் PDF ஏற்றுக்கொள்ளப்படும்.",
+    desc: "Review your details, set your security PIN, and complete registration.",
+    descTa: "விவரங்களைச் சரிபார்த்து, உங்கள் பாதுகாப்பு பின்னை அமைத்து, பதிவை முடிக்கவும்.",
+    tip: "Create a memorable 4-digit PIN to secure your digital pass.",
+    tipTa: "உங்கள் டிஜிட்டல் அட்டையைப் பாதுகாக்க மறக்கமுடியாத 4-இலக்க பின்னை உருவாக்கவும்.",
   },
   {
     n: 4,
-    t: "Success",
-    ta: "நிறைவு",
+    t: "Success & ID Card",
+    ta: "வெற்றி & அட்டை",
     icon: Star,
-    desc: "Download your membership certificate",
-    descTa: "உங்கள் உறுப்பினர் சான்றிதழை பதிவிறக்கவும்",
+    desc: "Your membership card and certificate are ready for download.",
+    descTa: "உங்கள் உறுப்பினர் அட்டை மற்றும் சான்றிதழ் பதிவிறக்கத்திற்கு தயாராக உள்ளது.",
     tip: "",
     tipTa: "",
   },
@@ -169,13 +172,34 @@ const WING_CATEGORIES = [
     id: "public",
     nameEn: "Public & General Services",
     nameTa: "பொது மற்றும் சமூகப் பிரிவுகள்",
-    wings: ["labour", "differently-abled", "transgender-entrepreneurs", "pharmacists", "educators", "tourism-transport", "sports-business", "shop-owners", "street-vendors", "hotels-lodgings", "beauty-fitness", "central-govt-relations", "state-govt-relations", "cottage-industry", "digital-advertisers"]
+    wings: ["labour", "differently-abled", "transgender-entrepreneurs", "pharmacists", "educators", "tourism-transport", "sports-business", "shop-owners", "street-vendors", "hotels-lodgings", "beauty-fitness", "central-govt-relations", "state-govt-relations", "cottage-industry", "digital-advertAdvertisers"]
   }
 ];
+interface MemberForm {
+  name: string;
+  epic: string;
+  mobile: string;
+  email: string;
+  dob: string;
+  age: string;
+  gender: string;
+  bloodGroup: string;
+  assembly: string;
+  district: string;
+  shop: string;
+  type: string;
+  address: string;
+  years: string;
+  wing: string;
+}
 
 function Membership() {
   const { t, language } = useLanguage();
   const search = Route.useSearch();
+
+  const todayDate = new Date();
+  const maxDob = `${todayDate.getFullYear() - 18}-${String(todayDate.getMonth() + 1).padStart(2, "0")}-${String(todayDate.getDate()).padStart(2, "0")}`;
+  const minDob = `${todayDate.getFullYear() - 120}-${String(todayDate.getMonth() + 1).padStart(2, "0")}-${String(todayDate.getDate()).padStart(2, "0")}`;
 
   const [step, setStep] = useState(() => {
     if (typeof window !== "undefined") {
@@ -186,11 +210,17 @@ function Membership() {
     return 1;
   });
 
-  const [form, setForm] = useState(() => {
+  const [form, setForm] = useState<MemberForm>(() => {
     const baseForm = {
       name: search.name || "",
+      epic: search.epic || "",
       mobile: search.mobile || "",
       email: "",
+      dob: "",
+      age: "",
+      gender: "Male",
+      bloodGroup: "O+",
+      assembly: search.assembly || "",
       district: search.district || "Chennai",
       shop: "",
       type: "Retail",
@@ -218,12 +248,96 @@ function Membership() {
 
   const [useWebcam, setUseWebcam] = useState(false);
   const [webcamCapturing, setWebcamCapturing] = useState(false);
+  const [cameraError, setCameraError] = useState(false);
+  const [tempSelfie, setTempSelfie] = useState<string | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+
+  const stopCamera = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
+    }
+  };
+
+  useEffect(() => {
+    if (useWebcam && !tempSelfie) {
+      setCameraError(false);
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
+          .then((stream) => {
+            streamRef.current = stream;
+            if (videoRef.current) {
+              videoRef.current.srcObject = stream;
+            }
+          })
+          .catch((err) => {
+            console.error("Camera access error:", err);
+            setCameraError(true);
+          });
+      } else {
+        setCameraError(true);
+      }
+    } else {
+      stopCamera();
+    }
+    return () => {
+      stopCamera();
+    };
+  }, [useWebcam, tempSelfie]);
+
   const [submitting, setSubmitting] = useState(false);
   const [pin, setPin] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [shareMsg, setShareMsg] = useState("");
+
+  const frontRef = useRef<HTMLDivElement>(null);
+  const backRef = useRef<HTMLDivElement>(null);
 
   const epicRef = useRef(search.epic || "TN-VS-" + Math.floor(10000000 + Math.random() * 89999999));
-  const epic = epicRef.current;
+  
   const upd = (k: string, v: string) => setForm({ ...form, [k]: v });
+
+  const handleDobPartChange = (part: "year" | "month" | "day", value: string) => {
+    let [y, m, d] = form.dob ? form.dob.split("-") : ["0000", "00", "00"];
+    if (!y) y = "0000";
+    if (!m) m = "00";
+    if (!d) d = "00";
+
+    if (part === "year") y = value || "0000";
+    if (part === "month") m = value || "00";
+    if (part === "day") d = value || "00";
+
+    const newDob = `${y}-${m}-${d}`;
+    let calculatedAgeStr = "";
+
+    const isComplete = y !== "0000" && m !== "00" && d !== "00";
+
+    if (isComplete) {
+      const birthDate = new Date(newDob);
+      if (!isNaN(birthDate.getTime())) {
+        const today = new Date();
+        let calculatedAge = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+          calculatedAge--;
+        }
+        if (calculatedAge >= 18 && calculatedAge <= 120) {
+          calculatedAgeStr = calculatedAge.toString();
+        }
+      }
+    }
+
+    setForm((prev) => ({
+      ...prev,
+      dob: newDob,
+      age: calculatedAgeStr,
+    }));
+  };
+
 
   useEffect(() => {
     if (search.name && search.epic) {
@@ -236,6 +350,7 @@ function Membership() {
   }, [search.name, search.epic, language]);
 
   useEffect(() => { localStorage.setItem("tnvs_form_data", JSON.stringify(form)); }, [form]);
+  
   useEffect(() => {
     if (step < 4) {
       localStorage.setItem("tnvs_form_step", step.toString());
@@ -249,29 +364,161 @@ function Membership() {
     if (window.confirm(language === "ta" ? "உங்கள் படிவத் தகவல்களை நீக்க விரும்புகிறீர்களா?" : "Are you sure you want to clear your registration draft?")) {
       localStorage.removeItem("tnvs_form_data");
       localStorage.removeItem("tnvs_form_step");
-      setForm({ name: "", mobile: "", email: "", district: "Chennai", shop: "", type: "Retail", address: "", years: "", wing: "" });
+      setForm({
+        name: "",
+        epic: "",
+        mobile: "",
+        email: "",
+        dob: "",
+        age: "",
+        gender: "Male",
+        bloodGroup: "O+",
+        assembly: "",
+        district: "Chennai",
+        shop: "",
+        type: "Retail",
+        address: "",
+        years: "",
+        wing: "",
+      });
       setDocs({ idProof: null, shopPhoto: null, bizProof: null, selfie: null });
       setStep(1);
       toast.success(language === "ta" ? "படிவம் மீட்டமைக்கப்பட்டது" : "Form draft reset successfully");
     }
   };
 
+  const handleSearch = async () => {
+    const queryTerm = searchQuery.trim();
+    if (!queryTerm) return;
+    setSearchResults([]);
+    setIsSearching(true);
+    try {
+      const params = new URLSearchParams();
+      if (/^[a-zA-Z0-9]{3,20}$/.test(queryTerm)) {
+        params.append("epic", queryTerm);
+      } else {
+        params.append("name", queryTerm);
+      }
+
+      const res = await fetch(`/api/voter-search?${params.toString()}`);
+      if (!res.ok) throw new Error("API failed");
+      const data = await res.json();
+      if (data.voters) {
+        setSearchResults(data.voters);
+        if (data.voters.length === 0) {
+          toast.info(language === "ta" ? "பொருந்தும் பதிவுகள் எதுவும் கிடைக்கவில்லை" : "No matching records found");
+        }
+        return;
+      }
+    } catch (err) {
+      // Fallback client-side local search
+      const queryLower = queryTerm.toLowerCase();
+      const isEpic = /^[a-zA-Z0-9]{3,20}$/.test(queryTerm);
+      const filtered = votersData.filter((v: any) => {
+        if (isEpic) {
+          return v.EPIC_NO?.toLowerCase() === queryLower;
+        } else {
+          return v.VOTER_NAME?.toLowerCase().includes(queryLower);
+        }
+      });
+      setSearchResults(filtered);
+      if (filtered.length === 0) {
+        toast.info(language === "ta" ? "பொருந்தும் பதிவுகள் எதுவும் கிடைக்கவில்லை" : "No matching records found");
+      }
+    } finally {
+      setIsSearching(false);
+      setHasSearched(true);
+    }
+  };
+
+  const selectVoter = (v: any) => {
+    let fallbackDob = "";
+    if (v.AGE) {
+      const birthYear = new Date().getFullYear() - parseInt(v.AGE);
+      fallbackDob = `${birthYear}-01-01`;
+    }
+    setForm({
+      ...form,
+      name: v.VOTER_NAME || "",
+      epic: v.EPIC_NO || "",
+      mobile: v.MOBILE_NUMBER || form.mobile,
+      dob: v.DOB || fallbackDob,
+      age: v.AGE || "",
+      gender: v.GENDER || "Male",
+      bloodGroup: v.BLOOD_GROUP || "O+",
+      assembly: v.ASSEMBLY_NAME || "",
+      district: v.DISTRICT || "Chennai",
+      address: v.POLLING_STATION_ADDRESS || "",
+    });
+    setSearchResults([]);
+    setSearchQuery("");
+    toast.success(
+      language === "ta"
+        ? "விவரங்கள் தானாக நிரப்பப்பட்டன"
+        : "Details populated successfully!"
+    );
+  };
+
   const validate = (): boolean => {
     if (step === 1) {
       if (!form.name.trim()) { toast.error(language === "ta" ? "உங்கள் முழுப் பெயரை உள்ளிடவும்" : "Enter your full name"); return false; }
+      if (!form.epic.trim()) { toast.error(language === "ta" ? "தயவுசெய்து EPIC / ID எண்ணை உள்ளிடவும்" : "Enter EPIC / ID No"); return false; }
+      if (!/^[a-zA-Z]{3}\d{7}$/.test(form.epic.trim())) {
+        toast.error(language === "ta" 
+          ? "EPIC எண் வடிவத்தில் இருக்க வேண்டும் (எ.கா: RJE1234567)" 
+          : "EPIC No must be in format: 3 letters followed by 7 digits (e.g. RJE1234567)");
+        return false;
+      }
       if (!/^\d{10}$/.test(form.mobile.replace(/\D/g, "").slice(-10))) { toast.error(language === "ta" ? "சரியான 10-இலக்க மொபைல் எண்ணை உள்ளிடவும்" : "Enter valid 10-digit mobile"); return false; }
-      if (!form.email.includes("@")) { toast.error(language === "ta" ? "சரியான மின்னஞ்சல் முகவரியை உள்ளிடவும்" : "Enter valid email"); return false; }
-    }
-    if (step === 2) {
+      if (form.email && !form.email.includes("@")) { toast.error(language === "ta" ? "சரியான மின்னஞ்சல் முகவரியை உள்ளிடவும்" : "Enter valid email"); return false; }
+      if (!form.dob || form.dob.includes("0000") || form.dob.split("-").includes("00")) {
+        toast.error(language === "ta" ? "உங்கள் பிறந்த தேதியை முழுமையாக உள்ளிடவும்" : "Please complete your date of birth selection");
+        return false;
+      }
+      const birthDate = new Date(form.dob);
+      if (isNaN(birthDate.getTime())) {
+        toast.error(language === "ta" ? "பிறந்த தேதி செல்லாதது" : "Invalid date of birth");
+        return false;
+      }
+      const today = new Date();
+      if (birthDate > today) {
+        toast.error(language === "ta" ? "பிறந்த தேதி எதிர்காலத்தில் இருக்க முடியாது" : "Date of birth cannot be in the future");
+        return false;
+      }
+      let expectedAge = today.getFullYear() - birthDate.getFullYear();
+      const m = today.getMonth() - birthDate.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        expectedAge--;
+      }
+      if (expectedAge < 18 || expectedAge > 120) {
+        toast.error(language === "ta" ? "பிறந்த தேதியின்படி வயது 18 முதல் 120 வரை இருக்க வேண்டும்" : "Age based on date of birth must be between 18 and 120");
+        return false;
+      }
+      if (!form.age) { toast.error(language === "ta" ? "உங்கள் வயதை உள்ளிடவும்" : "Enter your age"); return false; }
+      const ageNum = parseInt(form.age);
+      if (isNaN(ageNum) || ageNum < 18 || ageNum > 120) {
+        toast.error(language === "ta" ? "வயது 18 முதல் 120 வரை இருக்க வேண்டும்" : "Age must be between 18 and 120");
+        return false;
+      }
+      if (Math.abs(ageNum - expectedAge) > 1) {
+        toast.error(language === "ta" ? "பிறந்த தேதியும் வயதும் பொருந்தவில்லை" : "Date of birth and age do not match");
+        return false;
+      }
       if (!form.shop.trim()) { toast.error(language === "ta" ? "வணிகப் பெயரை உள்ளிடவும்" : "Enter shop/business name"); return false; }
       if (!form.wing) { toast.error(language === "ta" ? "தயவுசெய்து வணிகப் பிரிவைத் தேர்ந்தெடுக்கவும்" : "Please select your business wing"); return false; }
+      if (!form.address.trim()) { toast.error(language === "ta" ? "உங்கள் முகவரியை உள்ளிடவும்" : "Enter your address"); return false; }
+    }
+    if (step === 2) {
+      if (!docs.selfie) {
+        toast.error(language === "ta" ? "தயவுசெய்து புகைப்படத்தைப் பதிவேற்றவும்" : "Please upload your photo");
+        return false;
+      }
     }
     if (step === 3) {
       const missing = [
         !docs.idProof && (language === "ta" ? "அடையாள ஆவணம்" : "Aadhaar / Voter ID"),
         !docs.shopPhoto && (language === "ta" ? "கடை புகைப்படம்" : "Shop Front Photo"),
         !docs.bizProof && (language === "ta" ? "வணிக சான்று" : "Business Proof"),
-        !docs.selfie && (language === "ta" ? "பாஸ்போர்ட் புகைப்படம்" : "Passport Photo"),
       ].filter(Boolean);
       if (missing.length) { toast.error(`${language === "ta" ? "ஆவணங்களைப் பதிவேற்றவும்: " : "Please upload: "}${missing.join(", ")}`); return false; }
       if (pin.length !== 4) {
@@ -286,18 +533,34 @@ function Membership() {
   const back = () => setStep(s => Math.max(1, s - 1));
 
   const handlePaySubmit = async () => {
-    if (!validate()) return;
-    if (pin.length !== 4) {
-      toast.error(language === "ta" ? "தயவுசெய்து 4-இலக்க பாதுகாப்பு PIN ஐ உள்ளிடவும்" : "Please create a valid 4-digit security PIN");
-      return;
+    try {
+      if (!validate()) return;
+      setSubmitting(true);
+      await new Promise(r => setTimeout(r, 2000));
+      setSubmitting(false);
+      localStorage.setItem("tnvs_last_epic", form.epic);
+
+      // Save PIN and dynamic member profile in localStorage for return access
+      localStorage.setItem(`tnvs_pin_${form.epic.toUpperCase()}`, pin);
+      const memberProfile = {
+        ...form,
+        epic: form.epic.toUpperCase(),
+        photoUrl: (typeof docs.selfie === "string" ? docs.selfie : "") || ownerPhoto
+      };
+      localStorage.setItem(`tnvs_member_${form.epic.toUpperCase()}`, JSON.stringify(memberProfile));
+
+      localStorage.removeItem("tnvs_form_data");
+      localStorage.removeItem("tnvs_form_step");
+      setStep(4);
+    } catch (err: any) {
+      setSubmitting(false);
+      console.error("Payment submission error:", err);
+      toast.error(
+        language === "ta" 
+          ? `பதிவு செய்வதில் பிழை ஏற்பட்டது: ${err.message || err}`
+          : `An error occurred during registration: ${err.message || err}`
+      );
     }
-    setSubmitting(true);
-    await new Promise(r => setTimeout(r, 2000));
-    setSubmitting(false);
-    localStorage.setItem("tnvs_last_epic", epic);
-    localStorage.removeItem("tnvs_form_data");
-    localStorage.removeItem("tnvs_form_step");
-    setStep(4);
   };
 
   const downloadCertificate = () => {
@@ -326,7 +589,7 @@ function Membership() {
       ctx.textAlign = "left"; ctx.fillStyle = "#555"; ctx.font = "15px Georgia, serif";
       ctx.fillText("Membership ID / EPIC:", 120, 330);
       ctx.fillStyle = "#1e3a8a"; ctx.font = "bold 16px monospace";
-      ctx.fillText(epic, 310, 330);
+      ctx.fillText(form.epic || epicRef.current, 310, 330);
       ctx.fillStyle = "#555"; ctx.font = "15px Georgia, serif";
       ctx.fillText("District / Location:", 120, 370);
       ctx.fillStyle = "#1e3a8a"; ctx.font = "bold 15px Georgia, serif";
@@ -355,43 +618,155 @@ function Membership() {
       ctx.fillText("Founder & State President", W / 2, 586);
       ctx.fillText("Tamilnadu Vanigargalin Sangamam", W / 2, 601);
       ctx.fillText("No 5/79, Saidapet, Chennai - 600015", W / 2, 617);
-      const link = document.createElement("a");
-      link.download = "membership-certificate-" + epic + ".png";
-      link.href = canvas.toDataURL("image/png");
-      link.click();
     };
 
-    const imgLeft = new Image(); imgLeft.src = ownerPhoto;
+    const imgLeft = new Image(); imgLeft.src = (typeof docs.selfie === "string" ? docs.selfie : "") || ownerPhoto;
     const imgRight = new Image(); imgRight.src = orgLogo;
     const imgSign = new Image(); imgSign.src = signImg;
     let loaded = 0;
-    const onLoad = () => {
+    const handleComplete = () => {
       loaded++;
       if (loaded === 3) {
         draw();
         const ph = 72, pw = 72;
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(45 + pw / 2, 40 + ph / 2, ph / 2, 0, Math.PI * 2);
-        ctx.clip();
-        ctx.drawImage(imgLeft, 45, 40, pw, ph);
-        ctx.restore();
-        ctx.drawImage(imgRight, W - 45 - pw, 40, pw, ph);
-        const sw = 110, sh = 44;
-        ctx.drawImage(imgSign, W / 2 - sw / 2, 545 - sh - 3, sw, sh);
-        ctx.fillStyle = "#1e3a8a"; ctx.font = "bold 12px Georgia, serif"; ctx.textAlign = "center";
-        ctx.fillText("SENTHIL KUMAR N", W / 2, 570);
-        ctx.fillStyle = "#555"; ctx.font = "11px Georgia, serif";
-        ctx.fillText("Founder & State President", W / 2, 586);
-        ctx.fillText("Tamilnadu Vanigargalin Sangamam", W / 2, 601);
-        const link2 = document.createElement("a");
-        link2.download = "membership-certificate-" + epic + ".png";
-        link2.href = canvas.toDataURL("image/png");
-        link2.click();
+        if (imgLeft.complete && imgLeft.naturalWidth > 0) {
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(45 + pw / 2, 40 + ph / 2, ph / 2, 0, Math.PI * 2);
+          ctx.clip();
+          ctx.drawImage(imgLeft, 45, 40, pw, ph);
+          ctx.restore();
+        }
+        if (imgRight.complete && imgRight.naturalWidth > 0) {
+          ctx.drawImage(imgRight, W - 45 - pw, 40, pw, ph);
+        }
+        if (imgSign.complete && imgSign.naturalWidth > 0) {
+          const sw = 110, h = 44;
+          ctx.drawImage(imgSign, W / 2 - sw / 2, 545 - h - 3, sw, h);
+        }
+        
+        const link = document.createElement("a");
+        link.download = "membership-certificate-" + (form.epic || epicRef.current) + ".png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
       }
     };
-    imgLeft.onload = imgRight.onload = imgSign.onload = onLoad;
-    imgLeft.onerror = imgRight.onerror = imgSign.onerror = () => { loaded++; if (loaded === 3) draw(); };
+    imgLeft.onload = imgLeft.onerror = 
+    imgRight.onload = imgRight.onerror = 
+    imgSign.onload = imgSign.onerror = handleComplete;
+  };
+
+  const handlePrint = () => {
+    if (!frontRef.current || !backRef.current) return;
+    const name = form.name.replace(/\s*-\s*$/, "").trim();
+    const frontHtml = frontRef.current.innerHTML;
+    const backHtml = backRef.current.innerHTML;
+
+    const w = window.open("", "_blank", "width=800,height=600");
+    if (!w) return;
+    w.document.write(`<!DOCTYPE html>
+      <html>
+        <head>
+          <title>Sangamam Card — ${name}</title>
+          <style>
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+            * { box-sizing: border-box; margin: 0; padding: 0; }
+            body { 
+              display: flex; 
+              flex-direction: column; 
+              align-items: center; 
+              justify-content: center; 
+              min-height: 100vh; 
+              gap: 40px; 
+              padding: 20px; 
+              background: #f0f2f5;
+              font-family: 'Inter', sans-serif;
+            }
+            .card-wrapper {
+              width: 2.125in;
+              height: 3.375in;
+              position: relative;
+              overflow: hidden;
+              background: transparent;
+              box-shadow: 0 8px 24px rgba(56, 42, 38, 0.12);
+              border-radius: 12px;
+              page-break-inside: avoid;
+            }
+            .card-wrapper,
+            .card-wrapper * {
+              box-sizing: border-box;
+            }
+            .card-wrapper > div,
+            .card-wrapper > div > div,
+            .card-wrapper > div > div > div {
+              width: 960px !important;
+              height: 1520px !important;
+              transform: none !important;
+              margin: 0 !important;
+              padding: 0 !important;
+              overflow: visible !important;
+            }
+            .card-wrapper > div {
+              transform: scale(calc(2.125 * 96 / 960)) !important;
+              transform-origin: top left !important;
+            }
+            .card-wrapper > div > div > div > div {
+              width: 240px !important;
+              height: 380px !important;
+              transform: scale(4) !important;
+              transform-origin: top left !important;
+              box-shadow: none !important;
+              overflow: hidden !important;
+            }
+            @media print {
+              @page {
+                size: auto;
+                margin: 0mm;
+              }
+              body { 
+                background: #fff; 
+                min-height: auto;
+                padding: 10mm;
+                gap: 15mm;
+              }
+              .card-wrapper {
+                box-shadow: none;
+                border-radius: 0;
+                page-break-inside: avoid;
+              }
+              * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="card-wrapper">${frontHtml}</div>
+          <div class="card-wrapper">${backHtml}</div>
+          <script>
+            window.onload = () => {
+              setTimeout(() => {
+                window.print();
+              }, 400);
+            };
+          </script>
+        </body>
+      </html>`);
+    w.document.close();
+  };
+
+  const handleShare = (mno: string) => {
+    const name = form.name.replace(/\s*-\s*$/, "").trim();
+    const text = `சங்கம உறுப்பினர் அட்டை\nPer: ${name}\nMembership: ${mno}\nAssembly: ${form.assembly}, ${form.district}`;
+    if (navigator.share) {
+      navigator.share({ title: `Sangamam Card — ${name}`, text, url: window.location.href }).catch(() => null);
+    } else {
+      navigator.clipboard.writeText(text).then(() => {
+        setShareMsg(language === "ta" ? "நகலெடுக்கப்பட்டது / Copied!" : "Copied!");
+        setTimeout(() => setShareMsg(""), 2500);
+      }).catch(() => null);
+    }
   };
 
   const handleFile = (key: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -400,27 +775,101 @@ function Membership() {
     if (file) toast.success(`${file.name} uploaded ✓`);
   };
 
-  const handleSelfieSimulate = () => {
-    setWebcamCapturing(true);
-    setTimeout(() => {
-      setDocs(prev => ({ ...prev, selfie: "Selfie Image (Captured Live via Webcam Scanner)" }));
-      setWebcamCapturing(false);
-      setUseWebcam(false);
-      toast.success(language === "ta" ? "புகைப்படம் வெற்றிகரமாக எடுக்கப்பட்டது ✓" : "Selfie captured successfully ✓");
-    }, 1800);
+  const handleSelfieCapture = () => {
+    if (streamRef.current && videoRef.current) {
+      setWebcamCapturing(true);
+      setTimeout(() => {
+        try {
+          const video = videoRef.current!;
+          const canvas = document.createElement("canvas");
+          canvas.width = video.videoWidth || 640;
+          canvas.height = video.videoHeight || 480;
+          const ctx = canvas.getContext("2d");
+          if (ctx) {
+            ctx.translate(canvas.width, 0);
+            ctx.scale(-1, 1);
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            const dataUrl = canvas.toDataURL("image/png");
+            setTempSelfie(dataUrl);
+          }
+        } catch (err) {
+          setTempSelfie(ownerPhoto);
+        } finally {
+          setWebcamCapturing(false);
+          stopCamera();
+        }
+      }, 800);
+    } else {
+      setWebcamCapturing(true);
+      setTimeout(() => {
+        setTempSelfie(ownerPhoto);
+        setWebcamCapturing(false);
+      }, 800);
+    }
+  };
+
+  const handleSelfieConfirm = () => {
+    if (tempSelfie) {
+      setDocs((prev) => ({ ...prev, selfie: tempSelfie }));
+      toast.success(language === "ta" ? "புகைப்படம் வெற்றிகரமாக பதிவேற்றப்பட்டது ✓" : "Photo uploaded successfully ✓");
+    }
+    setTempSelfie(null);
+    setUseWebcam(false);
+  };
+
+  const handleSelfieRetake = () => {
+    setTempSelfie(null);
   };
 
   const currentStep = STEPS[step - 1];
   const StepIcon = currentStep.icon;
 
   const docsConfig = [
-    { k: "selfie", icon: Camera, l: "Passport Size Photo", ta: "பாஸ்போர்ட் புகைப்படம்", accept: "image/jpeg,image/png,image/webp", webcam: true },
     { k: "idProof", icon: User, l: "Aadhaar / Voter ID", ta: "அடையாள ஆவணம்", accept: "image/*,application/pdf" },
     { k: "shopPhoto", icon: Building2, l: "Shop Front Photo", ta: "கடை புகைப்படம்", accept: "image/*" },
     { k: "bizProof", icon: FileCheck, l: "Business Proof (GST / License)", ta: "வணிக சான்று", accept: "image/*,application/pdf" },
   ];
 
-  const cardMaxWidth = step === 4 ? "max-w-4xl" : "max-w-3xl";
+  const photoPreview = docs.selfie
+    ? (typeof docs.selfie === "string" ? docs.selfie : URL.createObjectURL(docs.selfie as Blob))
+    : "";
+
+  const generatedVoter: Voter = {
+    ID: 9999,
+    ASSEMBLY_NO: "25",
+    ASSEMBLY_NAME: form.assembly || "Mylapore",
+    PART_NO: "1",
+    SECTION_NO: "1",
+    SERIAL_NO: "12",
+    HOUSE_NO: "",
+    VOTER_NAME: form.name,
+    RELATION_TYPE: "Father",
+    RELATION_NAME: "",
+    EPIC_NO: form.epic,
+    MOBILE_NUMBER: form.mobile,
+    AGE: form.age || "30",
+    DOB: form.dob,
+    BUSINESS_TYPE: form.type || "Retail",
+    GENDER: form.gender || "Male",
+    BLOOD_GROUP: form.bloodGroup || "O+",
+    PART_NAME: "TNVS Zone",
+    POLLING_STATION_NAME: form.address || "",
+    POLLING_STATION_ADDRESS: form.address || "",
+    MAIN_TOWN: form.district || "CHENNAI",
+    WARD: "",
+    POST_OFFICE: "",
+    POLICE_STATION: "",
+    DISTRICT: form.district || "CHENNAI",
+    PIN_CODE: "",
+    PHOTO_URL: (typeof docs.selfie === "string" ? docs.selfie : "") || ownerPhoto,
+  };
+
+  const generatedMno = `TNVS-${form.epic.replace(/[^A-Z0-9]/gi, "").toUpperCase().slice(-6)}12`;
+
+  const customInputClass = "w-full border border-slate-200 bg-white text-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-4 focus:ring-[#002B7F]/10 focus:border-[#002B7F] min-h-[46px] transition-all duration-200 placeholder-slate-400";
+
+  const cardMaxWidth = step === 4 ? "max-w-4xl" : "max-w-6xl";
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-slate-50/50 pb-12">
@@ -462,7 +911,7 @@ function Membership() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 mt-8">
           <div className="bg-white rounded-2xl border border-slate-200/60 p-4 md:p-5 shadow-xs">
             {/* Desktop Stepper */}
-            <div className="hidden sm:flex items-center justify-between relative">
+            <div className="hidden sm:flex items-center justify-between relative text-center">
               {/* Stepper background track line */}
               <div className="absolute left-6 right-6 top-1/2 -translate-y-1/2 h-0.5 bg-slate-105 z-0" />
               {/* Stepper active track line */}
@@ -472,7 +921,6 @@ function Membership() {
               />
 
               {STEPS.slice(0, 3).map((s) => {
-                const Icon = s.icon;
                 const done = step > s.n;
                 const active = step === s.n;
                 return (
@@ -530,8 +978,14 @@ function Membership() {
 
       {/* ── Main Container ── */}
       <div className={`mx-auto px-4 sm:px-6 py-8 w-full ${cardMaxWidth}`}>
-        {/* Form Card */}
-        <div className="bg-white rounded-3xl border border-slate-250/70 shadow-sm overflow-hidden transition-all duration-300">
+        
+        <div className={`flex flex-col ${step < 4 ? "lg:flex-row gap-8 items-start" : ""}`}>
+          
+          {/* Left Column: Form Card Wrapper */}
+          <div className={`w-full ${step < 4 ? "lg:flex-1" : ""}`}>
+            
+            {/* Form Card */}
+            <div className="bg-white rounded-3xl border border-slate-250/70 shadow-sm overflow-hidden transition-all duration-300">
           {/* Step Header inside card */}
           {step < 4 && (
             <div className="px-6 sm:px-10 pt-8 pb-6 border-b border-slate-100">
@@ -548,7 +1002,7 @@ function Membership() {
                   </div>
                 </div>
                 
-                {/* Visual Fee Badge (Always clear to users so they aren't confused) */}
+                {/* Visual Fee Badge */}
                 <div className="bg-emerald-50 border border-emerald-100/80 rounded-2xl px-4 py-2 flex items-center gap-2.5 self-start sm:self-auto shrink-0 shadow-xxs">
                   <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                   <div>
@@ -586,149 +1040,535 @@ function Membership() {
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.22 }}
               >
-                {/* ─── Step 1: Personal Details ─── */}
+                {/* ─── Step 1: Member Details ─── */}
                 {step === 1 && (
                   <div className="space-y-6">
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <div className="relative group">
-                        <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10 transition duration-205 text-slate-350 group-focus-within:text-primary">
-                          <User className="w-4 h-4" />
-                        </div>
-                        <FloatingInput
-                          label="Full Name / பெயர்"
-                          value={form.name}
-                          onChange={e => upd("name", e.target.value)}
-                          autoComplete="name"
-                          className="pl-10 h-[52px]"
+                    {/* Search Database Box */}
+                    <div className="bg-[#F3F6FC]/60 border border-slate-200/60 rounded-2xl p-5">
+                      <label className="block text-xs font-bold text-[#002B7F] uppercase tracking-wider mb-2">
+                        {language === "ta" ? "உறுப்பினர் தேடல் (விருப்பத்தேர்வு)" : "SEARCH MEMBER DATABASE (OPTIONAL)"}
+                      </label>
+                      <div className="flex flex-col sm:flex-row gap-2">
+                        <input
+                          type="text"
+                          placeholder={language === "ta" ? "EPIC ID அல்லது பெயரை உள்ளிடவும்..." : "Enter EPIC ID or name..."}
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleSearch())}
+                          className="flex-1 border border-slate-200 bg-white rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#002B7F]/40 min-h-[44px]"
                         />
-                      </div>
-                      <div className="relative group">
-                        <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10 transition duration-205 text-slate-350 group-focus-within:text-primary">
-                          <Phone className="w-4 h-4" />
-                        </div>
-                        <FloatingInput
-                          label="Mobile / கைபேசி"
-                          value={form.mobile}
-                          onChange={e => upd("mobile", e.target.value)}
-                          inputMode="numeric"
-                          maxLength={10}
-                          className="pl-10 h-[52px]"
-                        />
-                      </div>
-                      <div className="relative group">
-                        <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10 transition duration-205 text-slate-350 group-focus-within:text-primary">
-                          <Mail className="w-4 h-4" />
-                        </div>
-                        <FloatingInput
-                          label="Email / மின்னஞ்சல்"
-                          type="email"
-                          value={form.email}
-                          onChange={e => upd("email", e.target.value)}
-                          autoComplete="email"
-                          className="pl-10 h-[52px]"
-                        />
-                      </div>
-                      <div className="relative group">
-                        <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10 transition duration-205 text-slate-350 group-focus-within:text-primary">
-                          <MapPin className="w-4 h-4" />
-                        </div>
-                        <FloatingSelect
-                          label="District / மாவட்டம்"
-                          value={form.district}
-                          onChange={e => upd("district", e.target.value)}
-                          className="pl-10 h-[52px]"
+                        <button
+                          type="button"
+                          onClick={handleSearch}
+                          disabled={isSearching}
+                          className="bg-[#002B7F] text-white hover:bg-[#002060] px-5 py-2 rounded-md text-sm font-semibold transition shrink-0 min-h-[44px] cursor-pointer"
                         >
-                          {DISTRICTS.map(d => (
-                            <option key={d.en} value={d.en}>
-                              {language === "ta" ? `${d.ta} / ${d.en}` : `${d.en} / ${d.ta}`}
-                            </option>
-                          ))}
-                        </FloatingSelect>
+                          {isSearching 
+                            ? (language === "ta" ? "தேடுகிறது..." : "Searching...") 
+                            : (language === "ta" ? "தேடுக" : "Search")}
+                        </button>
                       </div>
-                    </div>
-                  </div>
-                )}
+                      <p className="text-[11px] text-slate-500 mt-1.5">
+                        {language === "ta"
+                          ? "குறிப்பு: 'Senthil Kumar' அல்லது 'RJE1234567' எனத் தட்டச்சு செய்து விவரங்களை மீட்டெடுக்கவும்."
+                          : "Tip: Search 'Senthil Kumar' or 'RJE1234567' to load pre-configured voter profiles."}
+                      </p>
 
-                {/* ─── Step 2: Business Details ─── */}
-                {step === 2 && (
-                  <div className="space-y-6">
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <div className="md:col-span-2">
-                        <div className="relative group">
-                          <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10 transition duration-200 text-slate-350 group-focus-within:text-primary">
-                            <Building2 className="w-4 h-4" />
+                      {/* Search Results Dropdown */}
+                      {hasSearched && !isSearching && searchResults.length === 0 && (
+                        <div className="mt-3 p-3 rounded-lg bg-red-50 border border-red-100 text-center">
+                          <p className="text-xs text-red-650 font-medium">
+                            {language === "ta" ? "பொருந்தும் பதிவுகள் எதுவும் கிடைக்கவில்லை." : "No matching records found."}
+                          </p>
+                        </div>
+                      )}
+
+                      {searchResults.length > 0 && (
+                        <div className="mt-3 border border-slate-200 bg-white rounded-lg divide-y divide-slate-100 overflow-hidden max-h-48 overflow-y-auto shadow-sm">
+                          {searchResults.map((v) => (
+                            <button
+                              key={v.ID}
+                              type="button"
+                              onClick={() => selectVoter(v)}
+                              className="w-full text-left px-3 py-2.5 hover:bg-slate-50 transition flex justify-between items-center text-xs cursor-pointer"
+                            >
+                              <div>
+                                <span className="font-semibold text-slate-800">{v.VOTER_NAME}</span>
+                                <span className="text-slate-350 mx-2">|</span>
+                                <span className="font-mono text-[#002B7F] font-medium">{v.EPIC_NO}</span>
+                              </div>
+                              <div className="text-slate-500 text-[10px]">
+                                {v.ASSEMBLY_NAME}, {v.DISTRICT}
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Form Fields Grid */}
+                    <div className="grid md:grid-cols-2 gap-5">
+                      {/* Full Name */}
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                          {language === "ta" ? "முழு பெயர் (Full Name) *" : "Full Name (பெயர்) *"}
+                        </label>
+                        <div className="relative rounded-xl shadow-xxs">
+                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            <User className="w-4 h-4" />
                           </div>
-                          <FloatingInput
-                            label="Shop / Business Name (கடை பெயர்)"
-                            value={form.shop}
-                            onChange={e => upd("shop", e.target.value)}
-                            className="pl-10 h-[52px]"
+                          <input
+                            required
+                            type="text"
+                            value={form.name}
+                            onChange={(e) => upd("name", e.target.value)}
+                            className={`${customInputClass} pl-10`}
+                            placeholder="e.g. Senthil Kumar / செந்தில் குமார்"
                           />
                         </div>
                       </div>
-                      <FloatingSelect
-                        label="Business Type / வகை"
-                        value={form.type}
-                        onChange={e => upd("type", e.target.value)}
-                        className="h-[52px]"
-                      >
-                        {["Retail", "Wholesale", "Manufacturing", "Service", "Online"].map(d => (
-                          <option key={d}>{d}</option>
-                        ))}
-                      </FloatingSelect>
-                      <div className="relative group">
-                        <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10 transition duration-200 text-slate-350 group-focus-within:text-primary">
-                          <Briefcase className="w-4 h-4" />
+
+                      {/* EPIC ID */}
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                          {language === "ta" ? "வாக்காளர் அடையாள எண் (EPIC / ID No) *" : "EPIC / ID No *"}
+                        </label>
+                        <div className="relative rounded-xl shadow-xxs">
+                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            <Hash className="w-4 h-4" />
+                          </div>
+                          <input
+                            required
+                            type="text"
+                            value={form.epic}
+                            onChange={(e) => upd("epic", e.target.value.toUpperCase())}
+                            className={`${customInputClass} pl-10`}
+                            placeholder="E.G. RJE1234567"
+                          />
                         </div>
-                        <FloatingInput
-                          label="Years in Business (அனுபவம்)"
-                          value={form.years}
-                          onChange={e => upd("years", e.target.value)}
-                          type="number"
-                          min="0"
-                          max="100"
-                          className="pl-10 h-[52px]"
-                        />
                       </div>
-                      <div className="md:col-span-2">
-                        <FloatingSelect
-                          label="Wing / பிரிவு"
-                          value={form.wing}
-                          onChange={e => upd("wing", e.target.value)}
-                          className="h-[52px]"
-                        >
-                          <option value="">-- Select Your Business Wing / பிரிவு --</option>
-                          {WING_CATEGORIES.map(category => (
-                            <optgroup
-                              key={category.id}
-                              label={language === "ta" ? category.nameTa : category.nameEn}
-                            >
-                              {WINGS.filter(w => category.wings.includes(w.id)).map(w => (
-                                <option key={w.id} value={w.id}>
-                                  {language === "ta" ? w.nameTa : w.nameEn}
+
+                      {/* Mobile */}
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                          {language === "ta" ? "கைபேசி எண் (Mobile Number) *" : "Mobile Number (கைபேசி எண்) *"}
+                        </label>
+                        <div className="relative rounded-xl shadow-xxs">
+                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            <Phone className="w-4 h-4" />
+                          </div>
+                          <input
+                            required
+                            type="tel"
+                            maxLength={10}
+                            value={form.mobile}
+                            onChange={(e) => upd("mobile", e.target.value.replace(/\D/g, ""))}
+                            className={`${customInputClass} pl-10`}
+                            placeholder="e.g. 9876543210"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Email */}
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                          {language === "ta" ? "மின்னஞ்சல் முகவரி (Email Address)" : "Email Address (மின்னஞ்சல்)"}
+                        </label>
+                        <div className="relative rounded-xl shadow-xxs">
+                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            <Mail className="w-4 h-4" />
+                          </div>
+                          <input
+                            type="email"
+                            value={form.email}
+                            onChange={(e) => upd("email", e.target.value)}
+                            className={`${customInputClass} pl-10`}
+                            placeholder="e.g. name@example.com"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Date of Birth */}
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                          {language === "ta" ? "பிறந்த தேதி (Date of Birth) *" : "Date of Birth (பிறந்த தேதி) *"}
+                        </label>
+                        <div className="grid grid-cols-3 gap-2">
+                          {/* Day Select */}
+                          <select
+                            required
+                            value={form.dob && form.dob.split("-")[2] !== "00" ? form.dob.split("-")[2] : ""}
+                            onChange={(e) => handleDobPartChange("day", e.target.value)}
+                            className={customInputClass}
+                          >
+                            <option value="">{language === "ta" ? "நாள் / Day" : "Day"}</option>
+                            {Array.from({ length: 31 }, (_, i) => String(i + 1).padStart(2, "0")).map(d => (
+                              <option key={d} value={d}>{d}</option>
+                            ))}
+                          </select>
+
+                          {/* Month Select */}
+                          <select
+                            required
+                            value={form.dob && form.dob.split("-")[1] !== "00" ? form.dob.split("-")[1] : ""}
+                            onChange={(e) => handleDobPartChange("month", e.target.value)}
+                            className={customInputClass}
+                          >
+                            <option value="">{language === "ta" ? "மாதம் / Month" : "Month"}</option>
+                            {Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0")).map(m => {
+                              const monthNamesEn = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                              const monthNamesTa = ["ஜனவரி", "பிப்ரவரி", "மார்ச்", "ஏப்ரல்", "மே", "ஜூன்", "ஜூலை", "ஆகஸ்ட்", "செப்டம்பர்", "அக்டோபர்", "நவம்பர்", "டிசம்பர்"];
+                              return (
+                                <option key={m} value={m}>
+                                  {language === "ta" ? monthNamesTa[parseInt(m) - 1] : monthNamesEn[parseInt(m) - 1]}
                                 </option>
-                              ))}
-                            </optgroup>
-                          ))}
-                        </FloatingSelect>
+                              );
+                            })}
+                          </select>
+
+                          {/* Year Select */}
+                          <select
+                            required
+                            value={form.dob && form.dob.split("-")[0] !== "0000" ? form.dob.split("-")[0] : ""}
+                            onChange={(e) => handleDobPartChange("year", e.target.value)}
+                            className={customInputClass}
+                          >
+                            <option value="">{language === "ta" ? "ஆண்டு / Year" : "Year"}</option>
+                            {Array.from({ length: 103 }, (_, i) => String(todayDate.getFullYear() - 18 - i)).map(y => (
+                              <option key={y} value={y}>{y}</option>
+                            ))}
+                          </select>
+                        </div>
                       </div>
-                      <div className="md:col-span-2">
-                        <FloatingTextarea
-                          label="Shop Address / முகவரி"
-                          value={form.address}
-                          onChange={e => upd("address", e.target.value)}
-                          rows={3}
-                        />
+
+                      {/* Age */}
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                          {language === "ta" ? "வயது (Age) *" : "Age (வயது) *"}
+                        </label>
+                        <div className="relative rounded-xl shadow-xxs">
+                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            <Clock className="w-4 h-4" />
+                          </div>
+                          <input
+                            required
+                            type="number"
+                            min="18"
+                            max="120"
+                            value={form.age}
+                            onChange={(e) => upd("age", e.target.value)}
+                            className={`${customInputClass} pl-10`}
+                            placeholder="Age"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Gender */}
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                          {language === "ta" ? "பாலினம் (Gender)" : "Gender (பாலினம்)"}
+                        </label>
+                        <div className="relative rounded-xl shadow-xxs">
+                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            <User className="w-4 h-4" />
+                          </div>
+                          <select
+                            value={form.gender}
+                            onChange={(e) => upd("gender", e.target.value)}
+                            className={`${customInputClass} pl-10`}
+                          >
+                            <option value="Male">{language === "ta" ? "ஆண் / Male" : "Male"}</option>
+                            <option value="Female">{language === "ta" ? "பெண் / Female" : "Female"}</option>
+                            <option value="Other">{language === "ta" ? "இதர / Other" : "Other"}</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      {/* Blood Group */}
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                          {language === "ta" ? "இரத்த வகை (Blood Group)" : "Blood Group (இரத்த வகை)"}
+                        </label>
+                        <div className="relative rounded-xl shadow-xxs">
+                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            <Heart className="w-4 h-4" />
+                          </div>
+                          <select
+                            value={form.bloodGroup}
+                            onChange={(e) => upd("bloodGroup", e.target.value)}
+                            className={`${customInputClass} pl-10`}
+                          >
+                            {["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"].map(bg => (
+                              <option key={bg} value={bg}>{bg}</option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+
+                      {/* Shop Name */}
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                          {language === "ta" ? "கடை / வணிகப் பெயர் (Shop / Business Name) *" : "Shop / Business Name (கடை பெயர்) *"}
+                        </label>
+                        <div className="relative rounded-xl shadow-xxs">
+                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            <Building2 className="w-4 h-4" />
+                          </div>
+                          <input
+                            required
+                            type="text"
+                            value={form.shop}
+                            onChange={(e) => upd("shop", e.target.value)}
+                            className={`${customInputClass} pl-10`}
+                            placeholder="e.g. Senthil Traders / செந்தில் டிரேடர்ஸ்"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Business Type */}
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                          {language === "ta" ? "வணிக வகை (Business Type)" : "Business Type (வணிக வகை)"}
+                        </label>
+                        <div className="relative rounded-xl shadow-xxs">
+                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            <Briefcase className="w-4 h-4" />
+                          </div>
+                          <select
+                            value={form.type}
+                            onChange={(e) => upd("type", e.target.value)}
+                            className={`${customInputClass} pl-10`}
+                          >
+                            {["Retail", "Wholesale", "Manufacturing", "Service", "Online"].map(t => (
+                              <option key={t} value={t}>{t}</option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+
+                      {/* Experience */}
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                          {language === "ta" ? "வணிக அனுபவம் (Years in Business)" : "Years in Business (அனுபவம்)"}
+                        </label>
+                        <div className="relative rounded-xl shadow-xxs">
+                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            <Clock className="w-4 h-4" />
+                          </div>
+                          <input
+                            type="number"
+                            min="0"
+                            value={form.years}
+                            onChange={(e) => upd("years", e.target.value)}
+                            className={`${customInputClass} pl-10`}
+                            placeholder="Years"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Assembly Name */}
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                          {language === "ta" ? "தொகுதி (Assembly Name)" : "Assembly Name (தொகுதி)"}
+                        </label>
+                        <div className="relative rounded-xl shadow-xxs">
+                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            <MapPin className="w-4 h-4" />
+                          </div>
+                          <input
+                            type="text"
+                            value={form.assembly}
+                            onChange={(e) => upd("assembly", e.target.value)}
+                            className={`${customInputClass} pl-10`}
+                            placeholder="e.g. Mylapore / மயிலாப்பூர்"
+                          />
+                        </div>
+                      </div>
+
+                      {/* District */}
+                      <div className="space-y-1.5 md:col-span-2">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                          {language === "ta" ? "மாவட்டம் (District) *" : "District (மாவட்டம்) *"}
+                        </label>
+                        <div className="relative rounded-xl shadow-xxs">
+                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            <MapPin className="w-4 h-4" />
+                          </div>
+                          <select
+                            value={form.district}
+                            onChange={(e) => upd("district", e.target.value)}
+                            className={`${customInputClass} pl-10`}
+                          >
+                            {DISTRICTS.map(d => (
+                              <option key={d.en} value={d.en}>
+                                {language === "ta" ? `${d.ta} / ${d.en}` : `${d.en} / ${d.ta}`}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+
+                      {/* Business Wing */}
+                      <div className="space-y-1.5 md:col-span-2">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                          {language === "ta" ? "வணிகப் பிரிவு (Business Wing) *" : "Business Wing / பிரிவு *"}
+                        </label>
+                        <div className="relative rounded-xl shadow-xxs">
+                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            <Briefcase className="w-4 h-4" />
+                          </div>
+                          <select
+                            value={form.wing}
+                            onChange={(e) => upd("wing", e.target.value)}
+                            className={`${customInputClass} pl-10`}
+                          >
+                            <option value="">{language === "ta" ? "-- வணிகப் பிரிவைத் தேர்ந்தெடுக்கவும் --" : "-- Select Your Business Wing --"}</option>
+                            {WING_CATEGORIES.map(category => (
+                              <optgroup
+                                key={category.id}
+                                label={language === "ta" ? category.nameTa : category.nameEn}
+                              >
+                                {WINGS.filter(w => category.wings.includes(w.id)).map(w => (
+                                  <option key={w.id} value={w.id}>
+                                    {language === "ta" ? w.nameTa : w.nameEn}
+                                  </option>
+                                ))}
+                              </optgroup>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+
+                      {/* Address */}
+                      <div className="space-y-1.5 md:col-span-2">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                          {language === "ta" ? "முகவரி (Address) *" : "Address (முகவரி) *"}
+                        </label>
+                        <div className="relative rounded-xl shadow-xxs">
+                          <div className="absolute top-3 left-0 pl-3.5 flex items-start pointer-events-none text-slate-400">
+                            <MapPin className="w-4 h-4" />
+                          </div>
+                          <textarea
+                            required
+                            rows={3}
+                            value={form.address}
+                            onChange={(e) => upd("address", e.target.value)}
+                            className="w-full border border-slate-200 bg-white text-slate-800 rounded-xl pl-10 pr-3.5 py-2.5 text-sm focus:outline-none focus:ring-4 focus:ring-[#002B7F]/10 focus:border-[#002B7F] transition-all duration-200 placeholder-slate-400"
+                            placeholder={language === "ta" ? "முகவரி (எ.கா. கதவு எண், தெரு பெயர், ஊர், பின்கோடு)..." : "Full address (e.g. கதவு எண், தெரு பெயர், ஊர், பின்கோடு)..."}
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
                 )}
 
-                {/* ─── Step 3: Documents & Review ─── */}
+                {/* ─── Step 2: Upload Photo ─── */}
+                {step === 2 && (
+                  <div className="space-y-6 flex flex-col items-center">
+                    {/* Search Database Box (kept consistent at top) */}
+                    <div className="w-full bg-[#F3F6FC]/60 border border-slate-200/60 rounded-2xl p-5 mb-4">
+                      <label className="block text-xs font-bold text-[#002B7F] uppercase tracking-wider mb-2">
+                        {language === "ta" ? "உறுப்பினர் தேடல் (விருப்பத்தேர்வு)" : "SEARCH MEMBER DATABASE (OPTIONAL)"}
+                      </label>
+                      <div className="flex flex-col sm:flex-row gap-2">
+                        <input
+                          type="text"
+                          placeholder={language === "ta" ? "EPIC ID அல்லது பெயரை உள்ளிடவும்..." : "Enter EPIC ID or name..."}
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleSearch())}
+                          className="flex-1 border border-slate-200 bg-white rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#002B7F]/40 min-h-[44px]"
+                        />
+                        <button
+                          type="button"
+                          onClick={handleSearch}
+                          disabled={isSearching}
+                          className="bg-[#002B7F] text-white hover:bg-[#002060] px-5 py-2 rounded-md text-sm font-semibold transition shrink-0 min-h-[44px] cursor-pointer"
+                        >
+                          {isSearching 
+                            ? (language === "ta" ? "தேடுகிறது..." : "Searching...") 
+                            : (language === "ta" ? "தேடுக" : "Search")}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="w-full max-w-lg border-2 border-dashed border-slate-200 bg-slate-50/20 rounded-3xl p-8 flex flex-col items-center justify-center transition-all duration-300 hover:border-primary/50">
+                      
+                      {/* Circular Photo Container */}
+                      <div className="relative w-36 h-36 rounded-full overflow-hidden border-2 border-primary shadow-md flex items-center justify-center bg-slate-100 mb-6">
+                        {docs.selfie ? (
+                          <img
+                            src={photoPreview}
+                            alt="Profile Preview"
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="text-slate-400 flex flex-col items-center justify-center">
+                            <User className="w-14 h-14 text-slate-350" />
+                            <span className="text-[10px] font-semibold text-slate-400 mt-1 uppercase tracking-wider">Photo</span>
+                          </div>
+                        )}
+                        {docs.selfie && (
+                          <button
+                            type="button"
+                            onClick={() => setDocs(prev => ({ ...prev, selfie: null }))}
+                            className="absolute inset-0 bg-black/50 text-white flex items-center justify-center text-xs opacity-0 hover:opacity-100 transition-opacity font-bold cursor-pointer border-none"
+                          >
+                            Remove Photo
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Upload and Capture Actions */}
+                      <div className="flex flex-col sm:flex-row gap-3 w-full max-w-sm justify-center">
+                        <label className="cursor-pointer inline-flex items-center justify-center gap-2 bg-[#002B7F] hover:bg-[#002060] text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition shadow-sm min-h-[48px] flex-1 text-center">
+                          <Upload className="w-4 h-4" />
+                          {language === "ta" ? "பதிவேற்று" : "Upload Photo (உரிமையாளர் படம்)"}
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (!file) return;
+                              if (file.size > 5 * 1024 * 1024) {
+                                toast.error(language === "ta" ? "புகைப்படம் 5MB-க்குள் இருக்க வேண்டும்" : "Photo must be under 5MB");
+                                return;
+                              }
+                              const reader = new FileReader();
+                              reader.onloadend = () => {
+                                setDocs(prev => ({ ...prev, selfie: reader.result as string }));
+                                toast.success(language === "ta" ? "புகைப்படம் வெற்றிகரமாக பதிவேற்றப்பட்டது ✓" : "Photo uploaded successfully ✓");
+                              };
+                              reader.readAsDataURL(file);
+                            }}
+                          />
+                        </label>
+                        
+                        <button
+                          type="button"
+                          onClick={() => setUseWebcam(true)}
+                          className="inline-flex items-center justify-center gap-2 border border-slate-250 bg-white hover:bg-slate-50 text-slate-700 px-5 py-2.5 rounded-xl text-sm font-semibold transition shadow-xs min-h-[48px] flex-1 cursor-pointer"
+                        >
+                          <Camera className="w-4 h-4 text-slate-550" />
+                          {language === "ta" ? "கேமரா" : "Take Photo (Camera)"}
+                        </button>
+                      </div>
+
+                      <p className="text-[11px] text-slate-500 mt-4 text-center leading-relaxed">
+                        {language === "ta"
+                          ? "அடையாள அட்டைக்குத் தேவையான 5 MB அளவிலான பாஸ்போர்ட் புகைப்படம். JPG, PNG அல்லது WebP வடிவங்கள்."
+                          : "Required passport size photo for ID Card. Max size 5 MB. Formats: JPG, PNG, WebP."}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* ─── Step 3: Review & Security ─── */}
                 {step === 3 && (
                   <div className="space-y-6">
-                    {/* Documents Upload Section */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    {/* Document Upload section */}
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       {docsConfig.map(doc => {
                         const DocIcon = doc.icon;
                         const uploaded = docs[doc.k];
@@ -740,40 +1580,29 @@ function Membership() {
                                 ? "border-emerald-300 bg-emerald-50/40"
                                 : "border-dashed border-slate-200 hover:border-primary/50 hover:bg-slate-50/50 hover:scale-[1.01]"
                             }`}
-                            onDragOver={!doc.webcam ? e => e.preventDefault() : undefined}
-                            onDrop={!doc.webcam ? e => {
-                              e.preventDefault();
-                              const file = e.dataTransfer.files?.[0];
-                              if (file) {
-                                if (file.size > 5 * 1024 * 1024) { toast.error("File must be under 5MB"); return; }
-                                setDocs(prev => ({ ...prev, [doc.k]: file }));
-                                toast.success(`${file.name} uploaded ✓`);
-                              }
-                            } : undefined}
                           >
-                            <div className="p-5 flex flex-col justify-between h-full min-h-[160px]">
+                            <div className="p-4 flex flex-col justify-between h-full min-h-[140px]">
                               {/* Header */}
-                              <div className="flex items-start gap-3">
-                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 ${uploaded ? "bg-emerald-100 text-emerald-600 scale-105" : "bg-slate-100 text-slate-500 group-hover:bg-primary/10 group-hover:text-primary"}`}>
-                                  {uploaded ? <Check className="w-5 h-5" /> : <DocIcon className="w-5 h-5" />}
+                              <div className="flex items-start gap-2.5">
+                                <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 ${uploaded ? "bg-emerald-100 text-emerald-600 scale-105" : "bg-slate-100 text-slate-500 group-hover:bg-primary/10 group-hover:text-primary"}`}>
+                                  {uploaded ? <Check className="w-4 h-4" /> : <DocIcon className="w-4 h-4" />}
                                 </div>
                                 <div className="min-w-0 flex-1">
-                                  <div className="text-sm font-bold text-slate-800 leading-tight">{doc.l}</div>
-                                  <div className="font-tamil text-xs text-slate-400 mt-0.5">{doc.ta}</div>
+                                  <div className="text-xs font-bold text-slate-800 leading-tight">{doc.l}</div>
+                                  <div className="font-tamil text-[10px] text-slate-400 mt-0.5">{doc.ta}</div>
                                 </div>
                               </div>
 
                               {/* Upload Action/Status Area */}
                               <div className="mt-4">
                                 {uploaded ? (
-                                  <div className="text-xs text-emerald-800 font-bold bg-emerald-100/70 border border-emerald-200/50 px-3 py-2 rounded-xl flex items-center justify-between gap-1.5 animate-fadeIn">
+                                  <div className="text-[11px] text-emerald-800 font-bold bg-emerald-100/70 border border-emerald-200/50 px-2.5 py-1.5 rounded-lg flex items-center justify-between gap-1.5 animate-fadeIn">
                                     <span className="truncate max-w-[80%]">
-                                      {typeof uploaded === "string" ? uploaded : (uploaded as File).name}
+                                      {typeof uploaded === "string" ? "Uploaded ✓" : (uploaded as File).name}
                                     </span>
-                                    <label className="text-primary hover:underline cursor-pointer shrink-0 text-[10px] font-bold uppercase tracking-wider bg-white px-2 py-0.5 rounded-md border border-slate-200 shadow-xxs">
+                                    <label className="text-primary hover:underline cursor-pointer shrink-0 text-[9px] font-bold uppercase tracking-wider bg-white px-1.5 py-0.5 rounded border border-slate-200 shadow-xxs">
                                       Change
                                       <input
-                                        key={`change-${doc.k}-${uploaded ? 'uploaded' : 'empty'}`}
                                         type="file"
                                         accept={doc.accept}
                                         className="hidden"
@@ -782,55 +1611,16 @@ function Membership() {
                                     </label>
                                   </div>
                                 ) : (
-                                  <div className="text-xs text-slate-450">
-                                    {doc.webcam ? (
-                                      <div className="flex gap-2">
-                                        <button
-                                          type="button"
-                                          onClick={() => setUseWebcam(true)}
-                                          className="flex-1 inline-flex justify-center items-center gap-1.5 bg-primary text-white hover:bg-primary/95 px-3 py-2 rounded-xl text-xs font-semibold transition cursor-pointer shadow-xs"
-                                        >
-                                          <Camera className="w-3.5 h-3.5" />
-                                          {language === "ta" ? "கேமரா" : "Camera"}
-                                        </button>
-                                        <label className="flex-1 inline-flex justify-center items-center gap-1.5 border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-xl text-xs font-semibold transition cursor-pointer shadow-xxs">
-                                          <Upload className="w-3.5 h-3.5 text-slate-400" />
-                                          {language === "ta" ? "பதிவேற்று" : "Upload File"}
-                                          <input
-                                            key={`upload-selfie-${docs.selfie ? 'uploaded' : 'empty'}`}
-                                            type="file"
-                                            accept={doc.accept}
-                                            className="hidden"
-                                            onChange={e => {
-                                              const file = e.target.files?.[0];
-                                              if (!file) return;
-                                              if (file.size > 5 * 1024 * 1024) { toast.error("Photo must be under 5MB"); return; }
-                                              setDocs(prev => ({ ...prev, selfie: file }));
-                                              toast.success("Passport photo uploaded ✓");
-                                            }}
-                                          />
-                                        </label>
-                                      </div>
-                                    ) : (
-                                      <label className="w-full inline-flex justify-center items-center gap-1.5 border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-xl text-xs font-semibold transition cursor-pointer shadow-xxs">
-                                        <Upload className="w-3.5 h-3.5 text-slate-400" />
-                                        {language === "ta" ? "கோப்பைத் தேர்ந்தெடு" : "Choose File or Drag & Drop"}
-                                        <input
-                                          key={`upload-${doc.k}-${docs[doc.k] ? 'uploaded' : 'empty'}`}
-                                          type="file"
-                                          accept={doc.accept}
-                                          className="hidden"
-                                          onChange={e => {
-                                            const file = e.target.files?.[0];
-                                            if (!file) return;
-                                            if (file.size > 5 * 1024 * 1024) { toast.error("File must be under 5MB"); return; }
-                                            setDocs(prev => ({ ...prev, [doc.k]: file }));
-                                            toast.success(`${file.name} uploaded ✓`);
-                                          }}
-                                        />
-                                      </label>
-                                    )}
-                                  </div>
+                                  <label className="w-full inline-flex justify-center items-center gap-1.5 border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer shadow-xxs">
+                                    <Upload className="w-3.5 h-3.5 text-slate-400" />
+                                    {language === "ta" ? "கோப்பைத் தேர்ந்தெடு" : "Choose File"}
+                                    <input
+                                      type="file"
+                                      accept={doc.accept}
+                                      className="hidden"
+                                      onChange={handleFile(doc.k)}
+                                    />
+                                  </label>
                                 )}
                               </div>
                             </div>
@@ -839,205 +1629,171 @@ function Membership() {
                       })}
                     </div>
 
-                    {/* File size note */}
-                    <div className="flex items-center gap-2.5 text-xs text-slate-550 bg-slate-50 border border-slate-200/50 rounded-2xl px-4 py-3 shadow-xxs">
-                      <Info className="w-4 h-4 text-slate-400 shrink-0" />
-                      <span>Max file size: <strong>5 MB</strong> per document. Accepted formats: <strong>JPG, PNG, PDF</strong></span>
-                    </div>
-
-                    {/* Review Section */}
+                    {/* Review Details Card */}
                     <div className="border-t border-slate-200 pt-6">
                       <div className="flex items-center gap-2 mb-4">
-                        <ClipboardList className="w-5 h-5 text-primary" />
+                        <ClipboardList className="w-5 h-5 text-[#002B7F]" />
                         <h3 className="font-display text-lg font-bold text-slate-900">Review Your Details</h3>
                       </div>
 
-                      {/* Unified Grid Summary */}
                       <div className="grid md:grid-cols-2 gap-6">
-                        
-                        {/* Personal Info Summary Card */}
+                        {/* Personal & Contact Summary Card */}
                         <div className="bg-slate-50 rounded-2xl border border-slate-200 p-5 space-y-4 shadow-xxs">
                           <div className="flex justify-between items-center pb-2.5 border-b border-slate-200/80">
                             <div className="flex items-center gap-2">
-                              <User className="w-4 h-4 text-primary" />
+                              <User className="w-4 h-4 text-[#002B7F]" />
                               <span className="text-sm font-bold text-slate-800">Personal Details</span>
                             </div>
                             <button
                               type="button"
                               onClick={() => setStep(1)}
-                              className="text-xs text-primary font-extrabold hover:underline cursor-pointer"
+                              className="text-xs text-[#002B7F] font-extrabold hover:underline cursor-pointer border-none bg-transparent"
                             >
                               Edit
                             </button>
                           </div>
-                          <div className="grid sm:grid-cols-2 gap-3.5">
+                          <div className="grid sm:grid-cols-2 gap-3">
                             {[
-                              { label: "Full Name", value: form.name || "—", icon: User },
-                              { label: "Mobile", value: form.mobile || "—", icon: Phone },
-                              { label: "Email", value: form.email || "—", icon: Mail },
-                              { label: "District", value: form.district, icon: MapPin },
-                            ].map(({ label, value, icon: Icon }) => (
+                              { label: "Full Name", value: form.name || "—" },
+                              { label: "EPIC ID / No", value: form.epic || "—" },
+                              { label: "Mobile", value: form.mobile || "—" },
+                              { label: "Email", value: form.email || "—" },
+                              { label: "DOB", value: form.dob || "—" },
+                              { label: "Age / Gender / Blood", value: `${form.age || "—"} yrs / ${form.gender} / ${form.bloodGroup}` },
+                            ].map(({ label, value }) => (
                               <div key={label} className="bg-white rounded-xl p-3 border border-slate-100 shadow-xxs">
-                                <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{label}</div>
-                                <div className="text-sm text-slate-850 font-bold mt-1.5 break-all">{value}</div>
+                                <div className="text-[9px] font-bold uppercase tracking-wider text-slate-400">{label}</div>
+                                <div className="text-xs text-slate-800 font-bold mt-1.5 break-all">{value}</div>
                               </div>
                             ))}
                           </div>
                         </div>
 
-                        {/* Business Info Summary Card */}
+                        {/* Business Summary Card */}
                         <div className="bg-slate-50 rounded-2xl border border-slate-200 p-5 space-y-4 shadow-xxs">
                           <div className="flex justify-between items-center pb-2.5 border-b border-slate-200/80">
                             <div className="flex items-center gap-2">
-                              <Briefcase className="w-4 h-4 text-primary" />
+                              <Briefcase className="w-4 h-4 text-[#002B7F]" />
                               <span className="text-sm font-bold text-slate-800">Business Details</span>
                             </div>
                             <button
                               type="button"
-                              onClick={() => setStep(2)}
-                              className="text-xs text-primary font-extrabold hover:underline cursor-pointer"
+                              onClick={() => setStep(1)}
+                              className="text-xs text-[#002B7F] font-extrabold hover:underline cursor-pointer border-none bg-transparent"
                             >
                               Edit
                             </button>
                           </div>
-                          <div className="grid sm:grid-cols-2 gap-3.5">
+                          <div className="grid sm:grid-cols-2 gap-3">
                             {[
                               { label: "Shop Name", value: form.shop || "—" },
                               { label: "Type", value: form.type },
                               { label: "Wing / Division", value: WINGS.find(w => w.id === form.wing)?.[language === "ta" ? "nameTa" : "nameEn"] || "—" },
                               { label: "Experience", value: form.years ? `${form.years} Years` : "—" },
+                              { label: "Assembly", value: form.assembly || "—" },
+                              { label: "District", value: form.district },
                             ].map(({ label, value }) => (
                               <div key={label} className="bg-white rounded-xl p-3 border border-slate-100 shadow-xxs">
-                                <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{label}</div>
-                                <div className="text-sm text-slate-850 font-bold mt-1.5 break-all">{value}</div>
+                                <div className="text-[9px] font-bold uppercase tracking-wider text-slate-400">{label}</div>
+                                <div className="text-xs text-slate-800 font-bold mt-1.5 break-all">{value}</div>
                               </div>
                             ))}
                           </div>
                           {form.address && (
                             <div className="bg-white rounded-xl p-3 border border-slate-100 shadow-xxs">
-                              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Shop Address</div>
-                              <div className="text-sm text-slate-855 font-bold mt-1.5 leading-relaxed">{form.address}</div>
+                              <div className="text-[9px] font-bold uppercase tracking-wider text-slate-400">Shop Address</div>
+                              <div className="text-xs text-slate-800 font-bold mt-1.5 leading-relaxed">{form.address}</div>
                             </div>
                           )}
                         </div>
+                      </div>
+                    </div>
 
-                        {/* Documents Uploaded Card */}
-                        <div className="md:col-span-2 bg-slate-50 rounded-2xl border border-slate-200 p-5 space-y-4 shadow-xxs">
-                          <div className="flex justify-between items-center pb-2.5 border-b border-slate-200/80">
-                            <div className="flex items-center gap-2">
-                              <FolderOpen className="w-4 h-4 text-primary" />
-                              <span className="text-sm font-bold text-slate-800">Uploaded Documents</span>
-                            </div>
+                    {/* Security PIN Section */}
+                    <div className="border-t border-slate-150 pt-6">
+                      <div className="max-w-md">
+                        <div className="flex items-center gap-2 mb-1.5">
+                          <div className="p-1 rounded-lg bg-primary/10 text-primary">
+                            <Lock className="w-4 h-4" />
                           </div>
-                          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                            {docsConfig.map(doc => {
-                              const isUploaded = !!docs[doc.k];
+                          <label className="text-sm font-extrabold text-slate-900">
+                            {language === "ta" ? "பாதுகாப்பு PIN குறியீட்டை உருவாக்கவும்" : "Create Security PIN"}
+                          </label>
+                        </div>
+                        <p className="text-xs text-slate-500 leading-relaxed mb-4 font-tamil">
+                          {language === "ta"
+                            ? "உறுப்பினர் அட்டை மற்றும் தகவல்களைப் பாதுகாக்க 4-இலக்க PIN ஐ உள்ளிடவும்."
+                            : "Set a 4-digit security PIN to protect your digital membership pass."}
+                        </p>
+                        <div className="relative inline-block group">
+                          <input
+                            type="text"
+                            pattern="[0-9]*"
+                            maxLength={4}
+                            value={pin}
+                            onChange={e => setPin(e.target.value.replace(/\D/g, ""))}
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                            autoComplete="one-time-code"
+                          />
+                          <div className="flex gap-3">
+                            {[0, 1, 2, 3].map(index => {
+                              const char = pin[index] || "";
+                              const isFocused = pin.length === index;
                               return (
                                 <div
-                                  key={doc.k}
-                                  className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border text-xs font-bold shadow-xxs transition-colors ${
-                                    isUploaded
-                                      ? "bg-white text-emerald-800 border-emerald-200/60"
-                                      : "bg-red-50/50 text-red-600 border-red-150"
+                                  key={index}
+                                  className={`w-12 h-14 rounded-2xl border-2 text-xl font-extrabold flex items-center justify-center transition-all duration-300 ${
+                                    isFocused
+                                      ? "border-primary ring-4 ring-primary/15 scale-105 bg-white shadow-md shadow-primary/5"
+                                      : char
+                                      ? "border-emerald-400 bg-emerald-50 text-emerald-850"
+                                      : "border-slate-200 bg-slate-50 text-slate-300"
                                   }`}
                                 >
-                                  <span className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 text-[10px] font-bold ${isUploaded ? "bg-emerald-100 text-emerald-650" : "bg-red-100 text-red-600"}`}>
-                                    {isUploaded ? "✓" : "✕"}
-                                  </span>
-                                  <span className="truncate">{doc.l}</span>
+                                  {char ? "•" : ""}
                                 </div>
                               );
                             })}
                           </div>
                         </div>
                       </div>
+                    </div>
 
-                      {/* Security PIN Section */}
-                      <div className="border-t border-slate-150 pt-6">
-                        <div className="max-w-md">
-                          <div className="flex items-center gap-2 mb-1.5">
-                            <div className="p-1 rounded-lg bg-primary/10 text-primary">
-                              <Lock className="w-4 h-4" />
-                            </div>
-                            <label className="text-sm font-extrabold text-slate-900">
-                              {language === "ta" ? "பாதுகாப்பு PIN குறியீட்டை உருவாக்கவும்" : "Create Security PIN"}
-                            </label>
+                    {/* Premium Checkout fee card */}
+                    <div className="bg-linear-to-br from-slate-900 to-slate-800 border border-slate-950 rounded-2xl p-6 text-white relative overflow-hidden shadow-md">
+                      <div className="absolute -right-4 -bottom-4 w-32 h-32 bg-primary/10 rounded-full blur-2xl" />
+                      <div className="absolute top-0 right-10 w-24 h-24 bg-emerald-500/5 rounded-full blur-xl pointer-events-none" />
+                      
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            <CreditCard className="w-4 h-4 text-emerald-400" />
+                            <span className="font-extrabold text-sm text-slate-200 tracking-wide uppercase">Annual Member Subscription</span>
                           </div>
-                          <p className="text-xs text-slate-500 leading-relaxed mb-4 font-tamil">
-                            {language === "ta"
-                              ? "உறுப்பினர் அட்டை மற்றும் தகவல்களைப் பாதுகாக்க 4-இலக்க PIN ஐ உள்ளிடவும்."
-                              : "Set a 4-digit security PIN to protect your digital membership pass."}
-                          </p>
-                          <div className="relative inline-block group">
-                            <input
-                              type="text"
-                              pattern="[0-9]*"
-                              maxLength={4}
-                              value={pin}
-                              onChange={e => setPin(e.target.value.replace(/\D/g, ""))}
-                              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                              autoComplete="one-time-code"
-                            />
-                            <div className="flex gap-3">
-                              {[0, 1, 2, 3].map(index => {
-                                const char = pin[index] || "";
-                                const isFocused = pin.length === index;
-                                return (
-                                  <div
-                                    key={index}
-                                    className={`w-12 h-14 rounded-2xl border-2 text-xl font-extrabold flex items-center justify-center transition-all duration-300 ${
-                                      isFocused
-                                        ? "border-primary ring-4 ring-primary/15 scale-105 bg-white shadow-md shadow-primary/5"
-                                        : char
-                                        ? "border-emerald-400 bg-emerald-50 text-emerald-850"
-                                        : "border-slate-200 bg-slate-50 text-slate-300"
-                                    }`}
-                                  >
-                                    {char ? "•" : ""}
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          </div>
+                          <p className="text-xs text-slate-400">Includes Digital Membership Card & Official Trade Wings access</p>
+                        </div>
+                        <div className="flex items-baseline gap-1 self-start sm:self-center shrink-0">
+                          <span className="text-[10px] text-slate-400 uppercase font-bold">Total:</span>
+                          <span className="font-display text-3xl font-black text-emerald-450 tracking-tight">₹500</span>
+                          <span className="text-xs text-slate-400">/year</span>
                         </div>
                       </div>
-
-                      {/* Premium Checkout fee card */}
-                      <div className="bg-linear-to-br from-slate-900 to-slate-800 border border-slate-950 rounded-2xl p-6 text-white relative overflow-hidden shadow-md">
-                        <div className="absolute -right-4 -bottom-4 w-32 h-32 bg-primary/10 rounded-full blur-2xl" />
-                        <div className="absolute top-0 right-10 w-24 h-24 bg-emerald-500/5 rounded-full blur-xl pointer-events-none" />
-                        
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
-                          <div className="space-y-1">
-                            <div className="flex items-center gap-2">
-                              <CreditCard className="w-4 h-4 text-emerald-400" />
-                              <span className="font-extrabold text-sm text-slate-200 tracking-wide uppercase">Annual Member Subscription</span>
-                            </div>
-                            <p className="text-xs text-slate-400">Includes Digital Membership Card & Official Trade Wings access</p>
-                          </div>
-                          <div className="flex items-baseline gap-1 self-start sm:self-center shrink-0">
-                            <span className="text-[10px] text-slate-400 uppercase font-bold">Total:</span>
-                            <span className="font-display text-3xl font-black text-emerald-450 tracking-tight">₹500</span>
-                            <span className="text-xs text-slate-400">/year</span>
-                          </div>
-                        </div>
-                        
-                        <div className="h-px bg-slate-800/80 my-4" />
-                        
-                        <div className="flex flex-col sm:flex-row justify-between gap-3 text-[11px] text-slate-400 relative z-10">
-                          <span className="flex items-center gap-1.5">
-                            <Shield className="w-3.5 h-3.5 text-emerald-400" /> 256-bit Secure Encryption Checkout
-                          </span>
-                          <span className="bg-slate-800 px-2.5 py-1 rounded-md text-[10px] text-amber-300 font-bold border border-slate-700/50">
-                            Demo Mode: No real payment processed
-                          </span>
-                        </div>
+                      
+                      <div className="h-px bg-slate-800/80 my-4" />
+                      
+                      <div className="flex flex-col sm:flex-row justify-between gap-3 text-[11px] text-slate-400 relative z-10">
+                        <span className="flex items-center gap-1.5">
+                          <Shield className="w-3.5 h-3.5 text-emerald-400" /> 256-bit Secure Encryption Checkout
+                        </span>
+                        <span className="bg-slate-800 px-2.5 py-1 rounded-md text-[10px] text-amber-300 font-bold border border-slate-700/50">
+                          Demo Mode: No real payment processed
+                        </span>
                       </div>
                     </div>
                   </div>
                 )}
 
-                {/* ─── Step 4: Success ─── */}
+                {/* ─── Step 4: Success & ID Card ─── */}
                 {step === 4 && (
                   <div className="py-6 flex flex-col items-center animate-fadeIn">
                     {/* Success badge */}
@@ -1055,57 +1811,23 @@ function Membership() {
                       <p className="text-xs text-slate-500 mt-1 leading-relaxed">Welcome to the Tamil Nadu Vanigargalin Sangamam community.</p>
                     </div>
 
-                    {/* Premium Digital Membership Card Mockup */}
-                    <div className="w-full max-w-md bg-linear-to-br from-slate-900 to-blue-950 border border-slate-800/80 rounded-3xl p-6 mb-8 relative overflow-hidden shadow-xl shadow-primary/10 group">
-                      {/* Decorative backdrop elements */}
-                      <div className="absolute top-0 right-0 w-44 h-44 bg-primary/20 rounded-full blur-3xl translate-x-1/4 -translate-y-1/4 pointer-events-none group-hover:bg-primary/25 transition duration-500" />
-                      <div className="absolute bottom-0 left-0 w-36 h-36 bg-emerald-500/10 rounded-full blur-2xl -translate-x-1/4 translate-y-1/4 pointer-events-none" />
-                      
-                      {/* Card Header branding */}
-                      <div className="flex justify-between items-start gap-4 mb-6 relative z-10 pb-4 border-b border-white/10">
-                        <div className="flex items-center gap-2">
-                          <img src={orgLogo} className="w-8 h-8 rounded-full border border-white/20 bg-white object-contain" alt="TNVS Logo" />
-                          <div>
-                            <div className="text-[10px] font-black text-white leading-none tracking-wider uppercase">TNVS</div>
-                            <div className="text-[8px] text-slate-455 mt-0.5 leading-none font-tamil font-normal">வணிகர்களின் சங்கமம்</div>
+                    {/* Both card faces display */}
+                    <div className="w-full max-w-md bg-slate-50 border border-slate-200 rounded-3xl p-6 mb-8 flex flex-col items-center gap-6 shadow-sm">
+                      <div className="w-full">
+                        <p className="text-xs font-semibold text-slate-550 uppercase tracking-widest mb-2 text-center">முன்பக்கம் · FRONT</p>
+                        <div ref={frontRef} className="card-scale-wrapper">
+                          <div className="responsive-card-scale">
+                            <VoterIdCard voter={generatedVoter} template="front" />
                           </div>
                         </div>
-                        <div className="bg-primary/30 border border-primary/45 rounded-full px-2.5 py-0.5 text-[8px] font-bold uppercase tracking-wider text-blue-300">
-                          Active Member
-                        </div>
                       </div>
-
-                      {/* Official EPIC ID Code */}
-                      <div className="mb-6 relative z-10">
-                        <div className="text-[9px] uppercase font-bold tracking-wider text-slate-455 mb-1">Official ID / EPIC</div>
-                        <div className="font-mono text-2xl sm:text-3xl font-black text-transparent bg-clip-text bg-linear-to-r from-blue-200 via-indigo-100 to-blue-100 tracking-widest">{epic}</div>
-                      </div>
-
-                      {/* Credentials Grid */}
-                      <div className="grid grid-cols-2 gap-4 relative z-10 text-white pt-2">
-                        <div>
-                          <div className="text-[9px] text-slate-455 font-bold uppercase tracking-wider mb-0.5">Name / பெயர்</div>
-                          <div className="text-sm font-bold text-slate-100 truncate">{form.name || "Sangamam Member"}</div>
-                        </div>
-                        <div>
-                          <div className="text-[9px] text-slate-455 font-bold uppercase tracking-wider mb-0.5">District / மாவட்டம்</div>
-                          <div className="text-sm font-bold text-slate-100 truncate">{form.district}</div>
-                        </div>
-                        {form.shop && (
-                          <div className="col-span-2">
-                            <div className="text-[9px] text-slate-455 font-bold uppercase tracking-wider mb-0.5">Business Name / கடை பெயர்</div>
-                            <div className="text-sm font-bold text-slate-100 truncate leading-snug">{form.shop}</div>
+                      <div className="w-full border-t border-slate-200 pt-5">
+                        <p className="text-xs font-semibold text-slate-550 uppercase tracking-widest mb-2 text-center">பின்பக்கம் · BACK</p>
+                        <div ref={backRef} className="card-scale-wrapper">
+                          <div className="responsive-card-scale">
+                            <VoterIdCard voter={generatedVoter} template="back" />
                           </div>
-                        )}
-                      </div>
-
-                      {/* Bottom decorative barcode pattern representation */}
-                      <div className="mt-6 pt-4 border-t border-white/5 flex justify-between items-center relative z-10">
-                        <div className="flex flex-col gap-0.5">
-                          <span className="text-[8px] text-slate-500 uppercase font-black tracking-wider leading-none">TAMIL NADU, INDIA</span>
-                          <span className="text-[7px] text-slate-655 font-tamil font-normal mt-0.5 leading-none">அதிகாரப்பூர்வ அட்டை</span>
                         </div>
-                        <div className="h-6 w-24 opacity-60 bg-[repeating-linear-gradient(90deg,#fff,#fff_2px,#000_2px,#000_5px)]" />
                       </div>
                     </div>
 
@@ -1129,18 +1851,33 @@ function Membership() {
                     </div>
 
                     {/* CTA Actions */}
-                    <div className="flex flex-col sm:flex-row gap-3 w-full max-w-md">
+                    <div className="flex flex-col sm:flex-row gap-3 w-full max-w-md justify-center">
+                      {shareMsg && <span className="text-xs text-primary font-medium w-full text-center block mb-2">{shareMsg}</span>}
                       <button
                         onClick={downloadCertificate}
-                        className="btn-primary flex-1 justify-center py-3 rounded-xl text-xs font-bold shadow-md cursor-pointer transition active:scale-95"
+                        className="btn-primary flex-1 justify-center py-3 rounded-xl text-xs font-bold shadow-md cursor-pointer transition active:scale-95 flex items-center gap-1.5"
                       >
                         <Download className="w-4 h-4" /> Download Certificate
                       </button>
+                      <button
+                        onClick={handlePrint}
+                        className="bg-slate-900 hover:bg-slate-800 text-white flex-1 justify-center py-3 rounded-xl text-xs font-bold shadow-xs cursor-pointer transition active:scale-95 flex items-center gap-1.5 border-none"
+                      >
+                        <Printer className="w-4 h-4" /> Print / PDF Card
+                      </button>
+                      <button
+                        onClick={() => handleShare(generatedMno)}
+                        className="bg-slate-100 hover:bg-slate-200 text-slate-700 flex-1 justify-center py-3 rounded-xl text-xs font-bold shadow-xxs cursor-pointer transition active:scale-95 flex items-center gap-1.5 border border-slate-200"
+                      >
+                        <Share2 className="w-4 h-4" /> Share
+                      </button>
+                    </div>
+                    <div className="w-full max-w-md mt-4 text-center">
                       <Link
                         to="/dashboard"
-                        className="btn-secondary flex-1 justify-center py-3 rounded-xl text-xs font-bold border border-slate-200 bg-white hover:bg-slate-50 shadow-xs cursor-pointer transition active:scale-95 flex items-center gap-1.5"
+                        className="text-xs font-semibold text-[#002B7F] hover:underline inline-flex items-center gap-1"
                       >
-                        <FileCheck className="w-4 h-4 text-slate-500" /> Go to Dashboard
+                        <FileCheck className="w-3.5 h-3.5" /> Go to Dashboard
                       </Link>
                     </div>
                   </div>
@@ -1154,7 +1891,7 @@ function Membership() {
                 <button
                   onClick={back}
                   disabled={step === 1 || submitting}
-                  className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-bold text-slate-500 hover:text-slate-850 hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent transition cursor-pointer rounded-xl"
+                  className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-bold text-slate-500 hover:text-slate-850 hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent transition cursor-pointer rounded-xl border-none bg-transparent"
                 >
                   <ArrowLeft className="w-4 h-4" /> Back
                 </button>
@@ -1169,6 +1906,8 @@ function Membership() {
                       <><Loader2 className="w-4 h-4 animate-spin" /> Processing…</>
                     ) : step === 3 ? (
                       <>Pay ₹500 & Submit <ArrowRight className="w-4 h-4" /></>
+                    ) : step === 2 ? (
+                      <>Generate ID Card <ArrowRight className="w-4 h-4" /></>
                     ) : (
                       <>Continue <ArrowRight className="w-4 h-4" /></>
                     )}
@@ -1180,6 +1919,34 @@ function Membership() {
         </div>
       </div>
 
+      {/* Right Column: Unity Banner */}
+      {step < 4 && (
+        <div className="w-full lg:w-80 shrink-0 bg-white rounded-3xl border border-slate-200/60 p-5 flex flex-col items-center gap-5 shadow-xs overflow-hidden">
+          <div className="w-full aspect-square flex items-center justify-center bg-slate-50 rounded-2xl overflow-hidden relative">
+            <img 
+              src={unityHands} 
+              alt="Unity" 
+              className="w-[70%] h-[70%] object-contain animate-slow-spin" 
+            />
+          </div>
+          <div className="space-y-1.5 text-center lg:text-left">
+            <h3 className="font-display font-bold text-base text-slate-800 leading-tight">
+              {t("வணிகர்கள் சங்கமம் — ஒற்றுமையே வலிமை", "Traders Union — Unity is Strength")}
+            </h3>
+            <p className="text-xs text-slate-550 leading-relaxed font-tamil">
+              {t(
+                "நமக்குள் இருக்கும் கருத்து வேறுபாடுகளைக் களைந்து, ஒற்றுமையுடன் செயல்பட்டு நமது உரிமைகளைப் பாதுகாப்போம்.",
+                "Let us set aside our differences, work together in unity, and protect our rights and business interests."
+              )}
+            </p>
+          </div>
+        </div>
+      )}
+
+    </div>
+
+  </div>
+
       {/* ── Webcam Modal ── */}
       {useWebcam && (
         <div className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm grid place-items-center p-4">
@@ -1189,30 +1956,87 @@ function Membership() {
                 <Camera className="w-4 h-4 text-primary" />
                 <span className="font-bold text-sm text-slate-800">Selfie Camera Scanner</span>
               </div>
-              <button onClick={() => setUseWebcam(false)} className="text-slate-400 hover:text-slate-600 text-xs font-semibold">✕ Close</button>
+              <button onClick={() => setUseWebcam(false)} className="text-slate-400 hover:text-slate-600 text-xs font-semibold border-none bg-transparent cursor-pointer">✕ Close</button>
             </div>
             <div className="aspect-square bg-slate-950 rounded-xl relative overflow-hidden flex items-center justify-center">
-              <div className="w-40 h-40 rounded-full border-4 border-dashed border-primary/60 animate-pulse absolute" />
-              <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-primary/40 -translate-y-1/2 animate-bounce" />
-              {webcamCapturing ? (
-                <div className="text-white text-xs space-y-2">
-                  <Loader2 className="w-6 h-6 animate-spin mx-auto text-primary" />
+              {tempSelfie ? (
+                <img
+                  src={tempSelfie}
+                  alt="Captured Selfie"
+                  className="w-full h-full object-cover"
+                />
+              ) : !cameraError ? (
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  playsInline
+                  muted
+                  className="w-full h-full object-cover scale-x-[-1]"
+                />
+              ) : (
+                <div className="text-center p-4">
+                  <div className="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-2">
+                    <Camera className="w-6 h-6 text-slate-550" />
+                  </div>
+                  <span className="text-slate-400 text-xs block">Camera Access Blocked / Unavailable</span>
+                  <span className="text-slate-500 text-[10px] mt-1 block">Simulating fallback capture...</span>
+                </div>
+              )}
+              
+              {!tempSelfie && (
+                <>
+                  <div className="w-40 h-40 rounded-full border-4 border-dashed border-primary/60 animate-pulse absolute pointer-events-none" />
+                  <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-primary/40 -translate-y-1/2 animate-bounce pointer-events-none" />
+                </>
+              )}
+              {webcamCapturing && (
+                <div className="absolute inset-0 bg-slate-950/80 flex flex-col items-center justify-center text-white text-xs space-y-2">
+                  <Loader2 className="w-6 h-6 animate-spin text-primary" />
                   <span>Scanning Face...</span>
                 </div>
-              ) : (
-                <span className="text-slate-500 text-xs">Position your face inside the circle</span>
               )}
             </div>
-            <p className="text-xs text-slate-500">Align your face inside the scanning circle</p>
-            <button
-              type="button"
-              onClick={handleSelfieSimulate}
-              disabled={webcamCapturing}
-              className="btn-primary w-full justify-center"
-            >
-              {webcamCapturing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Camera className="w-4 h-4" />}
-              Capture Photo
-            </button>
+            {tempSelfie ? (
+              <p className="text-xs text-slate-500 font-tamil leading-relaxed">
+                {language === "ta" 
+                  ? "புகைப்படம் உங்களுக்கு திருப்தியா? அல்லது மீண்டும் எடுக்க வேண்டுமா?" 
+                  : "Are you satisfied with this photo? Or would you like to retake it?"}
+              </p>
+            ) : (
+              <p className="text-xs text-slate-500">
+                {language === "ta" 
+                  ? "உங்கள் முகத்தை வட்டத்திற்குள் நேராக வைக்கவும்" 
+                  : "Align your face inside the scanning circle"}
+              </p>
+            )}
+            {tempSelfie ? (
+              <div className="flex gap-3 w-full">
+                <button
+                  type="button"
+                  onClick={handleSelfieConfirm}
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white flex-1 justify-center py-2.5 rounded-xl font-bold text-xs flex items-center gap-1.5 cursor-pointer border-none shadow-sm transition active:scale-98"
+                >
+                  <Check className="w-4 h-4" /> {language === "ta" ? "சரி / OK" : "OK"}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSelfieRetake}
+                  className="bg-slate-100 hover:bg-slate-200 text-slate-700 flex-1 justify-center py-2.5 rounded-xl font-bold text-xs flex items-center gap-1.5 cursor-pointer border border-slate-200 shadow-xxs transition active:scale-98"
+                >
+                  <RefreshCw className="w-3.5 h-3.5" /> {language === "ta" ? "மீண்டும் எடு" : "Retake Photo"}
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={handleSelfieCapture}
+                disabled={webcamCapturing}
+                className="btn-primary w-full justify-center cursor-pointer py-2.5 rounded-xl font-bold"
+              >
+                {webcamCapturing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Camera className="w-4 h-4" />}
+                {language === "ta" ? "புகைப்படம் எடு" : "Capture Photo"}
+              </button>
+            )}
           </div>
         </div>
       )}

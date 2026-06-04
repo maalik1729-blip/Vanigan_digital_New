@@ -13,7 +13,7 @@ export const Route = createFileRoute("/analytics")({
   head: () => ({
     meta: [
       { title: "Association Analytics · Tamil Nadu Vanigargalin Sangamam" },
-      { name: "description", content: "Interactive growth insights, regional distributions, and welfare capital allocation statistics of TNVS." },
+      { name: "description", content: "Interactive growth insights, regional distributions, and business credit capital allocation statistics of TNVS." },
     ],
   }),
   component: AnalyticsDashboard,
@@ -61,9 +61,9 @@ export const districtStats: DistrictStat[] = [
 
 export type WelfareSegment = { nameEn: string; nameTa: string; value: number; amount: string; percentage: number; color: string; dashArray: string; dashOffset: string };
 export const welfareDistribution: WelfareSegment[] = [
-  { nameEn: "Medical Health Cover", nameTa: "சுகாதார காப்பீடு", value: 45, amount: "₹3.78 Cr", percentage: 45, color: "#10b981", dashArray: "282.7", dashOffset: "0" },
-  { nameEn: "Educational Aid", nameTa: "கல்வி உதவித்தொகை", value: 30, amount: "₹2.52 Cr", percentage: 30, color: "#3b82f6", dashArray: "282.7", dashOffset: "127.2" },
-  { nameEn: "Emergency Relief", nameTa: "அவசர நிவாரணம்", value: 25, amount: "₹2.10 Cr", percentage: 25, color: "#f59e0b", dashArray: "282.7", dashOffset: "212.0" },
+  { nameEn: "Retail Trader Loans", nameTa: "சில்லறை வணிகக் கடன்", value: 45, amount: "₹5.62 Cr", percentage: 45, color: "#10b981", dashArray: "282.7", dashOffset: "0" },
+  { nameEn: "Young Entrepreneur Loans", nameTa: "இளைய தொழில்முனைவோர் கடன்", value: 30, amount: "₹3.75 Cr", percentage: 30, color: "#3b82f6", dashArray: "282.7", dashOffset: "127.2" },
+  { nameEn: "Micro & Street Vendor Loans", nameTa: "குறுந்தொழில் கடன்", value: 25, amount: "₹3.13 Cr", percentage: 25, color: "#f59e0b", dashArray: "282.7", dashOffset: "212.0" },
 ];
 
 function AnalyticsDashboard() {
@@ -231,17 +231,17 @@ function AnalyticsDashboard() {
                   <div className="flex justify-between items-start">
                     <div>
                       <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 font-sans">
-                        {t("வழங்கப்பட்ட நலத்திட்டங்கள்", "WELFARE DISBURSED")}
+                        {t("வழங்கப்பட்ட கடனுதவி", "CREDIT DISBURSED")}
                       </div>
                       <div className="text-3xl font-extrabold text-slate-800 mt-2 tracking-tight tabular-nums">
                         ₹8.40 Cr
                       </div>
                     </div>
-                    <div className="p-2 bg-emerald-500/10 text-emerald-600 rounded-xl shrink-0"><HeartPulse className="w-5 h-5" /></div>
+                    <div className="p-2 bg-emerald-500/10 text-emerald-600 rounded-xl shrink-0"><Award className="w-5 h-5" /></div>
                   </div>
                   <div className="flex items-center gap-1 mt-4 text-xs font-semibold text-emerald-600">
                     <CheckCircle2 className="w-4 h-4" />
-                    <span>94.8% {t("ஒப்புதல் விகிதம்", "claim approval")}</span>
+                    <span>94.8% {t("ஒப்புதல் விகிதம்", "loan approval")}</span>
                   </div>
                 </div>
 

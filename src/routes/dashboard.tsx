@@ -22,12 +22,14 @@ import { ActivityCard } from "@/components/ActivityCard";
 import { StatusPill } from "@/components/StatusPill";
 import { EmptyState } from "@/components/EmptyState";
 import orgLogo from "@/assets/ChatGPT Image Mar 25, 2026, 05_31_25 PM (1).png";
+import votersData from "@/data/voters.json";
+import ownerPhoto from "@/assets/349b584e-1b60-469e-9e5d-8d124cb057cb.png";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
     meta: [
       { title: "Member Dashboard · TN Vanigargalin Sangamam" },
-      { name: "description", content: "Member dashboard — view your EPIC ID, download certificate, manage renewals and welfare claims." },
+      { name: "description", content: "Member dashboard — view your EPIC ID, download certificate, manage renewals and loans." },
     ],
   }),
   component: Dashboard,
@@ -72,6 +74,63 @@ function Dashboard() {
   const [epicId, setEpicId] = useState<string | null>(() => getSession());
   const [dashboardTab, setDashboardTab] = useState<"overview" | "loans" | "recruiter" | "tools">("overview");
 
+  const currentMember = useMemo(() => {
+    if (!epicId) return null;
+    const cleanEpic = epicId.trim().toUpperCase();
+    
+    // 1. Check local storage registered profile
+    const savedMember = localStorage.getItem(`tnvs_member_${cleanEpic}`);
+    if (savedMember) {
+      try {
+        const profile = JSON.parse(savedMember);
+        if (profile) return profile;
+      } catch {}
+    }
+    
+    // 2. Check votersData
+    const mockVoter = votersData.find(v => v.EPIC_NO?.toUpperCase() === cleanEpic) as any;
+    if (mockVoter) {
+      return {
+        name: mockVoter.VOTER_NAME,
+        epic: mockVoter.EPIC_NO,
+        mobile: mockVoter.MOBILE_NUMBER,
+        district: mockVoter.DISTRICT || mockVoter.MAIN_TOWN || "Chennai",
+        assembly: mockVoter.ASSEMBLY_NAME || "Mylapore",
+        shop: mockVoter.POLLING_STATION_NAME || "Shop Detail",
+        type: mockVoter.BUSINESS_TYPE || "Retail",
+        address: mockVoter.POLLING_STATION_ADDRESS || "",
+        email: mockVoter.EMAIL || "",
+        dob: mockVoter.DOB || "",
+        age: mockVoter.AGE || "35",
+        gender: mockVoter.GENDER || "Male",
+        bloodGroup: mockVoter.BLOOD_GROUP || "O+",
+        photoUrl: mockVoter.PHOTO_URL || "",
+        years: "5",
+        wing: mockVoter.BUSINESS_TYPE || "Retail"
+      };
+    }
+    
+    // 3. Fallback to President
+    return {
+      name: "Senthil Kumar N",
+      epic: cleanEpic,
+      mobile: "+91 944 20 •• 44",
+      district: "Chennai",
+      assembly: "Mylapore",
+      shop: "Senthil Traders",
+      type: "Retail",
+      address: "Mylapore, Chennai",
+      email: "president@tnvs.org",
+      dob: "1985-05-15",
+      age: "41",
+      gender: "Male",
+      bloodGroup: "A+",
+      photoUrl: "",
+      years: "15",
+      wing: "Retail"
+    };
+  }, [epicId]);
+
   // Subsidized Loan Gated States
   const [showLoanCategories, setShowLoanCategories] = useState(true);
   const [isLoanModalOpen, setIsLoanModalOpen] = useState(false);
@@ -87,7 +146,7 @@ function Dashboard() {
     
     setLoanModalSubject(subject);
     setLoanChatStep(1);
-    setLoanInputs({ name: "Senthil Kumar N", phone: "+91 944 20 •• 44", amount: "" });
+    setLoanInputs({ name: currentMember?.name || "Senthil Kumar N", phone: currentMember?.mobile || "+91 944 20 •• 44", amount: "" });
     setIsLoanModalOpen(true);
   };
 
@@ -192,6 +251,18 @@ function Dashboard() {
     reason: "",
     age: "30"
   });
+
+  useEffect(() => {
+    if (currentMember) {
+      setWelfareFormInputs(prev => ({
+        ...prev,
+        shopName: currentMember.shop || "Senthil Traders",
+        proprietorName: currentMember.name,
+        phone: currentMember.mobile,
+        age: currentMember.age || "30",
+      }));
+    }
+  }, [currentMember]);
   const [welfareUploads, setWelfareUploads] = useState<Array<{ name: string; size: string; progress: number; status: "uploading" | "done" }>>([]);
   const [isWelfareUploading, setIsWelfareUploading] = useState(false);
   const [welfareClaims, setWelfareClaims] = useState<Array<{
@@ -366,7 +437,7 @@ function Dashboard() {
 
   const handleDownloadIdCard = () => {
     if (!epicId) return;
-    navigate({ to: "/voter-id", search: { q: epicId } } as never);
+    navigate({ to: "/voter-id", search: { epic: epicId } } as never);
   };
 
   const handleOptInCoordinator = () => {
@@ -428,7 +499,7 @@ function Dashboard() {
                 <StatusPill status="active" label="ACTIVE" />
               </div>
               <h1 className="mt-2.5 font-display text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">
-                {t("வணக்கம், செந்தில் குமார் N", "Welcome, Senthil Kumar N")}
+                {t("வணக்கம், " + (currentMember?.name || "செந்தில் குமார் N"), "Welcome, " + (currentMember?.name || "Senthil Kumar N"))}
               </h1>
               <p className="font-tamil text-xs md:text-sm text-slate-550 mt-0.5">
                 {t("உங்கள் உறுப்பினர் கணக்கு செயலில் உள்ளது.", "Your membership account is active.")}
@@ -511,13 +582,22 @@ function Dashboard() {
                   <div className="bg-linear-to-br from-slate-900 via-blue-950 to-slate-950 text-white rounded-3xl border border-slate-800 p-6 relative overflow-hidden shadow-xl shadow-primary/10 group">
                     <div className="absolute top-0 right-0 w-36 h-36 bg-primary/20 rounded-full blur-3xl translate-x-1/4 -translate-y-1/4 pointer-events-none group-hover:bg-primary/25 transition duration-500" />
                     
-                    <div className="flex justify-between items-start pb-4 border-b border-white/10">
-                      <div>
-                        <div className="text-[9px] font-extrabold uppercase tracking-wider text-slate-400">
-                          {t("உறுப்பினர் அடையாள எண்", "Membership ID")}
+                    <div className="flex justify-between items-center pb-4 border-b border-white/10 gap-4">
+                      <div className="flex items-center gap-3.5">
+                        <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-amber-400 bg-slate-850 shadow-md shrink-0">
+                          <img 
+                            src={currentMember?.photoUrl || ownerPhoto} 
+                            alt={currentMember?.name || "Member Photo"} 
+                            className="w-full h-full object-cover" 
+                          />
                         </div>
-                        <div className="font-mono text-lg font-black text-transparent bg-clip-text bg-linear-to-r from-blue-200 to-indigo-150 mt-1 tracking-wider">
-                          {epicId}
+                        <div>
+                          <div className="text-[9px] font-extrabold uppercase tracking-wider text-slate-400">
+                            {t("உறுப்பினர் அடையாள எண்", "Membership ID")}
+                          </div>
+                          <div className="font-mono text-base font-black text-transparent bg-clip-text bg-linear-to-r from-amber-300 via-yellow-100 to-amber-400 tracking-wider">
+                            {epicId}
+                          </div>
                         </div>
                       </div>
                       <div className="w-10 h-10 rounded-xl overflow-hidden border border-white/20 p-1 bg-white shadow-xs shrink-0">
@@ -526,12 +606,12 @@ function Dashboard() {
                     </div>
 
                     <div className="mt-5 grid grid-cols-2 gap-4">
-                      <InfoCellDark label="Member Name"        value="Senthil Kumar N" />
-                      <InfoCellDark label="District"           value="Chennai" />
-                      <InfoCellDark label="Zone"               value="Chennai Zone" />
-                      <InfoCellDark label="Assembly"           value="Mylapore" />
-                      <InfoCellDark label="Registered Mobile"  value="+91 944 20 •• 44" />
-                      <InfoCellDark label="Member Class"       value="A+ Patron" />
+                      <InfoCellDark label="Member Name"        value={currentMember?.name || "Senthil Kumar N"} />
+                      <InfoCellDark label="District"           value={currentMember?.district || "Chennai"} />
+                      <InfoCellDark label="Zone"               value={currentMember?.district ? `${currentMember.district} Zone` : "Chennai Zone"} />
+                      <InfoCellDark label="Assembly"           value={currentMember?.assembly || "Mylapore"} />
+                      <InfoCellDark label="Registered Mobile"  value={currentMember?.mobile || "+91 944 20 •• 44"} />
+                      <InfoCellDark label="Member Class"       value={currentMember?.type || "A+ Patron"} />
                     </div>
 
                     <div className="mt-5 flex items-center justify-between border-t border-white/10 pt-4">
@@ -1512,7 +1592,7 @@ function Dashboard() {
                         {[
                           { name: "Siva Shanmugam", location: "Salem", invites: 24, rank: "1st" },
                           { name: "Muthu Pandian", location: "Madurai", invites: 18, rank: "2nd" },
-                          { name: "Senthil Kumar N (You)", location: "Chennai", invites: 5, rank: "3rd" },
+                          { name: `${currentMember?.name || "Senthil Kumar N"} (You)`, location: currentMember?.district || "Chennai", invites: 5, rank: "3rd" },
                         ].map((item, index) => (
                           <div key={index} className={`flex items-center justify-between text-[11px] p-2.5 rounded-xl border ${
                             item.invites === 5 
@@ -1940,8 +2020,8 @@ function Dashboard() {
                       </div>
                       <div className="bg-white border border-slate-200/80 p-3 rounded-2xl rounded-tl-none shadow-xs text-xs text-slate-700 font-tamil leading-relaxed">
                         {t(
-                          `அருமை! உங்களது பதிவு செய்யப்பட்ட பெயர்: செந்தில் குமார் N மற்றும் கைபேசி எண்: +91 944 20 •• 44. இந்த விவரங்களுடன் கடன் கோரிக்கையைச் சமர்ப்பிக்கலாமா?`,
-                          `Excellent! Your registered name is Senthil Kumar N and mobile: +91 944 20 •• 44. Shall we submit the request with these details?`
+                          `அருமை! உங்களது பதிவு செய்யப்பட்ட பெயர்: ${currentMember?.name || "செந்தில் குமார் N"} மற்றும் கைபேசி எண்: ${currentMember?.mobile || "+91 944 20 •• 44"}. இந்த விவரங்களுடன் கடன் கோரிக்கையைச் சமர்ப்பிக்கலாமா?`,
+                          `Excellent! Your registered name is ${currentMember?.name || "Senthil Kumar N"} and mobile: ${currentMember?.mobile || "+91 944 20 •• 44"}. Shall we submit the request with these details?`
                         )}
                       </div>
                     </div>

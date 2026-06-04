@@ -80,7 +80,98 @@ function Services() {
     subject?: string;
   }>({ type: null });
 
+  const cardStyles = [
+    {
+      bg: "bg-slate-950 text-white border-slate-900 shadow-2xl",
+      title: "text-white border-b-2 border-slate-800/50",
+      pill: "bg-slate-900 border border-slate-800/30 text-slate-300",
+      itemBg: "bg-slate-900/60 border border-slate-800/80 hover:border-slate-700/50 hover:bg-slate-900/85",
+      itemIconBg: "bg-slate-800 text-gold group-hover:bg-gold group-hover:text-slate-950",
+      itemTitle: "text-slate-100",
+      itemDesc: "text-slate-400",
+      itemBorder: "border-t border-slate-900/80",
+      itemLink: "text-gold hover:text-gold/90"
+    },
+    {
+      bg: "bg-blue-900 text-white border-blue-800 shadow-2xl",
+      title: "text-white border-b-2 border-blue-800/50",
+      pill: "bg-blue-950 border border-blue-850 text-blue-200",
+      itemBg: "bg-blue-950/40 border border-blue-800/30 hover:border-blue-750/50 hover:bg-blue-950/60",
+      itemIconBg: "bg-blue-950 text-gold group-hover:bg-gold group-hover:text-blue-950",
+      itemTitle: "text-blue-100",
+      itemDesc: "text-blue-200/60",
+      itemBorder: "border-t border-blue-900/80",
+      itemLink: "text-gold hover:text-gold/90"
+    },
+    {
+      bg: "bg-white text-slate-900 border-slate-200/80 shadow-2xl",
+      title: "text-ink border-b-2 border-primary/20",
+      pill: "bg-slate-50 border border-slate-200 text-muted-foreground",
+      itemBg: "bg-slate-50/50 border border-slate-100 hover:border-slate-200 hover:bg-slate-50/85",
+      itemIconBg: "bg-primary/8 text-primary group-hover:bg-primary group-hover:text-white",
+      itemTitle: "text-ink",
+      itemDesc: "text-muted-foreground",
+      itemBorder: "border-t border-slate-100",
+      itemLink: "text-primary hover:text-primary/90"
+    }
+  ];
+
   const modalRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  useEffect(() => {
+    const cards = cardRefs.current;
+    if (!cards.length) return;
+
+    const onScroll = () => {
+      const isMobile = window.innerWidth < 768;
+
+      cards.forEach((card, i) => {
+        if (!card) return;
+        const innerCard = card.firstElementChild as HTMLElement;
+        if (!innerCard) return;
+
+        if (isMobile) {
+          innerCard.style.transform = "none";
+          innerCard.style.filter = "none";
+          return;
+        }
+
+        const parentRect = card.parentElement?.getBoundingClientRect();
+        if (!parentRect) return;
+
+        const cardRect = card.getBoundingClientRect();
+        const stickyTop = 96 + i * 24;
+
+        // Layout top of card relative to the viewport (ignoring stickiness)
+        const cardY = card.offsetTop;
+        const cardViewportTop = parentRect.top + cardY;
+
+        // How far past its sticky-top coordinate is the card scroll-pushed?
+        const pushed = Math.max(0, stickyTop - cardViewportTop);
+        const cardH  = Math.max(cardRect.height, 1);
+        const progress = Math.min(1, pushed / cardH);
+
+        // Scroll-driven stacking card scale down and dimming formula
+        const isLast = i === cats.length - 1;
+        const scrollScale = isLast ? 1 : 1 - progress * 0.04;
+        const scrollDim = isLast ? 1 : 1 - progress * 0.15;
+
+        innerCard.style.transform = `scale(${scrollScale})`;
+        innerCard.style.transformOrigin = "top center";
+        innerCard.style.filter = `brightness(${scrollDim})`;
+      });
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    onScroll();
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
 
   // Modal Step State
   const [step, setStep] = useState(1);
@@ -225,69 +316,76 @@ function Services() {
         </div>
       </section>
 
-      <Section className="py-10 sm:py-14 pb-[280px]">
-        <div className="space-y-12 sm:space-y-16">
-          {cats.map((cat, idx) => (
-            <div
-              key={cat.label}
-              className="bg-card border border-border/80 shadow-2xl p-6 sm:p-8 md:p-10 transition-all duration-300"
-              style={{
-                position: "sticky",
-                top: `${96 + idx * 32}px`,
-                zIndex: 10 + idx,
-                borderRadius: "1.75rem",
-                marginBottom: idx < cats.length - 1 ? "3rem" : 0,
-              }}
-            >
-              <div className="flex items-baseline justify-between border-b-2 border-primary/20 pb-3 mb-5 sm:mb-6">
-                <h2 className="font-display text-xl sm:text-2xl font-bold text-ink">{t(cat.label, cat.labelEn)}</h2>
-                <span className="text-xs text-muted-foreground bg-white border border-slate-200 px-2.5 py-1 rounded-full font-medium whitespace-nowrap ml-2">
-                  {cat.items.length} {t("சேவைகள்", "services")}
-                </span>
-              </div>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                {cat.items.map((s) => {
-                  const CardContent = (
-                    <>
-                      {s.e === "New Membership" && (
-                        <span className="absolute -top-3 left-4 bg-emerald-600 text-white text-xs font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm animate-pulse z-10">
-                          {t("இங்கே தொடங்கவும் · START HERE", "START HERE")}
-                        </span>
-                      )}
-                      <div className="text-left w-full">
-                        <div className="w-11 h-11 rounded-lg bg-primary/8 grid place-items-center text-primary transition-colors group-hover:bg-primary group-hover:text-white shrink-0"><s.i className="w-5 h-5" /></div>
-                        <h3 className="mt-3 sm:mt-4 font-display text-base sm:text-lg font-semibold text-ink leading-tight">{t(s.t, s.e)}</h3>
-                        <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{t(s.d, s.de)}</p>
-                      </div>
-                      <div className="mt-4 pt-3 border-t border-slate-50 flex items-center justify-between w-full">
-                        <span className="inline-flex items-center gap-1 text-sm font-semibold text-primary group-hover:gap-2 transition-all">
-                          {s.to ? t("செல்க", "Apply / Go") : t("விண்ணப்பிக்க", "Request / Apply")} <ArrowRight className="w-4 h-4" />
-                        </span>
-                      </div>
-                    </>
-                  );
+      <Section className="py-10 sm:py-14 pb-[180px]">
+        <div className="relative">
+          {cats.map((cat, idx) => {
+            const styles = cardStyles[2];
 
-                  return s.to ? (
-                    <Link
-                      key={s.e}
-                      to={s.to}
-                      className="relative card-base card-interactive group p-5 sm:p-6 flex flex-col justify-between min-h-[200px] sm:min-h-[220px] text-left cursor-pointer focus:outline-none bg-white"
-                    >
-                      {CardContent}
-                    </Link>
-                  ) : (
-                    <button
-                      key={s.e}
-                      onClick={() => openModal(s.modalType!, t(s.t, s.e))}
-                      className="relative card-base card-interactive group p-5 sm:p-6 flex flex-col justify-between min-h-[200px] sm:min-h-[220px] text-left cursor-pointer focus:outline-none w-full bg-white"
-                    >
-                      {CardContent}
-                    </button>
-                  );
-                })}
+            return (
+              <div
+                key={cat.label}
+                ref={(el) => { cardRefs.current[idx] = el; }}
+                className="md:sticky"
+                style={{
+                  top: `${96 + idx * 24}px`,
+                  zIndex: 10 + idx,
+                  paddingBottom: idx < cats.length - 1 ? "2.5rem" : 0,
+                }}
+              >
+                <div 
+                  className={`w-full max-w-5xl rounded-3xl border p-6 sm:p-8 md:p-10 ${styles.bg}`}
+                >
+                  <div className={`flex items-baseline justify-between pb-3 mb-5 sm:mb-6 ${styles.title}`}>
+                    <h2 className="font-display text-xl sm:text-2xl font-bold">{t(cat.label, cat.labelEn)}</h2>
+                    <span className={`text-xs px-2.5 py-1 rounded-full font-medium whitespace-nowrap ml-2 ${styles.pill}`}>
+                      {cat.items.length} {t("சேவைகள்", "services")}
+                    </span>
+                  </div>
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                    {cat.items.map((s) => {
+                      const CardContent = (
+                        <>
+                          {s.e === "New Membership" && (
+                            <span className="absolute -top-3 left-4 bg-emerald-600 text-white text-xs font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm animate-pulse z-10">
+                              {t("இங்கே தொடங்கவும் · START HERE", "START HERE")}
+                            </span>
+                          )}
+                          <div className="text-left w-full">
+                            <div className={`w-11 h-11 rounded-lg grid place-items-center transition-colors group-hover:bg-primary group-hover:text-white shrink-0 ${styles.itemIconBg}`}><s.i className="w-5 h-5" /></div>
+                            <h3 className={`mt-3 sm:mt-4 font-display text-base sm:text-lg font-semibold leading-tight ${styles.itemTitle}`}>{t(s.t, s.e)}</h3>
+                            <p className={`mt-2 text-sm leading-relaxed ${styles.itemDesc}`}>{t(s.d, s.de)}</p>
+                          </div>
+                          <div className={`mt-4 pt-3 flex items-center justify-between w-full ${styles.itemBorder}`}>
+                            <span className={`inline-flex items-center gap-1 text-sm font-semibold group-hover:gap-2 transition-all ${styles.itemLink}`}>
+                              {s.to ? t("செல்க", "Apply / Go") : t("விண்ணப்பிக்க", "Request / Apply")} <ArrowRight className="w-4 h-4" />
+                            </span>
+                          </div>
+                        </>
+                      );
+
+                      return s.to ? (
+                        <Link
+                          key={s.e}
+                          to={s.to}
+                          className={`relative card-interactive group p-5 sm:p-6 flex flex-col justify-between min-h-[200px] sm:min-h-[220px] text-left cursor-pointer focus:outline-none transition-all duration-300 rounded-2xl ${styles.itemBg}`}
+                        >
+                          {CardContent}
+                        </Link>
+                      ) : (
+                        <button
+                          key={s.e}
+                          onClick={() => openModal(s.modalType!, t(s.t, s.e))}
+                          className={`relative card-interactive group p-5 sm:p-6 flex flex-col justify-between min-h-[200px] sm:min-h-[220px] text-left cursor-pointer focus:outline-none w-full transition-all duration-300 rounded-2xl ${styles.itemBg}`}
+                        >
+                          {CardContent}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </Section>
 
@@ -414,7 +512,7 @@ function Services() {
                           Thank you! Your TNVS membership renewal has been processed. Your digital card is active for the current calendar year.
                         </p>
                         <div className="flex justify-center gap-3 pt-4">
-                          <Link to="/voter-id" search={{ q: undefined }} onClick={closeModal} className="bg-primary text-white px-4 py-2 rounded-lg text-xs font-semibold hover:bg-primary/95 transition shadow">
+                          <Link to="/voter-id" search={{ epic: undefined }} onClick={closeModal} className="bg-primary text-white px-4 py-2 rounded-lg text-xs font-semibold hover:bg-primary/95 transition shadow">
                             View Stamped Card
                           </Link>
                           <button onClick={closeModal} className="border border-slate-200 text-slate-700 px-4 py-2 rounded-lg text-xs hover:bg-slate-50 transition">

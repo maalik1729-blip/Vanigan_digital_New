@@ -34,7 +34,7 @@ function PrivacyPolicy() {
           </div>
 
           <p className="text-sm text-slate-600 leading-relaxed">
-            At <strong>Tamil Nadu Vanigargalin Sangamam (தமிழ்நாடு வணிகர்களின் சங்கமம்)</strong>, we value the trust you place in us as our member. Protecting your personal information is as important to us as ensuring the quality of advocacy, certification, and welfare services we provide. This Privacy Policy explains what information we collect, how we use it, how we safeguard it, and your rights when engaging with our portal—whether for membership, renewal, or welfare applications.
+            At <strong>Tamil Nadu Vanigargalin Sangamam (தமிழ்நாடு வணிகர்களின் சங்கமம்)</strong>, we value the trust you place in us as our member. Protecting your personal information is as important to us as ensuring the quality of advocacy, certification, and business support services we provide. This Privacy Policy explains what information we collect, how we use it, how we safeguard it, and your rights when engaging with our portal—whether for membership, renewal, or loan applications.
           </p>
 
           {/* Section 1 */}

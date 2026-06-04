@@ -54,7 +54,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Tamil Nadu Vanigargalin Sangamam — Trader Membership Portal" },
-      { name: "description", content: "Official portal for Tamil Nadu Vanigargalin Sangamam. Apply for membership, download certificates, access services and trader welfare." },
+      { name: "description", content: "Official portal for Tamil Nadu Vanigargalin Sangamam. Apply for membership, download certificates, and access business support." },
       { name: "theme-color", content: "#1e3a8a" },
     ],
     links: [
@@ -82,8 +82,9 @@ function RootShell({ children }: { children: React.ReactNode }) {
   );
 }
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useLanguage } from "@/hooks/useLanguage";
+import { LoadingPage } from "./loading";
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
@@ -101,6 +102,20 @@ function RootComponent() {
 function RootInner() {
   const { language } = useLanguage();
   const location = useLocation();
+  const [showSplash, setShowSplash] = useState(true);
+  const [isFadingOut, setIsFadingOut] = useState(false);
+
+  useEffect(() => {
+    const fadeTimer = setTimeout(() => {
+      setIsFadingOut(true);
+      const removeTimer = setTimeout(() => {
+        setShowSplash(false);
+      }, 550);
+      return () => clearTimeout(removeTimer);
+    }, 2200);
+
+    return () => clearTimeout(fadeTimer);
+  }, []);
 
   useEffect(() => {
     if (typeof window !== "undefined" && "serviceWorker" in navigator) {
@@ -124,6 +139,11 @@ function RootInner() {
 
   return (
     <>
+      {showSplash && (
+        <div className={`fixed inset-0 z-200 transition-opacity duration-500 ease-in-out ${isFadingOut ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
+          <LoadingPage />
+        </div>
+      )}
       {/*
         Header height breakdown:
           gov-stripe:   3px
