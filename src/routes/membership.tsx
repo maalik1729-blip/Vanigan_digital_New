@@ -40,7 +40,6 @@ import signImg from "@/assets/8bb61dfb-f349-4e0b-8501-560feae9f000.png";
 import kittenTeacup from "@/assets/kitten_teacup.png";
 import unityHands from "@/assets/unity-hands.png";
 import { VoterIdCard, type Voter, membershipNo, getZoneName, formatDob } from "@/components/VoterIdCard";
-import votersData from "@/data/voters.json";
 import { z } from "zod";
 import { WINGS } from "@/data/wings";
 
@@ -277,43 +276,29 @@ function Membership() {
   const maxDob = `${todayDate.getFullYear() - 18}-${String(todayDate.getMonth() + 1).padStart(2, "0")}-${String(todayDate.getDate()).padStart(2, "0")}`;
   const minDob = `${todayDate.getFullYear() - 120}-${String(todayDate.getMonth() + 1).padStart(2, "0")}-${String(todayDate.getDate()).padStart(2, "0")}`;
 
-  const [step, setStep] = useState(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("tnvs_form_step");
-      const parsed = saved ? parseInt(saved, 10) : 1;
-      return parsed >= 5 ? 1 : Math.min(4, Math.max(1, parsed));
-    }
-    return 1;
-  });
+  const [step, setStep] = useState(1);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const isMountedRef = useRef(false);
 
-  const [form, setForm] = useState<MemberForm>(() => {
-    const baseForm = {
-      name: search.name || "",
-      epic: search.epic || "",
-      mobile: search.mobile || "",
-      email: "",
-      dob: "",
-      age: "",
-      gender: "Male",
-      bloodGroup: "O+",
-      assembly: search.assembly || "",
-      district: search.district || "Chennai",
-      shop: "",
-      type: "Retail",
-      address: search.address || "",
-      years: "",
-      wing: search.wing || "",
-    };
-    if (search.name || search.epic) return baseForm;
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("tnvs_form_data");
-      if (saved) {
-        try { return { ...baseForm, ...JSON.parse(saved) }; }
-        catch { return baseForm; }
-      }
-    }
-    return baseForm;
-  });
+  const baseForm = {
+    name: search.name || "",
+    epic: search.epic || "",
+    mobile: search.mobile || "",
+    email: "",
+    dob: "",
+    age: "",
+    gender: "Male",
+    bloodGroup: "O+",
+    assembly: search.assembly || "",
+    district: search.district || "Chennai",
+    shop: "",
+    type: "Retail",
+    address: search.address || "",
+    years: "",
+    wing: search.wing || "",
+  };
+
+  const [form, setForm] = useState<MemberForm>(baseForm);
 
   const [docs, setDocs] = useState<Record<string, File | string | null>>({
     idProof: null,
@@ -425,16 +410,49 @@ function Membership() {
     }
   }, [search.name, search.epic, language]);
 
-  useEffect(() => { localStorage.setItem("tnvs_form_data", JSON.stringify(form)); }, [form]);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedStep = localStorage.getItem("tnvs_form_step");
+      if (savedStep) {
+        const parsed = parseInt(savedStep, 10);
+        if (parsed >= 1 && parsed <= 4) {
+          setStep(parsed);
+        }
+      }
+      
+      const savedData = localStorage.getItem("tnvs_form_data");
+      if (savedData && !(search.name || search.epic)) {
+        try {
+          const parsed = JSON.parse(savedData);
+          if (parsed) {
+            setForm((prev) => ({ ...prev, ...parsed }));
+          }
+        } catch {}
+      }
+      setIsLoaded(true);
+    }
+  }, [search.name, search.epic]);
+
+  useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem("tnvs_form_data", JSON.stringify(form));
+    }
+  }, [form, isLoaded]);
   
   useEffect(() => {
-    if (step < 4) {
-      localStorage.setItem("tnvs_form_step", step.toString());
-    } else {
-      localStorage.removeItem("tnvs_form_step");
+    if (isLoaded) {
+      if (step < 4) {
+        localStorage.setItem("tnvs_form_step", step.toString());
+      } else {
+        localStorage.removeItem("tnvs_form_step");
+      }
     }
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [step]);
+    if (isMountedRef.current) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      isMountedRef.current = true;
+    }
+  }, [step, isLoaded]);
 
   const clearDraft = () => {
     if (window.confirm(language === "ta" ? "உங்கள் படிவத் தகவல்களை நீக்க விரும்புகிறீர்களா?" : "Are you sure you want to clear your registration draft?")) {
@@ -487,20 +505,8 @@ function Membership() {
         return;
       }
     } catch (err) {
-      // Fallback client-side local search
-      const queryLower = queryTerm.toLowerCase();
-      const isEpic = /^[a-zA-Z0-9]{3,20}$/.test(queryTerm);
-      const filtered = votersData.filter((v: any) => {
-        if (isEpic) {
-          return v.EPIC_NO?.toLowerCase() === queryLower;
-        } else {
-          return v.VOTER_NAME?.toLowerCase().includes(queryLower);
-        }
-      });
-      setSearchResults(filtered);
-      if (filtered.length === 0) {
-        toast.info(language === "ta" ? "பொருந்தும் பதிவுகள் எதுவும் கிடைக்கவில்லை" : "No matching records found");
-      }
+      setSearchResults([]);
+      toast.info(language === "ta" ? "பொருந்தும் பதிவுகள் எதுவும் கிடைக்கவில்லை" : "No matching records found");
     } finally {
       setIsSearching(false);
       setHasSearched(true);
@@ -613,7 +619,82 @@ function Membership() {
       if (!validate()) return;
       setSubmitting(true);
 
-      // Auto-save business details to local MySQL
+      // Helper to compress and resize images on the client side
+      const compressAndResizeImage = (src: string | File, maxWidth = 800, maxHeight = 800, quality = 0.7): Promise<string | null> => {
+        return new Promise((resolve) => {
+          const img = new Image();
+          
+          const loadImage = () => {
+            img.onload = () => {
+              const canvas = document.createElement("canvas");
+              let width = img.width;
+              let height = img.height;
+
+              if (width > height) {
+                if (width > maxWidth) {
+                  height = Math.round((height * maxWidth) / width);
+                  width = maxWidth;
+                }
+              } else {
+                if (height > maxHeight) {
+                  width = Math.round((width * maxHeight) / height);
+                  height = maxHeight;
+                }
+              }
+
+              canvas.width = width;
+              canvas.height = height;
+              const ctx = canvas.getContext("2d");
+              if (!ctx) {
+                resolve(null);
+                return;
+              }
+
+              ctx.drawImage(img, 0, 0, width, height);
+              const dataUrl = canvas.toDataURL("image/jpeg", quality);
+              resolve(dataUrl);
+            };
+            img.onerror = () => resolve(null);
+          };
+
+          if (src instanceof File) {
+            const reader = new FileReader();
+            reader.readAsDataURL(src);
+            reader.onload = (event) => {
+              img.src = event.target?.result as string;
+              loadImage();
+            };
+            reader.onerror = () => resolve(null);
+          } else {
+            img.src = src;
+            loadImage();
+          }
+        });
+      };
+
+      // Helper to read File/Blob or Base64 and compress it
+      const fileToBase64 = async (f: any): Promise<string | null> => {
+        if (!f) return null;
+        try {
+          return await compressAndResizeImage(f);
+        } catch (err) {
+          console.warn("Image compression failed, falling back to raw reader:", err);
+          if (typeof f === "string") return f;
+          return new Promise((resolve) => {
+            const r = new FileReader();
+            r.onload = () => resolve(r.result as string);
+            r.onerror = () => resolve(null);
+            r.readAsDataURL(f);
+          });
+        }
+      };
+
+      const selfieVal = await fileToBase64(docs.selfie);
+      const idProofVal = await fileToBase64(docs.idProof);
+      const shopPhotoVal = await fileToBase64(docs.shopPhoto);
+      const bizProofVal = await fileToBase64(docs.bizProof);
+
+      // 1. Auto-save business details to MySQL
       try {
         const mappedCategory = mapWingToCategory(form.wing);
         const bizPayload = {
@@ -650,18 +731,47 @@ function Membership() {
         console.error("Error adding business to local DB:", bizErr);
       }
 
+      // 2. Save member profile to MySQL member_list
+      try {
+        const memberPayload = {
+          ...form,
+          epic: form.epic.toUpperCase(),
+          selfie: selfieVal,
+          idProof: idProofVal,
+          shopPhoto: shopPhotoVal,
+          bizProof: bizProofVal,
+          pin: pin,
+        };
+
+        const memRes = await fetch("/api/public/members", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(memberPayload),
+        });
+
+        if (!memRes.ok) {
+          const errData = await memRes.json().catch(() => ({}));
+          throw new Error(errData.error || "Server registration failed");
+        } else {
+          toast.success(
+            language === "ta"
+              ? "உறுப்பினர் சேர்க்கை வெற்றிகரமாகத் தரவுத்தளத்தில் சேமிக்கப்பட்டது!"
+              : "Member profile saved successfully in database!"
+          );
+        }
+      } catch (memErr: any) {
+        console.error("Error saving member to DB:", memErr);
+        toast.error(
+          language === "ta"
+            ? `தரவுத்தளத்தில் சேமிக்க முடியவில்லை: ${memErr.message}`
+            : `Failed to save member to database: ${memErr.message}`
+        );
+        throw memErr; // Halt registration if database save fails
+      }
       await new Promise(r => setTimeout(r, 2000));
       setSubmitting(false);
-      localStorage.setItem("tnvs_last_epic", form.epic);
-
-      // Save PIN and dynamic member profile in localStorage for return access
-      localStorage.setItem(`tnvs_pin_${form.epic.toUpperCase()}`, pin);
-      const memberProfile = {
-        ...form,
-        epic: form.epic.toUpperCase(),
-        photoUrl: (typeof docs.selfie === "string" ? docs.selfie : "") || ownerPhoto
-      };
-      localStorage.setItem(`tnvs_member_${form.epic.toUpperCase()}`, JSON.stringify(memberProfile));
 
       localStorage.removeItem("tnvs_form_data");
       localStorage.removeItem("tnvs_form_step");
@@ -670,7 +780,7 @@ function Membership() {
       setSubmitting(false);
       console.error("Payment submission error:", err);
       toast.error(
-        language === "ta" 
+        language === "ta"
           ? `பதிவு செய்வதில் பிழை ஏற்பட்டது: ${err.message || err}`
           : `An error occurred during registration: ${err.message || err}`
       );
@@ -2548,5 +2658,3 @@ function Membership() {
     </div>
   );
 }
-
-export default Membership;

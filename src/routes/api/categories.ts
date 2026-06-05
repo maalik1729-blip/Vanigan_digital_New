@@ -8,7 +8,7 @@ export const Route = createFileRoute("/api/categories")({
         try {
           const pool = getDbPool();
           const [rows] = await pool.execute(
-            "SELECT category, COUNT(*) as count FROM businesses WHERE category IS NOT NULL AND category != '' GROUP BY category ORDER BY category ASC"
+            "SELECT category, COUNT(*) as count FROM business_list WHERE category IS NOT NULL AND category != '' GROUP BY category ORDER BY category ASC"
           );
           
           return Response.json(rows);

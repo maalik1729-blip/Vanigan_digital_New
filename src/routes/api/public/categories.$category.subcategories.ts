@@ -11,7 +11,7 @@ export const Route = createFileRoute(
         try {
           const pool = getDbPool();
           const [rows]: any = await pool.execute(
-            "SELECT DISTINCT subCategory FROM businesses WHERE category = ? AND subCategory IS NOT NULL AND subCategory != '' ORDER BY subCategory ASC",
+            "SELECT DISTINCT subCategory FROM business_list WHERE category = ? AND subCategory IS NOT NULL AND subCategory != '' ORDER BY subCategory ASC",
             [category]
           );
           

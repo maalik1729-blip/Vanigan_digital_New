@@ -9,7 +9,6 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { toast } from "sonner";
 import { VoterIdCard, type Voter, membershipNo, getZoneName, formatDob } from "@/components/VoterIdCard";
-import votersData from "@/data/voters.json";
 import { WINGS } from "@/data/wings";
 import ownerPhoto from "@/assets/349b584e-1b60-469e-9e5d-8d124cb057cb.png";
 import orgLogo from "@/assets/ChatGPT Image Mar 25, 2026, 05_31_25 PM (1).png";
@@ -44,7 +43,7 @@ function SecureDownloadPage() {
   const backRef = useRef<HTMLDivElement>(null);
 
   // Verification Logic
-  const handleVerify = (e: React.FormEvent) => {
+  const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
     const inputVal = epicInput.trim().toUpperCase();
     if (!inputVal) {
@@ -58,126 +57,64 @@ function SecureDownloadPage() {
 
     setIsVerifying(true);
 
-    setTimeout(() => {
-      let resolvedEpic = inputVal;
-      let foundDynamicMember = null;
-      let foundMockVoter: any = null;
-
-      // Check if input is a 10-digit mobile number
+    try {
+      // Fetch and verify credentials from the MySQL database
+      const params = new URLSearchParams();
       const cleanMobile = inputVal.replace(/\D/g, "");
       if (cleanMobile.length === 10) {
-        // Search dynamic localStorage members by mobile
-        for (let i = 0; i < localStorage.length; i++) {
-          const key = localStorage.key(i);
-          if (key && key.startsWith("tnvs_member_")) {
-            try {
-              const profile = JSON.parse(localStorage.getItem(key) || "");
-              if (profile && profile.mobile === cleanMobile) {
-                foundDynamicMember = profile;
-                resolvedEpic = profile.epic.toUpperCase();
-                break;
-              }
-            } catch {}
-          }
-        }
-
-        // If not found in dynamic members, search mock voters
-        if (!foundDynamicMember) {
-          foundMockVoter = votersData.find(v => v.MOBILE_NUMBER === cleanMobile);
-          if (foundMockVoter) {
-            resolvedEpic = foundMockVoter.EPIC_NO.toUpperCase();
-          }
-        }
+        params.append("mobile", cleanMobile);
       } else {
-        // Direct search by EPIC ID
-        const savedMemberStr = localStorage.getItem(`tnvs_member_${inputVal}`);
-        if (savedMemberStr) {
-          try { foundDynamicMember = JSON.parse(savedMemberStr); } catch {}
-        } else {
-          foundMockVoter = votersData.find(v => v.EPIC_NO?.toUpperCase() === inputVal);
-        }
+        params.append("epic", inputVal);
       }
+      params.append("pin", pinInput);
 
-      // Check PIN verification for the resolved member
-      if (foundDynamicMember) {
-        const savedPin = localStorage.getItem(`tnvs_pin_${resolvedEpic}`);
-        if (savedPin === pinInput) {
-          const voterObj: Voter = {
-            ID: 8888,
-            ASSEMBLY_NO: "25",
-            ASSEMBLY_NAME: foundDynamicMember.assembly || "Mylapore",
-            PART_NO: "1",
-            SECTION_NO: "1",
-            SERIAL_NO: "12",
-            HOUSE_NO: "",
-            VOTER_NAME: foundDynamicMember.name,
-            RELATION_TYPE: "Father",
-            RELATION_NAME: "",
-            EPIC_NO: foundDynamicMember.epic,
-            MOBILE_NUMBER: foundDynamicMember.mobile,
-            AGE: foundDynamicMember.age || "30",
-            DOB: foundDynamicMember.dob,
-            BUSINESS_TYPE: foundDynamicMember.type || "Retail",
-            GENDER: foundDynamicMember.gender || "Male",
-            BLOOD_GROUP: foundDynamicMember.bloodGroup || "O+",
-            PART_NAME: "TNVS Zone",
-            POLLING_STATION_NAME: foundDynamicMember.address || "",
-            POLLING_STATION_ADDRESS: foundDynamicMember.address || "",
-            MAIN_TOWN: foundDynamicMember.district || "CHENNAI",
-            WARD: "",
-            POST_OFFICE: "",
-            POLICE_STATION: "",
-            DISTRICT: foundDynamicMember.district || "CHENNAI",
-            PIN_CODE: "",
-            PHOTO_URL: foundDynamicMember.photoUrl || ownerPhoto,
-          };
-          setVerifiedVoter(voterObj);
-          toast.success(language === "ta" ? "பாதுகாப்பு PIN சரிபார்க்கப்பட்டது! அணுகல் அனுமதிக்கப்பட்டது." : "Security PIN verified! Access granted.");
-        } else {
-          toast.error(language === "ta" ? "தவறான பாதுகாப்பு PIN. மீண்டும் முயலவும்." : "Invalid Security PIN. Please try again.");
-        }
-      } else if (foundMockVoter) {
-        // Default PIN for mock database voters is '1234'
-        if (pinInput === "1234") {
-          const voterObj: Voter = {
-            ID: foundMockVoter.ID,
-            ASSEMBLY_NO: foundMockVoter.ASSEMBLY_NO || "25",
-            ASSEMBLY_NAME: foundMockVoter.ASSEMBLY_NAME || "Mylapore",
-            PART_NO: foundMockVoter.PART_NO || "1",
-            SECTION_NO: foundMockVoter.SECTION_NO || "1",
-            SERIAL_NO: foundMockVoter.SERIAL_NO || "12",
-            HOUSE_NO: foundMockVoter.HOUSE_NO || "",
-            VOTER_NAME: foundMockVoter.VOTER_NAME,
-            RELATION_TYPE: foundMockVoter.RELATION_TYPE || "Father",
-            RELATION_NAME: foundMockVoter.RELATION_NAME || "",
-            EPIC_NO: foundMockVoter.EPIC_NO,
-            MOBILE_NUMBER: foundMockVoter.MOBILE_NUMBER || "",
-            AGE: foundMockVoter.AGE || "35",
-            DOB: foundMockVoter.DOB || "",
-            BUSINESS_TYPE: foundMockVoter.BUSINESS_TYPE || "Retail",
-            GENDER: foundMockVoter.GENDER || "Male",
-            BLOOD_GROUP: foundMockVoter.BLOOD_GROUP || "O+",
-            PART_NAME: foundMockVoter.PART_NAME || "TNVS Zone",
-            POLLING_STATION_NAME: foundMockVoter.POLLING_STATION_NAME || foundMockVoter.POLLING_STATION_ADDRESS || "",
-            POLLING_STATION_ADDRESS: foundMockVoter.POLLING_STATION_ADDRESS || "",
-            MAIN_TOWN: foundMockVoter.MAIN_TOWN || foundMockVoter.DISTRICT || "Chennai",
-            WARD: foundMockVoter.WARD || "",
-            POST_OFFICE: foundMockVoter.POST_OFFICE || "",
-            POLICE_STATION: foundMockVoter.POLICE_STATION || "",
-            DISTRICT: foundMockVoter.DISTRICT || "Chennai",
-            PIN_CODE: foundMockVoter.PIN_CODE || "",
-            PHOTO_URL: foundMockVoter.PHOTO_URL || ownerPhoto,
-          };
-          setVerifiedVoter(voterObj as any);
-          toast.success(language === "ta" ? "பாதுகாப்பு PIN சரிபார்க்கப்பட்டது! அணுகல் அனுமதிக்கப்பட்டது." : "Security PIN verified! Access granted.");
-        } else {
-          toast.error(language === "ta" ? "தவறான பாதுகாப்பு PIN. மீண்டும் முயலவும்." : "Invalid Security PIN. Please try again.");
-        }
-      } else {
+      const res = await fetch(`/api/public/members?${params.toString()}`);
+      if (res.ok) {
+        const dbMember = await res.json();
+        const voterObj: Voter = {
+          ID: dbMember.id || 8888,
+          ASSEMBLY_NO: "25",
+          ASSEMBLY_NAME: dbMember.assembly || "Mylapore",
+          PART_NO: "1",
+          SECTION_NO: "1",
+          SERIAL_NO: "12",
+          HOUSE_NO: "",
+          VOTER_NAME: dbMember.name,
+          RELATION_TYPE: "Father",
+          RELATION_NAME: "",
+          EPIC_NO: dbMember.epic,
+          MOBILE_NUMBER: dbMember.mobile,
+          AGE: dbMember.age ? String(dbMember.age) : "30",
+          DOB: dbMember.dob,
+          BUSINESS_TYPE: dbMember.type || "Retail",
+          GENDER: dbMember.gender || "Male",
+          BLOOD_GROUP: dbMember.bloodGroup || "O+",
+          PART_NAME: "TNVS Zone",
+          POLLING_STATION_NAME: dbMember.address || "",
+          POLLING_STATION_ADDRESS: dbMember.address || "",
+          MAIN_TOWN: dbMember.district || "CHENNAI",
+          WARD: "",
+          POST_OFFICE: "",
+          POLICE_STATION: "",
+          DISTRICT: dbMember.district || "CHENNAI",
+          PIN_CODE: "",
+          PHOTO_URL: dbMember.selfie || ownerPhoto,
+        };
+        setVerifiedVoter(voterObj);
+        toast.success(language === "ta" ? "பாதுகாப்பு PIN சரிபார்க்கப்பட்டது! அணுகல் அனுமதிக்கப்பட்டது." : "Security PIN verified! Access granted.");
+      } else if (res.status === 401) {
+        toast.error(language === "ta" ? "தவறான பாதுகாப்பு PIN. மீண்டும் முயலவும்." : "Invalid Security PIN. Please try again.");
+      } else if (res.status === 404) {
         toast.error(language === "ta" ? "உறுப்பினர் கணக்கு அல்லது EPIC ID காணப்படவில்லை." : "Membership record or EPIC ID not found.");
+      } else {
+        toast.error(language === "ta" ? "சரிபார்க்க முடியவில்லை. மீண்டும் முயலவும்." : "Could not verify details. Please try again.");
       }
+    } catch (err) {
+      console.error("Database lookup error:", err);
+      toast.error(language === "ta" ? "சேவையகத்தை அணுக முடியவில்லை. மீண்டும் முயலவும்." : "Unable to reach verification server. Please try again.");
+    } finally {
       setIsVerifying(false);
-    }, 1200);
+    }
   };
 
   // Certificate download logic (using canvas)

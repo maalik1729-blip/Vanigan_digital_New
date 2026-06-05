@@ -27,6 +27,7 @@ import { Route as BusinessesIndexRouteImport } from './routes/businesses.index'
 import { Route as BusinessesIdRouteImport } from './routes/businesses.$id'
 import { Route as ApiVoterSearchRouteImport } from './routes/api/voter-search'
 import { Route as ApiCategoriesRouteImport } from './routes/api/categories'
+import { Route as ApiPublicMembersRouteImport } from './routes/api/public/members'
 import { Route as ApiPublicBusinessesRouteImport } from './routes/api/public/businesses'
 import { Route as ApiPublicBusinessesIdRouteImport } from './routes/api/public/businesses.$id'
 import { Route as ApiPublicCategoriesCategorySubcategoriesRouteImport } from './routes/api/public/categories.$category.subcategories'
@@ -121,6 +122,11 @@ const ApiCategoriesRoute = ApiCategoriesRouteImport.update({
   path: '/api/categories',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicMembersRoute = ApiPublicMembersRouteImport.update({
+  id: '/api/public/members',
+  path: '/api/public/members',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicBusinessesRoute = ApiPublicBusinessesRouteImport.update({
   id: '/api/public/businesses',
   path: '/api/public/businesses',
@@ -158,6 +164,7 @@ export interface FileRoutesByFullPath {
   '/businesses/$id': typeof BusinessesIdRoute
   '/businesses/': typeof BusinessesIndexRoute
   '/api/public/businesses': typeof ApiPublicBusinessesRouteWithChildren
+  '/api/public/members': typeof ApiPublicMembersRoute
   '/api/public/businesses/$id': typeof ApiPublicBusinessesIdRoute
   '/api/public/categories/$category/subcategories': typeof ApiPublicCategoriesCategorySubcategoriesRoute
 }
@@ -180,6 +187,7 @@ export interface FileRoutesByTo {
   '/businesses/$id': typeof BusinessesIdRoute
   '/businesses': typeof BusinessesIndexRoute
   '/api/public/businesses': typeof ApiPublicBusinessesRouteWithChildren
+  '/api/public/members': typeof ApiPublicMembersRoute
   '/api/public/businesses/$id': typeof ApiPublicBusinessesIdRoute
   '/api/public/categories/$category/subcategories': typeof ApiPublicCategoriesCategorySubcategoriesRoute
 }
@@ -204,6 +212,7 @@ export interface FileRoutesById {
   '/businesses/$id': typeof BusinessesIdRoute
   '/businesses/': typeof BusinessesIndexRoute
   '/api/public/businesses': typeof ApiPublicBusinessesRouteWithChildren
+  '/api/public/members': typeof ApiPublicMembersRoute
   '/api/public/businesses/$id': typeof ApiPublicBusinessesIdRoute
   '/api/public/categories/$category/subcategories': typeof ApiPublicCategoriesCategorySubcategoriesRoute
 }
@@ -229,6 +238,7 @@ export interface FileRouteTypes {
     | '/businesses/$id'
     | '/businesses/'
     | '/api/public/businesses'
+    | '/api/public/members'
     | '/api/public/businesses/$id'
     | '/api/public/categories/$category/subcategories'
   fileRoutesByTo: FileRoutesByTo
@@ -251,6 +261,7 @@ export interface FileRouteTypes {
     | '/businesses/$id'
     | '/businesses'
     | '/api/public/businesses'
+    | '/api/public/members'
     | '/api/public/businesses/$id'
     | '/api/public/categories/$category/subcategories'
   id:
@@ -274,6 +285,7 @@ export interface FileRouteTypes {
     | '/businesses/$id'
     | '/businesses/'
     | '/api/public/businesses'
+    | '/api/public/members'
     | '/api/public/businesses/$id'
     | '/api/public/categories/$category/subcategories'
   fileRoutesById: FileRoutesById
@@ -296,6 +308,7 @@ export interface RootRouteChildren {
   ApiCategoriesRoute: typeof ApiCategoriesRoute
   ApiVoterSearchRoute: typeof ApiVoterSearchRoute
   ApiPublicBusinessesRoute: typeof ApiPublicBusinessesRouteWithChildren
+  ApiPublicMembersRoute: typeof ApiPublicMembersRoute
   ApiPublicCategoriesCategorySubcategoriesRoute: typeof ApiPublicCategoriesCategorySubcategoriesRoute
 }
 
@@ -427,6 +440,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCategoriesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/members': {
+      id: '/api/public/members'
+      path: '/api/public/members'
+      fullPath: '/api/public/members'
+      preLoaderRoute: typeof ApiPublicMembersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/businesses': {
       id: '/api/public/businesses'
       path: '/api/public/businesses'
@@ -494,6 +514,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCategoriesRoute: ApiCategoriesRoute,
   ApiVoterSearchRoute: ApiVoterSearchRoute,
   ApiPublicBusinessesRoute: ApiPublicBusinessesRouteWithChildren,
+  ApiPublicMembersRoute: ApiPublicMembersRoute,
   ApiPublicCategoriesCategorySubcategoriesRoute:
     ApiPublicCategoriesCategorySubcategoriesRoute,
 }

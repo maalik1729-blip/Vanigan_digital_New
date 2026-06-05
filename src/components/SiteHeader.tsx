@@ -634,7 +634,7 @@ export function SiteHeader() {
                       <div className="bg-white rounded-2xl border border-slate-100 shadow-2xl p-2.5 space-y-0.5 overflow-hidden">
                         {n.dropdown.map((sub) => (
                           <Link
-                            key={sub.to}
+                            key={sub.en}
                             to={sub.to}
                             className="block px-3.5 py-2.5 rounded-xl hover:bg-slate-50 transition text-left cursor-pointer group/item"
                           >
@@ -894,7 +894,7 @@ export function SiteHeader() {
                       <div className="pl-4 pr-2 py-1 space-y-1 border-l-2 border-slate-100/85 ml-4">
                         {n.dropdown.map((sub) => (
                           <Link
-                            key={sub.to}
+                            key={sub.en}
                             to={sub.to}
                             onClick={() => setOpen(false)}
                             className="flex flex-col px-3.5 py-2 rounded-lg text-slate-650 hover:bg-slate-50 transition text-left cursor-pointer"

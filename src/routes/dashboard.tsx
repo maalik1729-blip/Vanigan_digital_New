@@ -22,7 +22,6 @@ import { ActivityCard } from "@/components/ActivityCard";
 import { StatusPill } from "@/components/StatusPill";
 import { EmptyState } from "@/components/EmptyState";
 import orgLogo from "@/assets/ChatGPT Image Mar 25, 2026, 05_31_25 PM (1).png";
-import votersData from "@/data/voters.json";
 import ownerPhoto from "@/assets/349b584e-1b60-469e-9e5d-8d124cb057cb.png";
 
 export const Route = createFileRoute("/dashboard")({
@@ -74,43 +73,41 @@ function Dashboard() {
   const [epicId, setEpicId] = useState<string | null>(() => getSession());
   const [dashboardTab, setDashboardTab] = useState<"overview" | "loans" | "recruiter" | "tools">("overview");
 
+  const [dbProfile, setDbProfile] = useState<any>(null);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(false);
+
+  useEffect(() => {
+    if (!epicId) {
+      setDbProfile(null);
+      return;
+    }
+    const cleanEpic = epicId.trim().toUpperCase();
+    setIsLoadingProfile(true);
+    fetch(`/api/public/members?epic=${cleanEpic}`)
+      .then(async (res) => {
+        if (res.ok) {
+          const data = await res.json();
+          setDbProfile({
+            ...data,
+            photoUrl: data.selfie || ""
+          });
+        }
+      })
+      .catch((err) => {
+        console.warn("Failed to fetch member profile from database:", err);
+      })
+      .finally(() => {
+        setIsLoadingProfile(false);
+      });
+  }, [epicId]);
+
   const currentMember = useMemo(() => {
+    if (dbProfile) return dbProfile;
+
     if (!epicId) return null;
     const cleanEpic = epicId.trim().toUpperCase();
     
-    // 1. Check local storage registered profile
-    const savedMember = localStorage.getItem(`tnvs_member_${cleanEpic}`);
-    if (savedMember) {
-      try {
-        const profile = JSON.parse(savedMember);
-        if (profile) return profile;
-      } catch {}
-    }
-    
-    // 2. Check votersData
-    const mockVoter = votersData.find(v => v.EPIC_NO?.toUpperCase() === cleanEpic) as any;
-    if (mockVoter) {
-      return {
-        name: mockVoter.VOTER_NAME,
-        epic: mockVoter.EPIC_NO,
-        mobile: mockVoter.MOBILE_NUMBER,
-        district: mockVoter.DISTRICT || mockVoter.MAIN_TOWN || "Chennai",
-        assembly: mockVoter.ASSEMBLY_NAME || "Mylapore",
-        shop: mockVoter.POLLING_STATION_NAME || "Shop Detail",
-        type: mockVoter.BUSINESS_TYPE || "Retail",
-        address: mockVoter.POLLING_STATION_ADDRESS || "",
-        email: mockVoter.EMAIL || "",
-        dob: mockVoter.DOB || "",
-        age: mockVoter.AGE || "35",
-        gender: mockVoter.GENDER || "Male",
-        bloodGroup: mockVoter.BLOOD_GROUP || "O+",
-        photoUrl: mockVoter.PHOTO_URL || "",
-        years: "5",
-        wing: mockVoter.BUSINESS_TYPE || "Retail"
-      };
-    }
-    
-    // 3. Fallback to President
+    // Fallback to President
     return {
       name: "Senthil Kumar N",
       epic: cleanEpic,
@@ -129,7 +126,7 @@ function Dashboard() {
       years: "15",
       wing: "Retail"
     };
-  }, [epicId]);
+  }, [epicId, dbProfile]);
 
   // Subsidized Loan Gated States
   const [showLoanCategories, setShowLoanCategories] = useState(true);
@@ -150,13 +147,12 @@ function Dashboard() {
     setIsLoanModalOpen(true);
   };
 
-  // Coordinator opt-in state
-  const [isCoordinator, setIsCoordinator] = useState(() => {
+  const [isCoordinator, setIsCoordinator] = useState(false);
+  useEffect(() => {
     if (typeof window !== "undefined") {
-      return localStorage.getItem("tnvs_is_coordinator") === "true";
+      setIsCoordinator(localStorage.getItem("tnvs_is_coordinator") === "true");
     }
-    return false;
-  });
+  }, []);
   const [copiedLink, setCopiedLink] = useState(false);
 
   // Referred Members CRM Search & Filter States

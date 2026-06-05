@@ -1,7 +1,34 @@
 import { createFileRoute } from "@tanstack/react-router";
-import demoVoters from "@/data/voters.json";
 
-type VoterRow = typeof demoVoters[number];
+type VoterRow = {
+  ID: number;
+  ASSEMBLY_NO?: string;
+  ASSEMBLY_NAME?: string;
+  PART_NO?: string;
+  SECTION_NO?: string;
+  SERIAL_NO?: string;
+  HOUSE_NO?: string;
+  VOTER_NAME?: string;
+  RELATION_TYPE?: string;
+  RELATION_NAME?: string;
+  EPIC_NO?: string;
+  MOBILE_NUMBER?: string;
+  AGE?: string;
+  DOB?: string;
+  BUSINESS_TYPE?: string;
+  GENDER?: string;
+  BLOOD_GROUP?: string;
+  PART_NAME?: string;
+  POLLING_STATION_NAME?: string;
+  POLLING_STATION_ADDRESS?: string;
+  MAIN_TOWN?: string;
+  WARD?: string;
+  POST_OFFICE?: string;
+  POLICE_STATION?: string;
+  DISTRICT?: string;
+  PIN_CODE?: string;
+  PHOTO_URL?: string;
+};
 
 const DB_CONFIG = {
   host: "127.0.0.1",
@@ -12,14 +39,7 @@ const DB_CONFIG = {
 };
 
 function filterDemo(epic?: string, mobile?: string, name?: string): VoterRow[] {
-  let results: VoterRow[] = demoVoters;
-  if (epic)   results = results.filter(v => v.EPIC_NO?.toUpperCase() === epic.toUpperCase());
-  if (mobile) results = results.filter(v => v.MOBILE_NUMBER === mobile);
-  if (name && !epic && !mobile) {
-    const q = name.toLowerCase();
-    results = results.filter(v => v.VOTER_NAME?.toLowerCase().includes(q));
-  }
-  return results.slice(0, 5);
+  return [];
 }
 
 export const Route = createFileRoute("/api/voter-search")({

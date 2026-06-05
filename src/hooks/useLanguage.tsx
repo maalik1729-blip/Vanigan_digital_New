@@ -11,13 +11,7 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguageState] = useState<Language>(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("app_lang");
-      return (saved === "en" || saved === "ta") ? saved : "ta"; // Default to Tamil
-    }
-    return "ta";
-  });
+  const [language, setLanguageState] = useState<Language>("ta");
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
@@ -29,9 +23,12 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      document.documentElement.lang = language;
+      const saved = localStorage.getItem("app_lang");
+      const initialLang = (saved === "en" || saved === "ta") ? saved : "ta";
+      setLanguageState(initialLang);
+      document.documentElement.lang = initialLang;
     }
-  }, [language]);
+  }, []);
 
   const t = (ta: string, en: string) => {
     return language === "ta" ? ta : en;

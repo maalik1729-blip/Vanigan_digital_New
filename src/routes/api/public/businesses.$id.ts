@@ -9,7 +9,7 @@ export const Route = createFileRoute("/api/public/businesses/$id")({
         try {
           const pool = getDbPool();
           const [rows]: any = await pool.execute(
-            "SELECT * FROM businesses WHERE _id = ? LIMIT 1",
+            "SELECT * FROM business_list WHERE _id = ? LIMIT 1",
             [id]
           );
 

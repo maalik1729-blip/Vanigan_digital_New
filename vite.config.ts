@@ -39,7 +39,8 @@ export default defineConfig(({ command }) => {
     plugins,
     server: {
       host: "::",
-      port: 3000,
+      port: 3001,
+      strictPort: true,
       watch: {
         awaitWriteFinish: {
           stabilityThreshold: 1000,

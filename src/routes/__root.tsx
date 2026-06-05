@@ -84,7 +84,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 import { useEffect, useState } from "react";
 import { useLanguage } from "@/hooks/useLanguage";
-import { LoadingPage } from "./loading";
+import { LoadingPage } from "@/components/LoadingPage";
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
@@ -124,6 +124,24 @@ function RootInner() {
           .then((reg) => console.log("Service Worker registered successfully with scope:", reg.scope))
           .catch((err) => console.error("Service Worker registration failed:", err));
       });
+    }
+  }, []);
+
+  useEffect(() => {
+    // Clear dummy/test member records and old cached data from localStorage
+    if (typeof window !== "undefined") {
+      for (let i = localStorage.length - 1; i >= 0; i--) {
+        const key = localStorage.key(i);
+        if (
+          key &&
+          (key.startsWith("tnvs_member_") ||
+            key.startsWith("tnvs_pin_") ||
+            key === "tnvs_last_epic" ||
+            key === "voters_data")
+        ) {
+          localStorage.removeItem(key);
+        }
+      }
     }
   }, []);
 

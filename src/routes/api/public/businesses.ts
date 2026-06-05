@@ -13,7 +13,7 @@ export const Route = createFileRoute("/api/public/businesses")({
           try {
             const pool = getDbPool();
             const [rows]: any = await pool.execute(
-              "SELECT * FROM businesses WHERE _id = ? LIMIT 1",
+              "SELECT * FROM business_list WHERE _id = ? LIMIT 1",
               [id]
             );
 
@@ -44,8 +44,8 @@ export const Route = createFileRoute("/api/public/businesses")({
         try {
           const pool = getDbPool();
 
-          let query = "SELECT * FROM businesses WHERE 1=1";
-          let countQuery = "SELECT COUNT(*) as total FROM businesses WHERE 1=1";
+          let query = "SELECT * FROM business_list WHERE 1=1";
+          let countQuery = "SELECT COUNT(*) as total FROM business_list WHERE 1=1";
           const params: any[] = [];
 
           if (category) {
@@ -111,7 +111,7 @@ export const Route = createFileRoute("/api/public/businesses")({
           const listingCode = `VAN${timestamp.toString().slice(-8)}`;
 
           const query = `
-            INSERT INTO businesses (
+            INSERT INTO business_list (
               _id, name, listingCode, description, category, subCategory,
               phone, phone2, email, website, city, district, assembly, address,
               pincode, landmark, lat, lng, openDays, openTime, closeTime,

@@ -3,50 +3,12 @@ import { Link } from "@tanstack/react-router";
 import { LogIn, IdCard, ArrowRight } from "lucide-react";
 import { setSession } from "@/lib/session";
 import { toast } from "sonner";
-import votersData from "@/data/voters.json";
 
 export function LoginPrompt({ onLogin }: { onLogin: (epic: string) => void }) {
   const [value, setValue] = useState("");
   const [error, setError] = useState("");
 
-  const findLocalMember = (input: string) => {
-    const cleanInput = input.trim().toUpperCase();
-    
-    // 1. Direct EPIC match
-    const directMember = localStorage.getItem(`tnvs_member_${cleanInput}`);
-    if (directMember) {
-      try { return JSON.parse(directMember); } catch { return null; }
-    }
-    
-    // 2. Mobile number search
-    const cleanMobile = cleanInput.replace(/\D/g, "");
-    if (cleanMobile.length === 10) {
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.startsWith("tnvs_member_")) {
-          try {
-            const profile = JSON.parse(localStorage.getItem(key) || "");
-            if (profile && profile.mobile === cleanMobile) {
-              return profile;
-            }
-          } catch {}
-        }
-      }
-    }
-    return null;
-  };
-
-  const findMockVoter = (input: string) => {
-    const cleanInput = input.trim().toUpperCase();
-    const cleanMobile = input.replace(/\D/g, "");
-    
-    return votersData.find(v => 
-      v.EPIC_NO?.toUpperCase() === cleanInput || 
-      (cleanMobile.length === 10 && v.MOBILE_NUMBER === cleanMobile)
-    );
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
@@ -58,31 +20,32 @@ export function LoginPrompt({ onLogin }: { onLogin: (epic: string) => void }) {
       return;
     }
 
-    // 1. Lookup dynamic registered profile
-    const dynamicProfile = findLocalMember(raw);
-    if (dynamicProfile) {
-      const epic = dynamicProfile.epic;
-      setSession(epic);
-      toast.success("Login successful! Welcome back.");
-      setTimeout(() => {
-        onLogin(epic);
-      }, 150);
-      return;
+    try {
+      // Query the database to verify the member exists
+      const params = new URLSearchParams();
+      const cleanMobile = raw.replace(/\D/g, "");
+      if (cleanMobile.length === 10) {
+        params.append("mobile", cleanMobile);
+      } else {
+        params.append("epic", raw);
+      }
+
+      const res = await fetch(`/api/public/members?${params.toString()}`);
+      if (res.ok || res.status === 401) {
+        const data = res.ok ? await res.json() : null;
+        const resolvedEpic = data?.epic || raw.toUpperCase();
+        setSession(resolvedEpic);
+        toast.success("Login successful! Welcome back.");
+        setTimeout(() => {
+          onLogin(resolvedEpic);
+        }, 150);
+        return;
+      }
+    } catch (err) {
+      console.error("Database login check failed:", err);
     }
 
-    // 2. Lookup preloaded mock voters
-    const mockVoter = findMockVoter(raw);
-    if (mockVoter) {
-      const epic = mockVoter.EPIC_NO;
-      setSession(epic);
-      toast.success("Login successful! Welcome back.");
-      setTimeout(() => {
-        onLogin(epic);
-      }, 150);
-      return;
-    }
-
-    // 3. Fail validation
+    // Fail validation
     const errorMsg = "No registered member found with this EPIC ID or Mobile Number. Please check your credentials.";
     setError(errorMsg);
     toast.error(errorMsg);

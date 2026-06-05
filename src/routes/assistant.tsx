@@ -17,7 +17,7 @@ export const Route = createFileRoute("/assistant")({
   component: Assistant,
 });
 
-export function Assistant() {
+function Assistant() {
   const { language, t } = useLanguage();
   
   // Status checker state
