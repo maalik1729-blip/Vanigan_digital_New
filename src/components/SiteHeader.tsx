@@ -1,12 +1,382 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { useState, useEffect, useRef } from "react";
-import { Menu, X, User, Phone, Globe, ChevronDown } from "lucide-react";
+import { Menu, X, User, Phone, Globe, ChevronDown, ChevronRight, Building2, Loader2 } from "lucide-react";
 import templeLogo from "@/assets/ChatGPT Image Mar 25, 2026, 05_31_25 PM (1).png";
 import { useLanguage } from "@/hooks/useLanguage";
 import { motion } from "framer-motion";
 
+const CATEGORIES = [
+  { name: "Hotels & Restaurants",      icon: "🍽️" },
+  { name: "Caterers",                  icon: "🥘" },
+  { name: "Daily Needs",               icon: "🛒" },
+  { name: "Organic Products",          icon: "🌿" },
+  { name: "Doctors",                   icon: "👨‍⚕️" },
+  { name: "Hospitals & Clinics",       icon: "🏥" },
+  { name: "Pharmacy",                  icon: "💊" },
+  { name: "Labs & Diagnostics",        icon: "🔬" },
+  { name: "Spa & Beauty",              icon: "💅" },
+  { name: "Education",                 icon: "🎓" },
+  { name: "Coaching Centers",          icon: "📚" },
+  { name: "IT & Software",             icon: "💻" },
+  { name: "Digital & IT Products",     icon: "🖥️" },
+  { name: "Electricals & Electronics", icon: "⚡" },
+  { name: "Construction Materials",    icon: "🧱" },
+  { name: "Civil Contractors",         icon: "🏗️" },
+  { name: "Real Estate",               icon: "🏠" },
+  { name: "Interior Design",           icon: "🛋️" },
+  { name: "Transport",                 icon: "🚛" },
+  { name: "Automobile",                icon: "🚘" },
+  { name: "Automobiles",               icon: "🚗" },
+  { name: "Textiles & Garments",       icon: "👗" },
+  { name: "Jewellery",                 icon: "💎" },
+  { name: "Footwear",                  icon: "👟" },
+  { name: "Agriculture",               icon: "🌾" },
+  { name: "Nursery & Plants",          icon: "🌱" },
+  { name: "B2B Services",              icon: "🤝" },
+  { name: "Banking & Finance",         icon: "🏦" },
+  { name: "Finance & Banking",         icon: "🏦" },
+  { name: "Insurance",                 icon: "🛡️" },
+  { name: "Legal Services",            icon: "⚖️" },
+  { name: "Advocate & Legal",          icon: "⚖️" },
+  { name: "Advertising",               icon: "📢" },
+  { name: "Printing Services",         icon: "🖨️" },
+  { name: "Photography",               icon: "📸" },
+  { name: "Wedding Services",          icon: "💒" },
+  { name: "Banquets & Event Halls",    icon: "🏛️" },
+  { name: "Event Management",          icon: "🎉" },
+  { name: "Home Appliances",           icon: "🏠" },
+  { name: "Furniture",                 icon: "🪑" },
+  { name: "Hardware & Tools",          icon: "🔧" },
+  { name: "Demand Services",           icon: "🛠️" },
+  { name: "Hire Services",             icon: "🔑" },
+  { name: "Courier Services",          icon: "📦" },
+  { name: "Packers & Movers",          icon: "🚚" },
+  { name: "Pest Control",              icon: "🐛" },
+  { name: "Repairs",                   icon: "🔩" },
+  { name: "Sports",                    icon: "⚽" },
+  { name: "Jobs",                      icon: "💼" },
+  { name: "Religious",                 icon: "🛕" },
+  { name: "Bills & Recharge",          icon: "📱" },
+  { name: "Travel & Tourism",          icon: "✈️" },
+] as const;
+
+const SUBCATEGORY_MAPPING: Record<string, readonly string[]> = {
+  "Advertising": [
+    "Branding & Marketing",
+    "Digital & Display Advertising",
+    "Printing & Outdoor Advertising",
+    "Social Media Advertising",
+    "TV & Broadcasting Media"
+  ],
+  "Advocate & Legal": [
+    "Consumer Court Advocates",
+    "Criminal Case Advocates",
+    "Family Dispute Advocates",
+    "High Court & District Court",
+    "Notary & Documentation",
+    "Property Case Advocates"
+  ],
+  "Legal Services": [
+    "Consumer Court Advocates",
+    "Criminal Case Advocates",
+    "Family Dispute Advocates",
+    "High Court & District Court",
+    "Notary & Documentation",
+    "Property Case Advocates"
+  ],
+  "Agriculture": [
+    "Agricultural Equipment",
+    "Fertilizer Dealers",
+    "Fertilizers & Organic Products",
+    "Millets & Grains",
+    "Nursery & Cattle",
+    "Seed Suppliers",
+    "Seeds & Trees"
+  ],
+  "Automobile": [
+    "Auto Parts & Accessories",
+    "Car & Bike Sales",
+    "Helmet & Riding Gear",
+    "Vehicle Body Building",
+    "Vehicle Tyres & Batteries",
+    "Wash, Polish & Detailing"
+  ],
+  "Automobiles": [
+    "Auto Parts & Accessories",
+    "Car & Bike Sales",
+    "Helmet & Riding Gear",
+    "Vehicle Body Building",
+    "Vehicle Tyres & Batteries",
+    "Wash, Polish & Detailing"
+  ],
+  "B2B Services": [
+    "Chemicals & Industrial Supplies",
+    "Electrical & Electronics Components",
+    "Healthcare & Medical Supplies",
+    "Packaging Machines & Products"
+  ],
+  "Banking & Finance": [
+    "Business & Educational Loans",
+    "Home Loans",
+    "Personal & Car Loans",
+    "Share Market & Crypto"
+  ],
+  "Finance & Banking": [
+    "Business & Educational Loans",
+    "Home Loans",
+    "Personal & Car Loans",
+    "Share Market & Crypto"
+  ],
+  "Banquets & Event Halls": [
+    "AC Banquet Halls",
+    "Party Halls on Rent",
+    "Wedding Halls"
+  ],
+  "Bills & Recharge": [
+    "Broadband & Cable TV",
+    "DTH Recharge",
+    "Electricity Bills",
+    "Gas & Water Bills",
+    "Mobile Prepaid & Postpaid"
+  ],
+  "Caterers": [
+    "Multi-cuisine Caterers",
+    "North Indian Caterers",
+    "Party & Birthday Caterers",
+    "South Indian Caterers",
+    "Wedding Caterers"
+  ],
+  "Civil Contractors": [
+    "Borewell & Drilling",
+    "Building & Construction",
+    "Interior & Flooring",
+    "Painting & Waterproofing",
+    "Plumbing & Pipeline"
+  ],
+  "Construction Materials": [
+    "Cement, Sand & Bricks",
+    "Glass & Aluminium Work",
+    "Iron Rods & Steel",
+    "PVC, Doors & Windows",
+    "Paints & Hardware",
+    "Tiles, Granite & Mosaic"
+  ],
+  "Courier Services": [
+    "Blue Dart",
+    "DTDC",
+    "International Courier",
+    "Local Courier",
+    "Professional Couriers"
+  ],
+  "Daily Needs": [
+    "Bakeries & Milk Shops",
+    "Dry Fruits & Pooja Items",
+    "Fish & Meat Shops",
+    "Fruits & Vegetable Shops",
+    "Grocery & Supermarkets",
+    "Juice Bars & Drinking Water"
+  ],
+  "Demand Services": [
+    "Carpenters & Masons",
+    "Housekeeping Services",
+    "Security Services"
+  ],
+  "Digital & IT Products": [
+    "CCTV & Security Systems",
+    "Computer Sales & Service",
+    "Networking & UPS"
+  ],
+  "Doctors": [
+    "Dentists & Dental Surgeons",
+    "Dermatologists & Skin Doctors",
+    "Eye Specialists & Surgeons",
+    "General Physicians",
+    "Gynaecologists & Obstetricians",
+    "Neurologists & Psychiatrists",
+    "Orthopaedic & Spine Specialists",
+    "Paediatricians"
+  ],
+  "Education": [
+    "Colleges & Universities",
+    "Engineering & Medical Colleges",
+    "Music, Art & Language Classes",
+    "Pre-KG & Child Care",
+    "Schools",
+    "Study Abroad Consultants",
+    "Tuition Centres",
+    "Yoga Classes"
+  ],
+  "Electricals & Electronics": [
+    "Electrical Shops",
+    "Electricians",
+    "Electronics Showrooms",
+    "GPS Vehicle Tracking",
+    "Hardware Stores",
+    "Plumbing & Water Treatment",
+    "Solar Power Plants"
+  ],
+  "Furniture": [
+    "Furniture Showrooms"
+  ],
+  "Hardware & Tools": [
+    "Tools & Fasteners"
+  ],
+  "Hire Services": [
+    "Furniture & Appliances on Hire",
+    "Vehicles on Hire (Car/Bus/Bike)"
+  ],
+  "Home Appliances": [
+    "Cookware & Steel Items",
+    "Electronics Showrooms",
+    "Furniture Showrooms",
+    "TV Showrooms"
+  ],
+  "Hospitals & Clinics": [
+    "Children's Hospitals",
+    "ENT Clinics",
+    "Eye Hospitals",
+    "Home Nursing Services",
+    "Maternity Hospitals",
+    "Mental Health Hospitals",
+    "Multi-specialty Hospitals",
+    "Nursing Homes",
+    "Orthopaedic Hospitals",
+    "Veterinary Hospitals"
+  ],
+  "Hotels & Restaurants": [
+    "5-Star & 3-Star Hotels",
+    "Coffee Shops & Cafes",
+    "Dhaba & Tandoori",
+    "Fast Food & Biryani Shops",
+    "Resorts & Guest Houses",
+    "Veg & Non-Veg Restaurants"
+  ],
+  "IT & Software": [
+    "Computer Networking",
+    "IT Consultants & Solutions",
+    "Mobile App Developers",
+    "POS & Sales Software",
+    "Software Development Companies",
+    "Software Training Institutes"
+  ],
+  "Insurance": [
+    "Health Insurance",
+    "Insurance Agents",
+    "Life Insurance (LIC)",
+    "Vehicle Insurance (Car & Bike)"
+  ],
+  "Jewellery": [
+    "Gold & Diamond Stores",
+    "Jewellery Manufacturers",
+    "Jewellery Showrooms"
+  ],
+  "Jobs": [
+    "BPO & Call Centres",
+    "HR & Manpower Services",
+    "Part-time & Work-from-Home"
+  ],
+  "Labs & Diagnostics": [
+    "Blood Testing Labs",
+    "Health Check-up Labs",
+    "Scan Centres (MRI/X-Ray)"
+  ],
+  "Nursery & Plants": [
+    "Plant Nursery"
+  ],
+  "Organic Products": [
+    "Nattu Koli Pannai",
+    "Organic Food & Dairy",
+    "Organic Grocery Stores",
+    "Organic Oils",
+    "Organic Skincare"
+  ],
+  "Packers & Movers": [
+    "Household Goods Movers",
+    "Local Movers"
+  ],
+  "Pest Control": [
+    "Cockroach Control",
+    "Mosquito Control",
+    "Residential & Commercial Pest Control",
+    "Termite Control"
+  ],
+  "Photography": [
+    "Studio & Event Photography"
+  ],
+  "Printing Services": [
+    "Books & Stationery Printing",
+    "Digital Printing",
+    "Flex & Banner Printing",
+    "Printing Press",
+    "Stickers & Labels",
+    "Textile Printing"
+  ],
+  "Real Estate": [
+    "Independent Houses",
+    "PG, Hostels & Rooms",
+    "Plots & Lands",
+    "Real Estate Agents & Builders",
+    "Villas"
+  ],
+  "Religious": [
+    "Pooja Item Shops",
+    "Religious Book Dealers",
+    "Religious Trusts & Organisations",
+    "Temple Construction"
+  ],
+  "Repairs": [
+    "AC & Refrigerator Repair",
+    "Mobile & Laptop Repair",
+    "TV & Home Theatre Repair"
+  ],
+  "Spa & Beauty": [
+    "Beauty Parlours",
+    "Bridegroom Makeup",
+    "Facial Services",
+    "Herbal & Wellness Products",
+    "Saloons",
+    "Spas (Men / Women / Unisex)"
+  ],
+  "Sports": [
+    "Cycling",
+    "Fitness Centres",
+    "Sports Coaching",
+    "Sports Kit Shops",
+    "Swimming Clubs",
+    "Trophies & Shields"
+  ],
+  "Textiles & Garments": [
+    "Handloom & Fabrics",
+    "Home Furnishing",
+    "Kids Wear",
+    "Ladies Wear",
+    "Men's Wear",
+    "Ready-made Garment Retailers"
+  ],
+  "Transport": [
+    "Bus Tickets",
+    "Cab Services",
+    "Drivers on Hire",
+    "Travels & Tour Operators",
+    "Vehicle Transport"
+  ],
+  "Travel & Tourism": [
+    "Tour Packages (Domestic & International)",
+    "Tourist Guides",
+    "Travel Agents"
+  ],
+  "Wedding Services": [
+    "Bridal Makeup & Mehendi",
+    "DJ, Sound & Music Bands",
+    "Decorators & Florists",
+    "Wedding Cards & Event Organisers",
+    "Wedding Photographers"
+  ]
+} as const;
+
 const NAV = [
   { to: "/",          label: "முகப்பு",     en: "Home" },
+  { to: "/businesses", label: "வணிகங்கள்",   en: "Businesses", hasMegaMenu: true },
   {
     to: "/services",
     label: "சேவைகள்",
@@ -26,7 +396,6 @@ const NAV = [
       { to: "/wings", label: "மண்டலங்கள் & மாவட்டங்கள்", en: "Regional Zones", desc: "தமிழ்நாட்டின் அனைத்து மாவட்ட பிரிவுகள்", descEn: "Regional wings across Tamil Nadu" }
     ]
   },
-  { to: "/membership",label: "இணைவு",       en: "Join" },
   {
     to: "/assistant",
     label: "ஆதரவு",
@@ -48,6 +417,7 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [hidden, setHidden] = useState(false);       // true = navbar slid up
   const [scrolled, setScrolled] = useState(false);   // true = past threshold (glass intensifies)
+  const [hoveredCat, setHoveredCat] = useState<string | null>(null);
 
   const loc = useLocation();
   const { language, setLanguage } = useLanguage();
@@ -216,8 +586,13 @@ export function SiteHeader() {
             {NAV.map((n) => {
               const active = loc.pathname === n.to;
               const hasDropdown = "dropdown" in n;
+              const hasMegaMenu = "hasMegaMenu" in n && n.hasMegaMenu;
               return (
-                <div key={n.to} className="relative group/nav min-h-[44px] flex items-center">
+                <div
+                  key={n.to}
+                  className="relative group/nav min-h-[44px] flex items-center"
+                  onMouseLeave={() => { if (hasMegaMenu) setHoveredCat(null); }}
+                >
                   <Link
                     to={n.to}
                     aria-current={active ? "page" : undefined}
@@ -230,7 +605,7 @@ export function SiteHeader() {
                     ].join(" ")}
                   >
                     <span className="relative z-10 text-sm">{language === "ta" ? n.label : n.en}</span>
-                    {hasDropdown && (
+                    {(hasDropdown || hasMegaMenu) && (
                       <ChevronDown className="w-3 h-3 text-slate-400 group-hover/nav:rotate-180 transition-transform duration-300 relative z-10" />
                     )}
                     
@@ -273,6 +648,119 @@ export function SiteHeader() {
                             )}
                           </Link>
                         ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Desktop Mega Menu for Businesses */}
+                  {hasMegaMenu && (
+                    <div className="absolute top-[85%] left-1/2 translate-x-[-40%] w-[820px] pt-3 opacity-0 invisible group-hover/nav:opacity-100 group-hover/nav:visible transition-all duration-300 transform scale-95 group-hover/nav:scale-100 z-50 pointer-events-none group-hover/nav:pointer-events-auto">
+                      <div className="bg-white/95 backdrop-blur-2xl rounded-3xl border border-slate-200/60 shadow-[0_24px_54px_rgba(0,0,0,0.12)] p-6 grid grid-cols-[1fr_300px] gap-6 overflow-hidden text-left">
+                        {/* Left Pane: Categories Grid */}
+                        <div className="flex flex-col justify-between">
+                          <div>
+                            <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-100">
+                              <div className="flex items-center gap-2">
+                                <Building2 className="w-4 h-4 text-primary" />
+                                <span className="font-bold text-slate-800 text-sm">
+                                  {language === "ta" ? "வணிகப் பிரிவுகள்" : "Business Categories"}
+                                </span>
+                              </div>
+                              <Link
+                                to="/businesses"
+                                className="text-xs font-bold text-primary hover:text-primary/80 flex items-center gap-0.5 transition-colors"
+                              >
+                                {language === "ta" ? "அனைத்தையும் காட்டு" : "View All"}
+                                <ChevronRight className="w-3 h-3" />
+                              </Link>
+                            </div>
+                            
+                            <div className="grid grid-cols-3 gap-x-2 gap-y-1.5 max-h-[360px] overflow-y-auto pr-1 scrollbar-thin">
+                              {CATEGORIES.map((cat) => (
+                                <Link
+                                  key={cat.name}
+                                  to="/businesses"
+                                  search={{ category: cat.name }}
+                                  onMouseEnter={() => setHoveredCat(cat.name)}
+                                  className={`flex items-center gap-2 px-2.5 py-1.5 rounded-xl text-left transition-all duration-150 cursor-pointer ${
+                                    hoveredCat === cat.name
+                                      ? "bg-primary/6 text-primary font-bold"
+                                      : "hover:bg-slate-50 text-slate-600 hover:text-slate-900"
+                                  }`}
+                                >
+                                  <span className="text-base shrink-0 select-none">{cat.icon}</span>
+                                  <span className="text-xs truncate font-medium">{cat.name}</span>
+                                </Link>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Right Pane: Subcategory Preview / Welcome Panel */}
+                        <div className="bg-slate-50/50 rounded-2xl border border-slate-200/60 p-5 flex flex-col justify-between min-h-[380px]">
+                          {hoveredCat ? (
+                            <div className="flex flex-col h-full justify-between">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2.5 mb-3.5">
+                                  <span className="text-2xl select-none">
+                                    {CATEGORIES.find(c => c.name === hoveredCat)?.icon || "🏪"}
+                                  </span>
+                                  <span className="font-extrabold text-slate-800 text-sm tracking-tight leading-tight">
+                                    {hoveredCat}
+                                  </span>
+                                </div>
+                                
+                                <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-2">
+                                  {language === "ta" ? "துணைப் பிரிவுகள்" : "Subcategories"}
+                                </div>
+                                
+                                {SUBCATEGORY_MAPPING[hoveredCat] && SUBCATEGORY_MAPPING[hoveredCat].length > 0 ? (
+                                  <div className="flex flex-wrap gap-1.5 max-h-[220px] overflow-y-auto pr-1 scrollbar-thin">
+                                    {SUBCATEGORY_MAPPING[hoveredCat].map((sub) => (
+                                      <Link
+                                        key={sub}
+                                        to="/businesses"
+                                        search={{ category: hoveredCat, subCategory: sub }}
+                                        className="px-2.5 py-1 rounded-full text-[10.5px] font-semibold bg-white border border-slate-200/80 text-slate-650 hover:bg-primary/5 hover:text-primary hover:border-primary/30 transition-all duration-150"
+                                      >
+                                        {sub}
+                                      </Link>
+                                    ))}
+                                  </div>
+                                ) : (
+                                  <div className="text-[11px] text-slate-400 italic">
+                                    {language === "ta" ? "துணைப் பிரிவுகள் இல்லை" : "No subcategories"}
+                                  </div>
+                                )}
+                              </div>
+
+                              <div className="pt-4 border-t border-slate-200/80 mt-auto shrink-0">
+                                <Link
+                                  to="/businesses"
+                                  search={{ category: hoveredCat }}
+                                  className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-primary text-white font-bold text-xs hover:bg-primary/90 transition-all duration-200 shadow-md shadow-primary/10 hover:shadow-lg hover:shadow-primary/15 group/btn"
+                                >
+                                  {language === "ta" ? "அனைத்தையும் ஆராய்க" : `Explore All in ${hoveredCat}`}
+                                  <ChevronRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />
+                                </Link>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="flex flex-col items-center justify-center text-center h-full my-auto">
+                              <div className="w-12 h-12 rounded-2xl bg-primary/8 flex items-center justify-center text-primary mb-3">
+                                <Building2 className="w-6 h-6" />
+                              </div>
+                              <h4 className="font-bold text-slate-800 text-sm mb-1.5">
+                                {language === "ta" ? "வணிகக் கோப்பகம்" : "Business Directory"}
+                              </h4>
+                              <p className="text-[11px] text-slate-400 max-w-[200px] leading-relaxed font-tamil">
+                                {language === "ta"
+                                  ? "துணைப் பிரிவுகளைக் காண ஏதேனும் ஒரு பிரிவின் மீது நகர்த்தவும்."
+                                  : "Hover over any category to view its subcategories and start exploring."}
+                              </p>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                   )}
@@ -419,6 +907,24 @@ export function SiteHeader() {
                                 {language === "ta" ? sub.desc : sub.descEn}
                               </span>
                             )}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Business categories in mobile drawer */}
+                    {n.to === "/businesses" && (
+                      <div className="pl-4 pr-2 py-1 border-l-2 border-slate-100/85 ml-4 max-h-52 overflow-y-auto space-y-0.5 scrollbar-thin">
+                        {CATEGORIES.map(cat => (
+                          <Link
+                            key={cat.name}
+                            to="/businesses"
+                            search={{ category: cat.name }}
+                            onClick={() => setOpen(false)}
+                            className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-slate-650 hover:bg-slate-50 hover:text-primary transition"
+                          >
+                            <span className="text-sm shrink-0 select-none">{cat.icon}</span>
+                            <span className="text-xs font-semibold">{cat.name}</span>
                           </Link>
                         ))}
                       </div>

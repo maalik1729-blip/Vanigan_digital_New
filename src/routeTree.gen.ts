@@ -18,11 +18,18 @@ import { Route as MembershipRouteImport } from './routes/membership'
 import { Route as LoadingRouteImport } from './routes/loading'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as BusinessesRouteImport } from './routes/businesses'
 import { Route as AssistantRouteImport } from './routes/assistant'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as BusinessesIndexRouteImport } from './routes/businesses.index'
+import { Route as BusinessesIdRouteImport } from './routes/businesses.$id'
 import { Route as ApiVoterSearchRouteImport } from './routes/api/voter-search'
+import { Route as ApiCategoriesRouteImport } from './routes/api/categories'
+import { Route as ApiPublicBusinessesRouteImport } from './routes/api/public/businesses'
+import { Route as ApiPublicBusinessesIdRouteImport } from './routes/api/public/businesses.$id'
+import { Route as ApiPublicCategoriesCategorySubcategoriesRouteImport } from './routes/api/public/categories.$category.subcategories'
 
 const WingsRoute = WingsRouteImport.update({
   id: '/wings',
@@ -69,6 +76,11 @@ const ContactRoute = ContactRouteImport.update({
   path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BusinessesRoute = BusinessesRouteImport.update({
+  id: '/businesses',
+  path: '/businesses',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AssistantRoute = AssistantRouteImport.update({
   id: '/assistant',
   path: '/assistant',
@@ -89,17 +101,49 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BusinessesIndexRoute = BusinessesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => BusinessesRoute,
+} as any)
+const BusinessesIdRoute = BusinessesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => BusinessesRoute,
+} as any)
 const ApiVoterSearchRoute = ApiVoterSearchRouteImport.update({
   id: '/api/voter-search',
   path: '/api/voter-search',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCategoriesRoute = ApiCategoriesRouteImport.update({
+  id: '/api/categories',
+  path: '/api/categories',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicBusinessesRoute = ApiPublicBusinessesRouteImport.update({
+  id: '/api/public/businesses',
+  path: '/api/public/businesses',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicBusinessesIdRoute = ApiPublicBusinessesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ApiPublicBusinessesRoute,
+} as any)
+const ApiPublicCategoriesCategorySubcategoriesRoute =
+  ApiPublicCategoriesCategorySubcategoriesRouteImport.update({
+    id: '/api/public/categories/$category/subcategories',
+    path: '/api/public/categories/$category/subcategories',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/analytics': typeof AnalyticsRoute
   '/assistant': typeof AssistantRoute
+  '/businesses': typeof BusinessesRouteWithChildren
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/loading': typeof LoadingRoute
@@ -109,7 +153,13 @@ export interface FileRoutesByFullPath {
   '/terms-conditions': typeof TermsConditionsRoute
   '/voter-id': typeof VoterIdRoute
   '/wings': typeof WingsRoute
+  '/api/categories': typeof ApiCategoriesRoute
   '/api/voter-search': typeof ApiVoterSearchRoute
+  '/businesses/$id': typeof BusinessesIdRoute
+  '/businesses/': typeof BusinessesIndexRoute
+  '/api/public/businesses': typeof ApiPublicBusinessesRouteWithChildren
+  '/api/public/businesses/$id': typeof ApiPublicBusinessesIdRoute
+  '/api/public/categories/$category/subcategories': typeof ApiPublicCategoriesCategorySubcategoriesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -125,7 +175,13 @@ export interface FileRoutesByTo {
   '/terms-conditions': typeof TermsConditionsRoute
   '/voter-id': typeof VoterIdRoute
   '/wings': typeof WingsRoute
+  '/api/categories': typeof ApiCategoriesRoute
   '/api/voter-search': typeof ApiVoterSearchRoute
+  '/businesses/$id': typeof BusinessesIdRoute
+  '/businesses': typeof BusinessesIndexRoute
+  '/api/public/businesses': typeof ApiPublicBusinessesRouteWithChildren
+  '/api/public/businesses/$id': typeof ApiPublicBusinessesIdRoute
+  '/api/public/categories/$category/subcategories': typeof ApiPublicCategoriesCategorySubcategoriesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -133,6 +189,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/analytics': typeof AnalyticsRoute
   '/assistant': typeof AssistantRoute
+  '/businesses': typeof BusinessesRouteWithChildren
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/loading': typeof LoadingRoute
@@ -142,7 +199,13 @@ export interface FileRoutesById {
   '/terms-conditions': typeof TermsConditionsRoute
   '/voter-id': typeof VoterIdRoute
   '/wings': typeof WingsRoute
+  '/api/categories': typeof ApiCategoriesRoute
   '/api/voter-search': typeof ApiVoterSearchRoute
+  '/businesses/$id': typeof BusinessesIdRoute
+  '/businesses/': typeof BusinessesIndexRoute
+  '/api/public/businesses': typeof ApiPublicBusinessesRouteWithChildren
+  '/api/public/businesses/$id': typeof ApiPublicBusinessesIdRoute
+  '/api/public/categories/$category/subcategories': typeof ApiPublicCategoriesCategorySubcategoriesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -151,6 +214,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/analytics'
     | '/assistant'
+    | '/businesses'
     | '/contact'
     | '/dashboard'
     | '/loading'
@@ -160,7 +224,13 @@ export interface FileRouteTypes {
     | '/terms-conditions'
     | '/voter-id'
     | '/wings'
+    | '/api/categories'
     | '/api/voter-search'
+    | '/businesses/$id'
+    | '/businesses/'
+    | '/api/public/businesses'
+    | '/api/public/businesses/$id'
+    | '/api/public/categories/$category/subcategories'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -176,13 +246,20 @@ export interface FileRouteTypes {
     | '/terms-conditions'
     | '/voter-id'
     | '/wings'
+    | '/api/categories'
     | '/api/voter-search'
+    | '/businesses/$id'
+    | '/businesses'
+    | '/api/public/businesses'
+    | '/api/public/businesses/$id'
+    | '/api/public/categories/$category/subcategories'
   id:
     | '__root__'
     | '/'
     | '/about'
     | '/analytics'
     | '/assistant'
+    | '/businesses'
     | '/contact'
     | '/dashboard'
     | '/loading'
@@ -192,7 +269,13 @@ export interface FileRouteTypes {
     | '/terms-conditions'
     | '/voter-id'
     | '/wings'
+    | '/api/categories'
     | '/api/voter-search'
+    | '/businesses/$id'
+    | '/businesses/'
+    | '/api/public/businesses'
+    | '/api/public/businesses/$id'
+    | '/api/public/categories/$category/subcategories'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -200,6 +283,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AnalyticsRoute: typeof AnalyticsRoute
   AssistantRoute: typeof AssistantRoute
+  BusinessesRoute: typeof BusinessesRouteWithChildren
   ContactRoute: typeof ContactRoute
   DashboardRoute: typeof DashboardRoute
   LoadingRoute: typeof LoadingRoute
@@ -209,7 +293,10 @@ export interface RootRouteChildren {
   TermsConditionsRoute: typeof TermsConditionsRoute
   VoterIdRoute: typeof VoterIdRoute
   WingsRoute: typeof WingsRoute
+  ApiCategoriesRoute: typeof ApiCategoriesRoute
   ApiVoterSearchRoute: typeof ApiVoterSearchRoute
+  ApiPublicBusinessesRoute: typeof ApiPublicBusinessesRouteWithChildren
+  ApiPublicCategoriesCategorySubcategoriesRoute: typeof ApiPublicCategoriesCategorySubcategoriesRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -277,6 +364,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/businesses': {
+      id: '/businesses'
+      path: '/businesses'
+      fullPath: '/businesses'
+      preLoaderRoute: typeof BusinessesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/assistant': {
       id: '/assistant'
       path: '/assistant'
@@ -305,6 +399,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/businesses/': {
+      id: '/businesses/'
+      path: '/'
+      fullPath: '/businesses/'
+      preLoaderRoute: typeof BusinessesIndexRouteImport
+      parentRoute: typeof BusinessesRoute
+    }
+    '/businesses/$id': {
+      id: '/businesses/$id'
+      path: '/$id'
+      fullPath: '/businesses/$id'
+      preLoaderRoute: typeof BusinessesIdRouteImport
+      parentRoute: typeof BusinessesRoute
+    }
     '/api/voter-search': {
       id: '/api/voter-search'
       path: '/api/voter-search'
@@ -312,14 +420,68 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiVoterSearchRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/categories': {
+      id: '/api/categories'
+      path: '/api/categories'
+      fullPath: '/api/categories'
+      preLoaderRoute: typeof ApiCategoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/businesses': {
+      id: '/api/public/businesses'
+      path: '/api/public/businesses'
+      fullPath: '/api/public/businesses'
+      preLoaderRoute: typeof ApiPublicBusinessesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/businesses/$id': {
+      id: '/api/public/businesses/$id'
+      path: '/$id'
+      fullPath: '/api/public/businesses/$id'
+      preLoaderRoute: typeof ApiPublicBusinessesIdRouteImport
+      parentRoute: typeof ApiPublicBusinessesRoute
+    }
+    '/api/public/categories/$category/subcategories': {
+      id: '/api/public/categories/$category/subcategories'
+      path: '/api/public/categories/$category/subcategories'
+      fullPath: '/api/public/categories/$category/subcategories'
+      preLoaderRoute: typeof ApiPublicCategoriesCategorySubcategoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
+
+interface BusinessesRouteChildren {
+  BusinessesIdRoute: typeof BusinessesIdRoute
+  BusinessesIndexRoute: typeof BusinessesIndexRoute
+}
+
+const BusinessesRouteChildren: BusinessesRouteChildren = {
+  BusinessesIdRoute: BusinessesIdRoute,
+  BusinessesIndexRoute: BusinessesIndexRoute,
+}
+
+const BusinessesRouteWithChildren = BusinessesRoute._addFileChildren(
+  BusinessesRouteChildren,
+)
+
+interface ApiPublicBusinessesRouteChildren {
+  ApiPublicBusinessesIdRoute: typeof ApiPublicBusinessesIdRoute
+}
+
+const ApiPublicBusinessesRouteChildren: ApiPublicBusinessesRouteChildren = {
+  ApiPublicBusinessesIdRoute: ApiPublicBusinessesIdRoute,
+}
+
+const ApiPublicBusinessesRouteWithChildren =
+  ApiPublicBusinessesRoute._addFileChildren(ApiPublicBusinessesRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   AnalyticsRoute: AnalyticsRoute,
   AssistantRoute: AssistantRoute,
+  BusinessesRoute: BusinessesRouteWithChildren,
   ContactRoute: ContactRoute,
   DashboardRoute: DashboardRoute,
   LoadingRoute: LoadingRoute,
@@ -329,7 +491,11 @@ const rootRouteChildren: RootRouteChildren = {
   TermsConditionsRoute: TermsConditionsRoute,
   VoterIdRoute: VoterIdRoute,
   WingsRoute: WingsRoute,
+  ApiCategoriesRoute: ApiCategoriesRoute,
   ApiVoterSearchRoute: ApiVoterSearchRoute,
+  ApiPublicBusinessesRoute: ApiPublicBusinessesRouteWithChildren,
+  ApiPublicCategoriesCategorySubcategoriesRoute:
+    ApiPublicCategoriesCategorySubcategoriesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

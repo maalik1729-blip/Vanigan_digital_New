@@ -1,6 +1,6 @@
-import headerLogo from "@/assets/349b584e-1b60-469e-9e5d-8d124cb057cb.png";
 import rightLogo from "@/assets/ChatGPT Image Mar 25, 2026, 05_31_25 PM (1).png";
 import ownerSign from "@/assets/8bb61dfb-f349-4e0b-8501-560feae9f000.png";
+import { ZONE_BREAKDOWN } from "@/data/zones";
 
 export type Voter = {
   ID: number;
@@ -34,73 +34,61 @@ export type Voter = {
 
 export type Template = "front" | "back";
 
-/* ── Brand colors matching reference ── */
-const RUST = "#7e534c";
-const CHARCOAL = "#382a26";
-const LIGHT_BG = "#faf7f6";
-const TEXT_MUTED = "#8c7e7a";
-
 /* ── Helpers ── */
-function membershipNo(voter: Voter) {
+export function membershipNo(voter: Voter) {
   const base = voter.EPIC_NO.replace(/[^A-Z0-9]/gi, "").toUpperCase().slice(-6);
-  const sn   = parseInt(voter.SERIAL_NO || "1").toString(16).padStart(2, "0").toUpperCase();
-  return `TNVS-${base}${sn}`;
+  const sn = parseInt(voter.SERIAL_NO || "1", 10).toString(16).padStart(2, "0").toUpperCase();
+  return `TNV-${base}${sn}`;
 }
 
-function PhotoBoxCircle({ photoUrl, size = 80 }: { photoUrl?: string; size?: number }) {
-  return (
-    <div style={{
-      position: "relative",
-      width: size + 16,
-      height: size + 16,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-    }}>
-      {/* Concentric Arc */}
-      <div style={{
-        position: "absolute",
-        width: size + 12,
-        height: size + 12,
-        borderRadius: "50%",
-        borderRight: "2px solid #7e534c",
-        borderBottom: "2px solid #7e534c",
-        borderLeft: "2px solid transparent",
-        borderTop: "2px solid transparent",
-        transform: "rotate(-20deg)",
-      }} />
+export function getZoneName(district?: string, assemblyName?: string): string {
+  if (!district && !assemblyName) return "North Zone";
+  const dist = district?.toUpperCase().trim() || "";
+  const assm = assemblyName?.toLowerCase().trim() || "";
 
-      {/* Main Circle Photo */}
-      <div style={{
-        width: size,
-        height: size,
-        borderRadius: "50%",
-        overflow: "hidden",
-        border: "1px solid #eef0f5",
-        background: "#eef0f5",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        flexShrink: 0,
-      }}>
-        {photoUrl ? (
-          <img src={photoUrl} alt="Photo" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-        ) : (
-          <img
-            src={rightLogo}
-            alt="TNVS Logo"
-            style={{
-              width: "70%",
-              height: "70%",
-              objectFit: "contain",
-              opacity: 0.55,
-              borderRadius: "50%",
-            }}
-          />
-        )}
-      </div>
-    </div>
+  const found = ZONE_BREAKDOWN.find(
+    (item) =>
+      item.district.toUpperCase().trim() === dist &&
+      item.constituency.toLowerCase().trim() === assm
   );
+
+  if (found) {
+    return found.zone.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
+  }
+
+  const foundByDist = ZONE_BREAKDOWN.find(
+    (item) => item.district.toUpperCase().trim() === dist
+  );
+  if (foundByDist) {
+    return foundByDist.zone.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
+  }
+
+  return "North Zone";
+}
+
+export function formatDob(dob?: string, age?: string): string {
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  if (dob) {
+    const d = new Date(dob);
+    if (!isNaN(d.getTime())) {
+      const day = String(d.getDate()).padStart(2, "0");
+      const month = months[d.getMonth()];
+      const year = d.getFullYear();
+      return `${day} ${month} ${year}`;
+    }
+    const parts = dob.split("-");
+    if (parts.length === 3) {
+      const yr = parseInt(parts[0], 10);
+      const mo = parseInt(parts[1], 10) - 1;
+      const dy = parseInt(parts[2], 10);
+      if (mo >= 0 && mo < 12) {
+        return `${String(dy).padStart(2, "0")} ${months[mo]} ${yr}`;
+      }
+    }
+    return dob;
+  }
+  const birthYear = new Date().getFullYear() - parseInt(age || "30", 10);
+  return `01 Jan ${birthYear}`;
 }
 
 /* ══════════════════════════════════════════════
@@ -108,11 +96,268 @@ function PhotoBoxCircle({ photoUrl, size = 80 }: { photoUrl?: string; size?: num
    ══════════════════════════════════════════════ */
 export function VoterIdCard({ voter, template }: { voter: Voter; template: Template }) {
   return (
-    <div className="card-scale-wrapper">
-      <div className="responsive-card-scale">
-        {template === "back" ? <GovBack voter={voter} /> : <GovFront voter={voter} />}
-      </div>
-    </div>
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+        .card-scale-wrapper {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 100%;
+          overflow: hidden;
+          padding: 10px 0;
+        }
+
+        .responsive-card-scale {
+          transform-origin: center center;
+          transition: transform 0.2s ease-in-out;
+          flex-shrink: 0;
+        }
+
+        .card-face {
+          width: 421px;
+          margin: 0 auto;
+          position: relative;
+          overflow: hidden;
+          font-family: 'Inter', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+          box-sizing: border-box;
+          text-align: left;
+          border-radius: 24px;
+        }
+
+        .card-face * {
+          box-sizing: border-box;
+        }
+
+        #page1-div {
+          background-image: url(https://res.cloudinary.com/dqndhcmu2/image/upload/v1773232516/vanigan/templates/ID_Front.png);
+          background-repeat: no-repeat;
+          background-size: 421px 573px;
+          background-position: center;
+          height: 573px;
+        }
+
+        #page2-div {
+          background-image: url(https://res.cloudinary.com/dqndhcmu2/image/upload/v1773232519/vanigan/templates/ID_Back.png);
+          background-repeat: no-repeat;
+          background-size: 421px 590px;
+          background-position: center;
+          height: 590px;
+        }
+
+        .front-photo-wrap {
+          position: absolute;
+          top: 182px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 137px;
+        }
+
+        .front-stack {
+          position: absolute;
+          top: 328px;
+          left: 28px;
+          right: 28px;
+          text-align: center;
+        }
+
+        .front-stack > * + * {
+          margin-top: 5px;
+        }
+
+        .front-meta {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 5px;
+          margin-top: 3px;
+        }
+
+        .photo {
+          display: block;
+          margin: 0 auto;
+          border: none;
+          border-radius: 20px;
+          width: 133px;
+          height: 133px;
+          object-fit: cover;
+          object-position: center top;
+          padding: 0;
+          background: #ffffff;
+          box-shadow:
+            0 0 0 1px rgba(0, 146, 69, 0.1),
+            0 6px 24px rgba(0, 92, 69, 0.30),
+            0 2px 6px rgba(0, 92, 69, 0.14);
+        }
+
+        .name {
+          font-size: 21px;
+          font-weight: 800;
+          color: #009245;
+          line-height: 1.15;
+          margin: 0;
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+        }
+
+        .detail-line {
+          font-size: 13.5px;
+          font-weight: 600;
+          color: #1f2937;
+          text-transform: capitalize;
+          line-height: 1.3;
+          margin: 0;
+          letter-spacing: 0.01em;
+        }
+
+        .front-line {
+          text-align: center;
+          word-break: break-word;
+          padding: 0 18px;
+        }
+
+        .suffix-tag {
+          display: inline-block;
+          font-size: 9px;
+          font-weight: 700;
+          color: #fff;
+          background: #009245;
+          border-radius: 4px;
+          padding: 1.5px 5px;
+          margin-left: 4px;
+          vertical-align: middle;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          line-height: 1;
+        }
+
+        .id-number {
+          font-size: 17px;
+          font-weight: 800;
+          color: #111827;
+          letter-spacing: 0.12em;
+          margin-top: 6px;
+          font-variant-numeric: tabular-nums;
+        }
+
+        .back-content {
+          position: absolute;
+          top: 234px;
+          left: 22px;
+          right: 20px;
+        }
+
+        .back-details {
+          transform: translateY(-60px);
+        }
+
+        .back-row {
+          display: grid;
+          grid-template-columns: 40% 5% 55%;
+          align-items: start;
+          margin-bottom: 7px;
+        }
+
+        .back-label {
+          font-size: 10px;
+          font-weight: 700;
+          text-transform: uppercase;
+          color: #6b7280;
+          letter-spacing: 0.08em;
+          padding-top: 2px;
+        }
+
+        .back-sep {
+          font-size: 15px;
+          line-height: 1;
+          text-align: center;
+          font-weight: 400;
+          color: #d1d5db;
+          padding-top: 1px;
+        }
+
+        .back-value {
+          font-size: 14px;
+          font-weight: 600;
+          color: #111827;
+          line-height: 1.3;
+          word-break: break-word;
+          letter-spacing: 0.01em;
+        }
+
+        .back-value.address {
+          line-height: 1.25;
+        }
+
+        .back-bottom {
+          display: grid;
+          grid-template-columns: 40% 60%;
+          align-items: start;
+          margin-top: -20px;
+        }
+
+        .qr-wrap {
+          padding-left: 20px;
+        }
+
+        .sign-wrap {
+          text-align: center;
+          padding-right: 10px;
+        }
+
+        .signature-name {
+          text-align: center;
+          margin: 2px 0 0;
+          font-size: 12.5px;
+          font-weight: 800;
+          color: #111827;
+          letter-spacing: 0.04em;
+          text-transform: uppercase;
+        }
+
+        .small-text {
+          font-size: 10px;
+          font-weight: 500;
+          color: #4b5563;
+          line-height: 1.3;
+          margin: 1px 0 0;
+          letter-spacing: 0.01em;
+        }
+
+        .contact-value {
+          background: rgba(255, 255, 255, 0.78);
+          display: inline-block;
+          padding: 1px 4px;
+          border-radius: 4px;
+        }
+
+        @media print {
+          #page1-div,
+          #page2-div {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+          }
+        }
+
+        @media (max-width: 500px) {
+          .responsive-card-scale {
+            transform: scale(0.85) !important;
+          }
+        }
+        @media (max-width: 420px) {
+          .responsive-card-scale {
+            transform: scale(0.75) !important;
+          }
+        }
+        @media (max-width: 360px) {
+          .responsive-card-scale {
+            transform: scale(0.65) !important;
+          }
+        }
+      `}</style>
+      {template === "back" ? <GovBack voter={voter} /> : <GovFront voter={voter} />}
+    </>
   );
 }
 
@@ -120,159 +365,48 @@ export function VoterIdCard({ voter, template }: { voter: Voter; template: Templ
    FRONT — Portrait Premium Design
    ══════════════════════════════════════════════ */
 function GovFront({ voter }: { voter: Voter }) {
-  const name     = voter.VOTER_NAME.replace(/\s*-\s*$/, "").trim();
-  const mno      = membershipNo(voter);
-  const birthYear = new Date().getFullYear() - parseInt(voter.AGE || "30");
+  const name = voter.VOTER_NAME.replace(/\s*-\s*$/, "").trim();
+  const mno = membershipNo(voter);
+  const zoneName = getZoneName(voter.DISTRICT, voter.ASSEMBLY_NAME);
 
   return (
-    <div style={{
-      width: 240, height: 380,
-      borderRadius: 12,
-      overflow: "hidden",
-      fontFamily: "Inter, sans-serif",
-      boxSizing: "border-box",
-      flexShrink: 0,
-      boxShadow: "0 8px 24px rgba(56, 42, 38, 0.15)",
-      display: "flex",
-      background: "#fff",
-      border: "1px solid #dce3f0",
-      position: "relative",
-    }}>
-
-      {/* ── Left Side Stripe ── */}
-      <div style={{
-        width: 60,
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        position: "relative",
-        flexShrink: 0,
-      }}>
-        {/* Top half: Rust brown */}
-        <div style={{
-          flex: 8, // ratio for upper part (80%)
-          background: RUST,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "12px 0",
-          position: "relative",
-        }}>
-          <div style={{
-            position: "absolute",
-            top: "52%",
-            left: "50%",
-            transform: "translate(-50%, -50%) rotate(-90deg)",
-            whiteSpace: "nowrap",
-            display: "flex",
-            alignItems: "center",
-            gap: 10,
-            color: "#fff",
-          }}>
-            <img 
-              src={headerLogo} 
-              alt="Logo" 
-              style={{ width: 34, height: 34, borderRadius: "50%", objectFit: "cover", transform: "rotate(90deg)" }} 
-            />
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <span style={{ fontSize: 9.2, fontWeight: 800, letterSpacing: "0.05em", lineHeight: 1.1 }}>TAMILNADU VANIGARGALIN SANGAMAM</span>
-              <span style={{ fontSize: 7, color: "rgba(255, 255, 255, 0.7)", letterSpacing: "0.02em" }}>MEMBERSHIP CARD</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom half: Dark charcoal with colorful logo */}
-        <div style={{
-          flex: 2, // ratio for bottom part (20%)
-          background: CHARCOAL,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "8px 0",
-        }}>
-          <img 
-            src={rightLogo} 
-            alt="Logo" 
-            style={{ width: 34, height: 34, objectFit: "contain", borderRadius: "50%" }} 
-          />
-        </div>
+    <div id="page1-div" className="card-face">
+      <div className="front-photo-wrap">
+        <img
+          src={voter.PHOTO_URL || "https://via.placeholder.com/137x136"}
+          crossOrigin="anonymous"
+          className="photo"
+          alt={name}
+        />
       </div>
 
-      {/* ── Right Main Area ── */}
-      <div style={{
-        flex: 1,
-        minWidth: 0,
-        padding: "20px 14px 14px 14px",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "flex-start",
-      }}>
-        {/* Profile Circle & Arc */}
-        <div style={{ width: "100%", display: "flex", justifyContent: "center", marginBottom: 8 }}>
-          <PhotoBoxCircle photoUrl={voter.PHOTO_URL} size={70} />
+      <div className="front-stack">
+        <div className="front-line">
+          <p className="name">{name}</p>
         </div>
-
-        {/* Member Name */}
-        <div style={{ width: "100%", paddingLeft: 2 }}>
-          <div style={{ 
-            fontSize: 12, 
-            fontWeight: 800, 
-            color: CHARCOAL, 
-            letterSpacing: "-0.01em", 
-            lineHeight: 1.2,
-            textTransform: "capitalize",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap"
-          }}>
-            {name}
+        <div className="front-meta">
+          <div className="front-line">
+            <p className="detail-line">
+              <span style={{color:'#6b7280', fontWeight:600, fontSize:'0.82em', letterSpacing:'0.05em', textTransform:'uppercase'}}>Assembly</span>
+              {" : "}{voter.ASSEMBLY_NAME || "—"}
+            </p>
           </div>
-          <div style={{ 
-            fontSize: 7.5, 
-            color: RUST, 
-            fontWeight: 700, 
-            textTransform: "capitalize", 
-            letterSpacing: "0.04em",
-            marginTop: 1
-          }}>
-            association member
+          <div className="front-line">
+            <p className="detail-line">
+              <span style={{color:'#6b7280', fontWeight:600, fontSize:'0.82em', letterSpacing:'0.05em', textTransform:'uppercase'}}>Dist</span>
+              {" : "}{voter.DISTRICT || "—"}
+            </p>
           </div>
-        </div>
-
-        {/* Thin Separator Line */}
-        <div style={{ width: "100%", height: 1, background: "#f0eceb", margin: "4px 0 6px 0" }} />
-
-        {/* Details Block */}
-        <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: 8 }}>
-          <DetailBlockRow label="epic no" value={voter.EPIC_NO} />
-          <DetailBlockRow label="assembly" value={voter.ASSEMBLY_NAME || "—"} />
-          <DetailBlockRow label="district" value={voter.DISTRICT || "—"} />
-          <DetailBlockRow label="gender" value={voter.GENDER || "—"} />
-          <DetailBlockRow label="business type" value={voter.BUSINESS_TYPE || "Retail"} />
+          <div className="front-line">
+            <p className="detail-line">
+              <span style={{color:'#6b7280', fontWeight:600, fontSize:'0.82em', letterSpacing:'0.05em', textTransform:'uppercase'}}>Zone</span>
+              {" : "}{zoneName}</p>
+          </div>
+          <div className="front-line">
+            <p className="id-number">{mno}</p>
+          </div>
         </div>
       </div>
-    </div>
-  );
-}
-
-/* ── Front detail row helper ── */
-function DetailBlockRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div style={{
-      width: "100%",
-      background: LIGHT_BG,
-      borderRadius: 4,
-      padding: "6.5px 10px",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-    }}>
-      <span style={{ fontSize: 7.5, color: TEXT_MUTED, textTransform: "capitalize", letterSpacing: "0.02em" }}>
-        {label} :
-      </span>
-      <span style={{ fontSize: 8.5, fontWeight: 700, color: CHARCOAL }}>
-        {value}
-      </span>
     </div>
   );
 }
@@ -281,217 +415,73 @@ function DetailBlockRow({ label, value }: { label: string; value: string }) {
    BACK — Portrait Premium Design
    ══════════════════════════════════════════════ */
 function GovBack({ voter }: { voter: Voter }) {
-  const name     = voter.VOTER_NAME.replace(/\s*-\s*$/, "").trim();
-  const mno      = membershipNo(voter);
-  const mobile   = voter.MOBILE_NUMBER && voter.MOBILE_NUMBER !== "-" ? voter.MOBILE_NUMBER : "—";
-  const rawAddress = voter.POLLING_STATION_ADDRESS || 
+  const name = voter.VOTER_NAME.replace(/\s*-\s*$/, "").trim();
+  const mno = membershipNo(voter);
+  const dobString = formatDob(voter.DOB, voter.AGE);
+  const mobile = voter.MOBILE_NUMBER && voter.MOBILE_NUMBER !== "-" ? voter.MOBILE_NUMBER : "—";
+  
+  const rawAddress =
+    voter.POLLING_STATION_ADDRESS ||
     (voter.HOUSE_NO ? `No ${voter.HOUSE_NO}, ${voter.MAIN_TOWN || voter.DISTRICT}` : "");
   const address = rawAddress
-    ? rawAddress.toLowerCase().replace(/\b\w/g, c => c.toUpperCase())
+    ? rawAddress.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase())
     : "—";
 
-  // Format Date of Birth
-  let dobString = "—";
-  if (voter.DOB) {
-    const parts = voter.DOB.split("-");
-    if (parts.length === 3) {
-      dobString = `${parts[2]} / ${parts[1]} / ${parts[0]}`; // Convert YYYY-MM-DD to DD / MM / YYYY
-    } else {
-      dobString = voter.DOB; // fallback if already in custom format
-    }
-  } else {
-    const birthYear = new Date().getFullYear() - parseInt(voter.AGE || "30");
-    dobString = `01 / 01 / ${birthYear}`;
-  }
-
-  const qrData   = encodeURIComponent(`${name}|${mno}|${voter.ASSEMBLY_NAME}|${voter.DISTRICT}`);
-  const qrUrl    = `https://api.qrserver.com/v1/create-qr-code/?size=48x48&data=${qrData}&color=382a26&bgcolor=ffffff&margin=2`;
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=96x88&data=${encodeURIComponent(mno)}`;
 
   return (
-    <div style={{
-      width: 240, height: 380,
-      borderRadius: 12,
-      overflow: "hidden",
-      fontFamily: "Inter, sans-serif",
-      boxSizing: "border-box",
-      flexShrink: 0,
-      boxShadow: "0 8px 24px rgba(56, 42, 38, 0.15)",
-      display: "flex",
-      background: "#fff",
-      border: "1px solid #dce3f0",
-      position: "relative",
-    }}>
-
-      {/* ── Left Main Area ── */}
-      <div style={{
-        flex: 1,
-        minWidth: 0,
-        padding: "20px 14px 14px 14px",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "flex-start",
-      }}>
-        {/* Header: Member Info & Logo */}
-        {/* Header: Member Info */}
-        <div style={{ width: "100%", display: "flex", flexDirection: "column", marginBottom: 14 }}>
-          <span style={{ fontSize: 11, fontWeight: 800, color: CHARCOAL, textTransform: "capitalize", lineHeight: 1.1 }}>
-            {name}
-          </span>
-          <span style={{ fontSize: 7, fontFamily: "monospace", color: RUST, fontWeight: 700, marginTop: 1 }}>
-            {mno}
-          </span>
-        </div>
-
-        {/* Details Block */}
-        <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: 8, marginBottom: 8 }}>
-          <BackDetailRow label="date of birth" value={dobString} />
-          <BackDetailRow label="age" value={voter.AGE ? `${voter.AGE} yrs` : "—"} />
-          <BackDetailRow label="blood group" value={voter.BLOOD_GROUP || "—"} />
-          <BackDetailRow label="address" value={address} wrap />
-          <BackDetailRow label="mobile" value={mobile} />
-        </div>
-
-        {/* Return Address, Signature, QR Code Footer */}
-        <div style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "flex-end",
-          marginTop: "auto",
-          borderTop: "1px solid #f0eceb",
-          paddingTop: 8,
-        }}>
-          {/* Left Column: Return Address & Signature */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 6, width: 105 }}>
-            <span style={{ fontSize: 5.5, color: TEXT_MUTED, fontStyle: "italic", lineHeight: 1.25, display: "block" }}>
-              If found, please return to: No 5/79, Saidapet, Chennai-600015
-            </span>
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
-              <img 
-                src={ownerSign} 
-                alt="Signature" 
-                height={26} 
-                style={{ height: 26, objectFit: "contain", opacity: 0.85 }} 
-              />
-              <span style={{ fontSize: 7, fontWeight: 700, color: CHARCOAL, textTransform: "uppercase", marginTop: 2, lineHeight: 1 }}>
-                Senthil Kumar N
-              </span>
-              <span style={{ fontSize: 6, color: TEXT_MUTED, textTransform: "capitalize", lineHeight: 1 }}>
-                State President
-              </span>
-            </div>
+    <div id="page2-div" className="card-face">
+      <div className="back-content">
+        <div className="back-details">
+          <div className="back-row">
+            <div className="back-label">DATE OF BIRTH</div>
+            <div className="back-sep">:</div>
+            <div className="back-value">{dobString}</div>
           </div>
 
-          {/* Right Column: QR Code */}
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-            <img 
-              src={qrUrl} 
-              alt="QR Code" 
-              width="42" 
-              height="42"
-              style={{ borderRadius: 2, border: "1px solid #eef0f5", display: "block" }} 
-            />
-            <span style={{ fontSize: 5, fontFamily: "monospace", color: TEXT_MUTED, marginTop: 2 }}>
-              {mno.slice(-8)}
-            </span>
+          <div className="back-row">
+            <div className="back-label">AGE</div>
+            <div className="back-sep">:</div>
+            <div className="back-value">{voter.AGE || "—"}</div>
           </div>
-        </div>
-      </div>
 
-      {/* ── Right Side Stripe (Flipped horizontal mirror) ── */}
-      <div style={{
-        width: 60,
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        position: "relative",
-        flexShrink: 0,
-      }}>
-        {/* Top half: Rust brown */}
-        <div style={{
-          flex: 8,
-          background: RUST,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "12px 0",
-          position: "relative",
-        }}>
-          <div style={{
-            position: "absolute",
-            top: "52%",
-            left: "50%",
-            transform: "translate(-50%, -50%) rotate(-90deg)",
-            whiteSpace: "nowrap",
-            display: "flex",
-            alignItems: "center",
-            gap: 10,
-            color: "#fff",
-          }}>
-            <img 
-              src={headerLogo} 
-              alt="Logo" 
-              style={{ width: 34, height: 34, borderRadius: "50%", objectFit: "cover", transform: "rotate(90deg)" }} 
-            />
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <span style={{ fontSize: 9.2, fontWeight: 800, letterSpacing: "0.05em", lineHeight: 1.1 }}>TAMILNADU VANIGARGALIN SANGAMAM</span>
-              <span style={{ fontSize: 7, color: "rgba(255, 255, 255, 0.7)", letterSpacing: "0.02em" }}>MEMBERSHIP CARD</span>
+          <div className="back-row">
+            <div className="back-label">BLOOD GROUP</div>
+            <div className="back-sep">:</div>
+            <div className="back-value">{voter.BLOOD_GROUP || "—"}</div>
+          </div>
+
+          <div className="back-row">
+            <div className="back-label">ADDRESS</div>
+            <div className="back-sep">:</div>
+            <div className="back-value address">{address}</div>
+          </div>
+
+          <div className="back-row" style={{ marginTop: "8px" }}>
+            <div className="back-label">CONTACT</div>
+            <div className="back-sep">:</div>
+            <div className="back-value">
+              <span className="contact-value">{mobile}</span>
             </div>
           </div>
         </div>
 
-        {/* Bottom half: Dark charcoal with colorful logo */}
-        <div style={{
-          flex: 2,
-          background: CHARCOAL,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "8px 0",
-        }}>
-          <img 
-            src={rightLogo} 
-            alt="Logo" 
-            style={{ width: 34, height: 34, objectFit: "contain", borderRadius: "50%" }} 
-          />
+        <div className="back-bottom">
+          <div className="qr-wrap">
+            <img src={qrUrl} width="96" height="88" alt="QR Code" />
+          </div>
+          <div className="sign-wrap">
+            <img
+              src={ownerSign}
+              alt="Signature"
+              style={{ height: 75, objectFit: "contain", opacity: 0.9, display: "block", margin: "-18px auto -12px" }}
+            />
+            <p className="signature-name">SENTHIL KUMAR N</p>
+            <p className="small-text">Founder &amp; State President</p>
+            <p className="small-text">Tamilnadu Vanigargalin Sangamam</p>
+          </div>
         </div>
       </div>
-    </div>
-  );
-}
-
-/* ── Back detail row helper ── */
-function BackDetailRow({ label, value, wrap }: { label: string; value: string; wrap?: boolean }) {
-  return (
-    <div style={{
-      display: "flex",
-      alignItems: wrap ? "flex-start" : "center",
-      gap: 6,
-    }}>
-      <span style={{
-        fontSize: 7.8,
-        color: RUST,
-        fontWeight: 700,
-        textTransform: "uppercase",
-        width: 72,
-        flexShrink: 0,
-        letterSpacing: "0.02em",
-      }}>
-        {label}
-      </span>
-      <span style={{ fontSize: 8, color: TEXT_MUTED }}>:</span>
-      <span style={{
-        fontSize: 8.5,
-        fontWeight: 700,
-        color: CHARCOAL,
-        whiteSpace: wrap ? "normal" : "nowrap",
-        overflow: wrap ? "visible" : "hidden",
-        textOverflow: wrap ? "clip" : "ellipsis",
-        lineHeight: 1.25,
-        wordBreak: wrap ? "break-word" : "normal",
-      }}>
-        {value}
-      </span>
     </div>
   );
 }

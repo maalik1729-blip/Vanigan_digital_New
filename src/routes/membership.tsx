@@ -39,7 +39,7 @@ import orgLogo from "@/assets/ChatGPT Image Mar 25, 2026, 05_31_25 PM (1).png";
 import signImg from "@/assets/8bb61dfb-f349-4e0b-8501-560feae9f000.png";
 import kittenTeacup from "@/assets/kitten_teacup.png";
 import unityHands from "@/assets/unity-hands.png";
-import { VoterIdCard, type Voter } from "@/components/VoterIdCard";
+import { VoterIdCard, type Voter, membershipNo, getZoneName, formatDob } from "@/components/VoterIdCard";
 import votersData from "@/data/voters.json";
 import { z } from "zod";
 import { WINGS } from "@/data/wings";
@@ -175,6 +175,82 @@ const WING_CATEGORIES = [
     wings: ["labour", "differently-abled", "transgender-entrepreneurs", "pharmacists", "educators", "tourism-transport", "sports-business", "shop-owners", "street-vendors", "hotels-lodgings", "beauty-fitness", "central-govt-relations", "state-govt-relations", "cottage-industry", "digital-advertAdvertisers"]
   }
 ];
+
+function mapWingToCategory(wingId: string): { category: string; subCategory: string } {
+  switch (wingId) {
+    case "women-entrepreneurs":
+      return { category: "Daily Needs", subCategory: "Grocery & Supermarkets" };
+    case "chartered-accountants":
+      return { category: "Finance & Banking", subCategory: "Personal & Car Loans" };
+    case "doctors":
+      return { category: "Doctors", subCategory: "General Physicians" };
+    case "lawyers":
+      return { category: "Advocate & Legal", subCategory: "Notary & Documentation" };
+    case "agriculture":
+      return { category: "Agriculture", subCategory: "Seeds & Trees" };
+    case "information-technology":
+      return { category: "IT & Software", subCategory: "Software Development Companies" };
+    case "engineers":
+      return { category: "Civil Contractors", subCategory: "Building & Construction" };
+    case "labour":
+      return { category: "Jobs", subCategory: "HR & Manpower Services" };
+    case "differently-abled":
+      return { category: "B2B Services", subCategory: "Chemicals & Industrial Supplies" };
+    case "young-entrepreneurs":
+      return { category: "B2B Services", subCategory: "Chemicals & Industrial Supplies" };
+    case "media-relations":
+      return { category: "Advertising", subCategory: "TV & Broadcasting Media" };
+    case "distributors":
+      return { category: "B2B Services", subCategory: "Chemicals & Industrial Supplies" };
+    case "manufacturers":
+      return { category: "B2B Services", subCategory: "Chemicals & Industrial Supplies" };
+    case "cottage-industry":
+      return { category: "Daily Needs", subCategory: "Grocery & Supermarkets" };
+    case "pharmacists":
+      return { category: "Hospitals & Clinics", subCategory: "Nursing Homes" };
+    case "educators":
+      return { category: "Education", subCategory: "Tuition Centres" };
+    case "import-export":
+      return { category: "B2B Services", subCategory: "Chemicals & Industrial Supplies" };
+    case "transgender-entrepreneurs":
+      return { category: "B2B Services", subCategory: "Chemicals & Industrial Supplies" };
+    case "shop-owners":
+      return { category: "Daily Needs", subCategory: "Grocery & Supermarkets" };
+    case "central-govt-relations":
+      return { category: "Legal Services", subCategory: "Notary & Documentation" };
+    case "state-govt-relations":
+      return { category: "Legal Services", subCategory: "Notary & Documentation" };
+    case "restaurant-owners":
+      return { category: "Hotels & Restaurants", subCategory: "Veg & Non-Veg Restaurants" };
+    case "tourism-transport":
+      return { category: "Transport", subCategory: "Travels & Tour Operators" };
+    case "sports-business":
+      return { category: "Sports", subCategory: "Sports Kit Shops" };
+    case "marine-business":
+      return { category: "Agriculture", subCategory: "Millets & Grains" };
+    case "tribal-entrepreneurs":
+      return { category: "Daily Needs", subCategory: "Grocery & Supermarkets" };
+    case "digital-advertisers":
+      return { category: "Advertising", subCategory: "Digital & Display Advertising" };
+    case "printing-press":
+      return { category: "Printing Services", subCategory: "Printing Press" };
+    case "computer-mobile":
+      return { category: "Digital & IT Products", subCategory: "Computer Sales & Service" };
+    case "weavers":
+      return { category: "Textiles & Garments", subCategory: "Handloom & Fabrics" };
+    case "insurance-finance":
+      return { category: "Insurance", subCategory: "Insurance Agents" };
+    case "street-vendors":
+      return { category: "Daily Needs", subCategory: "Grocery & Supermarkets" };
+    case "hotels-lodgings":
+      return { category: "Hotels & Restaurants", subCategory: "Resorts & Guest Houses" };
+    case "beauty-fitness":
+      return { category: "Spa & Beauty", subCategory: "Saloons" };
+    default:
+      return { category: "Daily Needs", subCategory: "Grocery & Supermarkets" };
+  }
+}
+
 interface MemberForm {
   name: string;
   epic: string;
@@ -536,6 +612,44 @@ function Membership() {
     try {
       if (!validate()) return;
       setSubmitting(true);
+
+      // Auto-save business details to local MySQL
+      try {
+        const mappedCategory = mapWingToCategory(form.wing);
+        const bizPayload = {
+          name: form.shop,
+          phone: form.mobile,
+          category: mappedCategory.category,
+          subCategory: mappedCategory.subCategory,
+          district: form.district,
+          assembly: form.assembly || null,
+          address: form.address,
+          description: `Registered TNVS Member: ${form.name} (EPIC: ${form.epic})`,
+          email: form.email || null,
+        };
+
+        const bizRes = await fetch("/api/public/businesses", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(bizPayload),
+        });
+
+        if (!bizRes.ok) {
+          const errData = await bizRes.json().catch(() => ({}));
+          console.warn("Failed to add business automatically:", errData.error || bizRes.statusText);
+        } else {
+          toast.success(
+            language === "ta"
+              ? "புதிய வணிகம் வெற்றிகரமாக தரவுத்தளத்தில் சேர்க்கப்பட்டது!"
+              : "Business listing registered successfully in database!"
+          );
+        }
+      } catch (bizErr) {
+        console.error("Error adding business to local DB:", bizErr);
+      }
+
       await new Promise(r => setTimeout(r, 2000));
       setSubmitting(false);
       localStorage.setItem("tnvs_last_epic", form.epic);
@@ -683,50 +797,48 @@ function Membership() {
               font-family: 'Inter', sans-serif;
             }
             .card-wrapper {
-              width: 2.125in;
-              height: 3.375in;
               position: relative;
               overflow: hidden;
               background: transparent;
-              box-shadow: 0 8px 24px rgba(56, 42, 38, 0.12);
+              box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
               border-radius: 12px;
               page-break-inside: avoid;
             }
-            .card-wrapper,
-            .card-wrapper * {
-              box-sizing: border-box;
+            /* Front Card Wrapper Dimensions */
+            .card-wrapper:first-of-type {
+              width: 421px;
+              height: 573px;
             }
-            .card-wrapper > div,
-            .card-wrapper > div > div,
-            .card-wrapper > div > div > div {
-              width: 960px !important;
-              height: 1520px !important;
-              transform: none !important;
-              margin: 0 !important;
+            /* Back Card Wrapper Dimensions */
+            .card-wrapper:last-of-type {
+              width: 421px;
+              height: 590px;
+            }
+            /* Clear any preview page wrapper styling */
+            .card-scale-wrapper {
               padding: 0 !important;
-              overflow: visible !important;
+              width: 100% !important;
+              height: 100% !important;
             }
-            .card-wrapper > div {
-              transform: scale(calc(2.125 * 96 / 960)) !important;
-              transform-origin: top left !important;
+            /* Prevent scale adjustments in print container */
+            .responsive-card-scale {
+              transform: none !important;
+              width: 100% !important;
+              height: 100% !important;
             }
-            .card-wrapper > div > div > div > div {
-              width: 240px !important;
-              height: 380px !important;
-              transform: scale(4) !important;
-              transform-origin: top left !important;
-              box-shadow: none !important;
-              overflow: hidden !important;
+            /* Center elements properly */
+            .card-face {
+              margin: 0 !important;
             }
             @media print {
               @page {
                 size: auto;
-                margin: 0mm;
+                margin: 10mm;
               }
               body { 
                 background: #fff; 
                 min-height: auto;
-                padding: 10mm;
+                padding: 0;
                 gap: 15mm;
               }
               .card-wrapper {
@@ -754,6 +866,361 @@ function Membership() {
         </body>
       </html>`);
     w.document.close();
+  };
+
+  const drawRoundedRect = (
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    radius: number,
+    fillStyle: string
+  ) => {
+    ctx.save();
+    ctx.fillStyle = fillStyle;
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + width - radius, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+    ctx.lineTo(x + width, y + height - radius);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+    ctx.lineTo(x + radius, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  };
+
+  const downloadFrontCardPng = () => {
+    if (!generatedVoter) return;
+    const toastId = toast.loading(language === "ta" ? "முன்பக்க அட்டைப் படம் உருவாக்கப்படுகிறது..." : "Generating Front ID Card PNG...");
+    const name = generatedVoter.VOTER_NAME.replace(/\s*-\s*$/, "").trim();
+    const W = 421, H = 573;
+    const scale = 3;
+    const canvas = document.createElement("canvas");
+    canvas.width = W * scale; canvas.height = H * scale;
+    const ctx = canvas.getContext("2d")!;
+    ctx.scale(scale, scale);
+
+    const draw = () => {
+      // 1. Draw Member Photo
+      const photoX = (W - 137) / 2;
+      const photoY = 182;
+      const photoW = 137;
+      const photoH = 136;
+      const radius = 22;
+
+      // Draw white background outer container for the ring frame
+      drawRoundedRect(ctx, photoX, photoY, photoW, photoH, radius, "#ffffff");
+
+      // Draw Photo image (rounded and inset by 3px for white offset padding ring)
+      if (imgPhoto.complete && imgPhoto.naturalWidth > 0) {
+        ctx.save();
+        const insetX = photoX + 3;
+        const insetY = photoY + 3;
+        const insetW = photoW - 6;
+        const insetH = photoH - 6;
+        const insetR = radius - 3;
+        ctx.beginPath();
+        ctx.moveTo(insetX + insetR, insetY);
+        ctx.lineTo(insetX + insetW - insetR, insetY);
+        ctx.quadraticCurveTo(insetX + insetW, insetY, insetX + insetW, insetY + insetR);
+        ctx.lineTo(insetX + insetW, insetY + insetH - insetR);
+        ctx.quadraticCurveTo(insetX + insetW, insetY + insetH, insetX + insetW - insetR, insetY + insetH);
+        ctx.lineTo(insetX + insetR, insetY + insetH);
+        ctx.quadraticCurveTo(insetX, insetY + insetH, insetX, insetY + insetH - insetR);
+        ctx.lineTo(insetX, insetY + insetR);
+        ctx.quadraticCurveTo(insetX, insetY, insetX + insetR, insetY);
+        ctx.closePath();
+        ctx.clip();
+        ctx.drawImage(imgPhoto, insetX, insetY, insetW, insetH);
+        ctx.restore();
+      }
+
+      // Draw green border (thinner 3px outer stroke)
+      ctx.save();
+      ctx.strokeStyle = "#009245";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(photoX + radius, photoY);
+      ctx.lineTo(photoX + photoW - radius, photoY);
+      ctx.quadraticCurveTo(photoX + photoW, photoY, photoX + photoW, photoY + radius);
+      ctx.lineTo(photoX + photoW, photoY + photoH - radius);
+      ctx.quadraticCurveTo(photoX + photoW, photoY + photoH, photoX + photoW - radius, photoY + photoH);
+      ctx.lineTo(photoX + radius, photoY + photoH);
+      ctx.quadraticCurveTo(photoX, photoY + photoH, photoX, photoY + photoH - radius);
+      ctx.lineTo(photoX, photoY + radius);
+      ctx.quadraticCurveTo(photoX, photoY, photoX + radius, photoY);
+      ctx.closePath();
+      ctx.stroke();
+      ctx.restore();
+
+      // 2. Draw Text Stack
+      ctx.textAlign = "center";
+      
+      // Name
+      ctx.font = "bold 23px Arial, sans-serif";
+      ctx.fillStyle = "#009245";
+      ctx.fillText(name.toUpperCase(), W / 2, 350);
+
+      // Assembly : Value
+      const assmLabel = "Assembly : ";
+      const assmValue = generatedVoter.ASSEMBLY_NAME || "—";
+      ctx.font = "500 13px Arial, sans-serif";
+      const assmLabelW = ctx.measureText(assmLabel).width;
+      ctx.font = "500 16px Arial, sans-serif";
+      const assmValueW = ctx.measureText(assmValue).width;
+      const assmLineW = assmLabelW + assmValueW;
+      const assmLineX = W / 2 - assmLineW / 2;
+      ctx.font = "500 13px Arial, sans-serif";
+      ctx.fillStyle = "#9ca3af";
+      ctx.textAlign = "left";
+      ctx.fillText(assmLabel, assmLineX, 382);
+      ctx.font = "500 16px Arial, sans-serif";
+      ctx.fillStyle = "#111827";
+      ctx.fillText(assmValue, assmLineX + assmLabelW, 382);
+
+      // Dist : Value
+      const distLabel = "Dist : ";
+      const distValue = generatedVoter.DISTRICT || "—";
+      ctx.font = "500 13px Arial, sans-serif";
+      const distLabelW = ctx.measureText(distLabel).width;
+      ctx.font = "500 16px Arial, sans-serif";
+      const distValueW = ctx.measureText(distValue).width;
+      const distLineW = distLabelW + distValueW;
+      const distLineX = W / 2 - distLineW / 2;
+      ctx.font = "500 13px Arial, sans-serif";
+      ctx.fillStyle = "#9ca3af";
+      ctx.fillText(distLabel, distLineX, 414);
+      ctx.font = "500 16px Arial, sans-serif";
+      ctx.fillStyle = "#111827";
+      ctx.fillText(distValue, distLineX + distLabelW, 414);
+
+      // Zone : Value
+      const zoneLabel = "Zone : ";
+      const zoneText = getZoneName(generatedVoter.DISTRICT, generatedVoter.ASSEMBLY_NAME);
+      ctx.font = "500 13px Arial, sans-serif";
+      const zoneLabelW = ctx.measureText(zoneLabel).width;
+      ctx.font = "500 16px Arial, sans-serif";
+      const zoneValueW = ctx.measureText(zoneText).width;
+      const zoneLineW = zoneLabelW + zoneValueW;
+      const zoneLineX = W / 2 - zoneLineW / 2;
+      ctx.font = "500 13px Arial, sans-serif";
+      ctx.fillStyle = "#9ca3af";
+      ctx.fillText(zoneLabel, zoneLineX, 446);
+      ctx.font = "500 16px Arial, sans-serif";
+      ctx.fillStyle = "#111827";
+      ctx.fillText(zoneText, zoneLineX + zoneLabelW, 446);
+
+      // ID/Membership Number (bold)
+      const mno = membershipNo(generatedVoter);
+      ctx.font = "bold 18px Arial, sans-serif";
+      ctx.fillStyle = "#000000";
+      ctx.fillText(mno, W / 2, 478);
+
+      // Trigger download
+      const link = document.createElement("a");
+      link.download = `id-card-front-${mno}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+      toast.dismiss(toastId);
+      toast.success(language === "ta" ? "முன்பக்க அட்டைப் படம் பதிவிறக்கப்பட்டது!" : "Front ID Card downloaded!");
+    };
+
+    // Load Background & Photo
+    const imgBg = new Image();
+    imgBg.crossOrigin = "anonymous";
+    imgBg.src = "https://res.cloudinary.com/dqndhcmu2/image/upload/v1773232516/vanigan/templates/ID_Front.png";
+
+    const imgPhoto = new Image();
+    imgPhoto.crossOrigin = "anonymous";
+    imgPhoto.src = (typeof docs.selfie === "string" ? docs.selfie : docs.selfie ? URL.createObjectURL(docs.selfie as Blob) : "") || ownerPhoto;
+
+    let loaded = 0;
+    const handleLoad = () => {
+      loaded++;
+      if (loaded === 2) {
+        const cardRadius = 24;
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(cardRadius, 0);
+        ctx.lineTo(W - cardRadius, 0);
+        ctx.quadraticCurveTo(W, 0, W, cardRadius);
+        ctx.lineTo(W, H - cardRadius);
+        ctx.quadraticCurveTo(W, H, W - cardRadius, H);
+        ctx.lineTo(cardRadius, H);
+        ctx.quadraticCurveTo(0, H, 0, H - cardRadius);
+        ctx.lineTo(0, cardRadius);
+        ctx.quadraticCurveTo(0, 0, cardRadius, 0);
+        ctx.closePath();
+        ctx.clip();
+
+        ctx.drawImage(imgBg, 0, 0, W, H);
+        draw();
+        ctx.restore();
+      }
+    };
+    imgBg.onerror = imgPhoto.onerror = () => {
+      toast.dismiss(toastId);
+      toast.error(language === "ta" ? "படங்களை ஏற்றுவதில் பிழை ஏற்பட்டது." : "Error loading card images.");
+    };
+    imgBg.onload = imgPhoto.onload = handleLoad;
+  };
+
+  const downloadBackCardPng = () => {
+    if (!generatedVoter) return;
+    const toastId = toast.loading(language === "ta" ? "பின்பக்க அட்டைப் படம் உருவாக்கப்படுகிறது..." : "Generating Back ID Card PNG...");
+    const W = 421, H = 590;
+    const scale = 3;
+    const canvas = document.createElement("canvas");
+    canvas.width = W * scale; canvas.height = H * scale;
+    const ctx = canvas.getContext("2d")!;
+    ctx.scale(scale, scale);
+
+    const mno = membershipNo(generatedVoter);
+    const dobString = formatDob(generatedVoter.DOB, generatedVoter.AGE);
+    const mobile = generatedVoter.MOBILE_NUMBER && generatedVoter.MOBILE_NUMBER !== "-" ? generatedVoter.MOBILE_NUMBER : "—";
+    const rawAddress = generatedVoter.POLLING_STATION_ADDRESS || (generatedVoter.HOUSE_NO ? `No ${generatedVoter.HOUSE_NO}, ${generatedVoter.MAIN_TOWN || generatedVoter.DISTRICT}` : "");
+    const address = rawAddress ? rawAddress.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase()) : "—";
+
+    const draw = () => {
+      // 1. Draw details rows
+      let y = 188;
+      const drawRow = (label: string, value: string, isAddress = false) => {
+        ctx.textAlign = "left";
+        ctx.font = "500 12px Arial, sans-serif";
+        ctx.fillStyle = "#4b5563";
+        ctx.fillText(label, 22, y);
+        
+        ctx.textAlign = "center";
+        ctx.font = "500 16px Arial, sans-serif";
+        ctx.fillStyle = "#4b5563";
+        ctx.fillText(":", 168, y);
+        
+        ctx.textAlign = "left";
+        ctx.font = "bold 17px Arial, sans-serif";
+        ctx.fillStyle = "#000000";
+        if (isAddress) {
+          const words = value.split(" ");
+          let line = "";
+          let currentY = y;
+          for (let n = 0; n < words.length; n++) {
+            let testLine = line + words[n] + " ";
+            let testWidth = ctx.measureText(testLine).width;
+            if (testWidth > 212 && n > 0) {
+              ctx.fillText(line, 188, currentY);
+              line = words[n] + " ";
+              currentY += 23;
+            } else {
+              line = testLine;
+            }
+          }
+          ctx.fillText(line, 188, currentY);
+          y = currentY + 25;
+        } else {
+          ctx.fillText(value, 188, y);
+          y += 22;
+        }
+      };
+
+      drawRow("DATE OF BIRTH", dobString);
+      drawRow("AGE", generatedVoter.AGE || "—");
+      drawRow("BLOOD GROUP", generatedVoter.BLOOD_GROUP || "—");
+      drawRow("ADDRESS", address, true);
+
+      // Contact row
+      y += 6;
+      ctx.textAlign = "left";
+      ctx.font = "500 12px Arial, sans-serif";
+      ctx.fillStyle = "#4b5563";
+      ctx.fillText("CONTACT", 22, y);
+      
+      ctx.textAlign = "center";
+      ctx.font = "500 16px Arial, sans-serif";
+      ctx.fillStyle = "#4b5563";
+      ctx.fillText(":", 168, y);
+      
+      ctx.font = "bold 17px Arial, sans-serif";
+      const mobileWidth = ctx.measureText(mobile).width;
+      ctx.fillStyle = "rgba(255, 255, 255, 0.78)";
+      ctx.fillRect(188 - 4, y - 14, mobileWidth + 8, 20);
+      ctx.fillStyle = "#000000";
+      ctx.textAlign = "left";
+      ctx.fillText(mobile, 188, y);
+
+      // 2. Draw QR Code
+      if (imgQr.complete && imgQr.naturalWidth > 0) {
+        ctx.drawImage(imgQr, 42, 460, 96, 88);
+      }
+
+      // 3. Draw Signature & President details
+      if (imgSign.complete && imgSign.naturalWidth > 0) {
+        ctx.drawImage(imgSign, 325 - 180 / 2, 405, 180, 75);
+      }
+
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#000000";
+      ctx.font = "bold 14px Arial, sans-serif";
+      ctx.fillText("SENTHIL KUMAR N", 325, 482);
+      ctx.font = "bold 12px Arial, sans-serif";
+      ctx.fillText("Founder & State President", 325, 498);
+      ctx.fillText("Tamilnadu Vanigargalin Sangamam", 325, 514);
+
+      // Trigger download
+      const link = document.createElement("a");
+      link.download = `id-card-back-${mno}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+      toast.dismiss(toastId);
+      toast.success(language === "ta" ? "பின்பக்க அட்டைப் படம் பதிவிறக்கப்பட்டது!" : "Back ID Card downloaded!");
+    };
+
+    // Load Background, QR Code and Signature
+    const imgBg = new Image();
+    imgBg.crossOrigin = "anonymous";
+    imgBg.src = "https://res.cloudinary.com/dqndhcmu2/image/upload/v1773232519/vanigan/templates/ID_Back.png";
+
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=96x88&data=${encodeURIComponent(mno)}`;
+    const imgQr = new Image();
+    imgQr.crossOrigin = "anonymous";
+    imgQr.src = qrUrl;
+
+    const imgSign = new Image();
+    imgSign.crossOrigin = "anonymous";
+    imgSign.src = signImg;
+
+    let loaded = 0;
+    const handleLoad = () => {
+      loaded++;
+      if (loaded === 3) {
+        const cardRadius = 24;
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(cardRadius, 0);
+        ctx.lineTo(W - cardRadius, 0);
+        ctx.quadraticCurveTo(W, 0, W, cardRadius);
+        ctx.lineTo(W, H - cardRadius);
+        ctx.quadraticCurveTo(W, H, W - cardRadius, H);
+        ctx.lineTo(cardRadius, H);
+        ctx.quadraticCurveTo(0, H, 0, H - cardRadius);
+        ctx.lineTo(0, cardRadius);
+        ctx.quadraticCurveTo(0, 0, cardRadius, 0);
+        ctx.closePath();
+        ctx.clip();
+
+        ctx.drawImage(imgBg, 0, 0, W, H);
+        draw();
+        ctx.restore();
+      }
+    };
+    imgBg.onerror = imgQr.onerror = imgSign.onerror = () => {
+      toast.dismiss(toastId);
+      toast.error(language === "ta" ? "படங்களை ஏற்றுவதில் பிழை ஏற்பட்டது." : "Error loading card images.");
+    };
+    imgBg.onload = imgQr.onload = imgSign.onload = handleLoad;
   };
 
   const handleShare = (mno: string) => {
@@ -1002,14 +1469,7 @@ function Membership() {
                   </div>
                 </div>
                 
-                {/* Visual Fee Badge */}
-                <div className="bg-emerald-50 border border-emerald-100/80 rounded-2xl px-4 py-2 flex items-center gap-2.5 self-start sm:self-auto shrink-0 shadow-xxs">
-                  <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <div>
-                    <div className="text-[9px] font-extrabold text-emerald-800 uppercase tracking-wider leading-none">Annual Fee</div>
-                    <div className="text-sm font-black text-emerald-950 mt-1 leading-none">₹ 500</div>
-                  </div>
-                </div>
+
               </div>
 
               {/* Spacious Alert Box for description and tip */}
@@ -1121,7 +1581,10 @@ function Membership() {
                             required
                             type="text"
                             value={form.name}
-                            onChange={(e) => upd("name", e.target.value)}
+                            onChange={(e) => {
+                              const titled = e.target.value.replace(/\b\w/g, c => c.toUpperCase());
+                              upd("name", titled);
+                            }}
                             className={`${customInputClass} pl-10`}
                             placeholder="e.g. Senthil Kumar / செந்தில் குமார்"
                           />
@@ -1555,11 +2018,39 @@ function Membership() {
                         </button>
                       </div>
 
-                      <p className="text-[11px] text-slate-500 mt-4 text-center leading-relaxed">
-                        {language === "ta"
-                          ? "அடையாள அட்டைக்குத் தேவையான 5 MB அளவிலான பாஸ்போர்ட் புகைப்படம். JPG, PNG அல்லது WebP வடிவங்கள்."
-                          : "Required passport size photo for ID Card. Max size 5 MB. Formats: JPG, PNG, WebP."}
-                      </p>
+                      {/* Photo Quality Guide */}
+                      <div className="w-full max-w-sm mt-4 rounded-2xl border border-slate-200 overflow-hidden text-left shadow-xs">
+                        <div className="bg-[#002B7F] px-4 py-2 flex items-center gap-2">
+                          <Info className="w-3.5 h-3.5 text-blue-200 shrink-0" />
+                          <p className="text-[11px] font-bold text-white uppercase tracking-wider">
+                            {language === "ta" ? "புகைப்பட வழிகாட்டி" : "Photo Quality Guide"}
+                          </p>
+                        </div>
+                        <div className="bg-white px-4 py-3 grid grid-cols-2 gap-x-4 gap-y-1.5">
+                          {[
+                            { ok: true,  text: language === "ta" ? "பாஸ்போர்ட் அளவு" : "Passport-size portrait" },
+                            { ok: false, text: language === "ta" ? "இருட்டான / மங்கலான" : "Dark or blurry selfies" },
+                            { ok: true,  text: language === "ta" ? "வெளிர் பின்னணி" : "Light / neutral background" },
+                            { ok: false, text: language === "ta" ? "நிறைந்த பின்னணி" : "Busy background" },
+                            { ok: true,  text: language === "ta" ? "முகம் மையத்தில்" : "Face centered, well-lit" },
+                            { ok: false, text: language === "ta" ? "கண்ணாடி / தொப்பி" : "Glasses / cap / tilt" },
+                          ].map((item, i) => (
+                            <div key={i} className="flex items-start gap-1.5">
+                              <span className={`mt-0.5 text-[10px] font-extrabold shrink-0 ${item.ok ? "text-emerald-500" : "text-red-400"}`}>
+                                {item.ok ? "✓" : "✗"}
+                              </span>
+                              <p className={`text-[10px] leading-snug ${ item.ok ? "text-slate-700" : "text-slate-400"}`}>{item.text}</p>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="bg-amber-50 border-t border-amber-100 px-4 py-2">
+                          <p className="text-[10px] text-amber-700 font-medium">
+                            {language === "ta"
+                              ? "அதிகபட்சம் 5MB · JPG, PNG, WebP"
+                              : "Max 5 MB · Formats: JPG, PNG, WebP"}
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -1759,7 +2250,7 @@ function Membership() {
                       </div>
                     </div>
 
-                    {/* Premium Checkout fee card */}
+                    {/* Membership Info Card (No Pricing or Amount) */}
                     <div className="bg-linear-to-br from-slate-900 to-slate-800 border border-slate-950 rounded-2xl p-6 text-white relative overflow-hidden shadow-md">
                       <div className="absolute -right-4 -bottom-4 w-32 h-32 bg-primary/10 rounded-full blur-2xl" />
                       <div className="absolute top-0 right-10 w-24 h-24 bg-emerald-500/5 rounded-full blur-xl pointer-events-none" />
@@ -1767,15 +2258,10 @@ function Membership() {
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
                         <div className="space-y-1">
                           <div className="flex items-center gap-2">
-                            <CreditCard className="w-4 h-4 text-emerald-400" />
-                            <span className="font-extrabold text-sm text-slate-200 tracking-wide uppercase">Annual Member Subscription</span>
+                            <FileCheck className="w-4 h-4 text-emerald-400" />
+                            <span className="font-extrabold text-sm text-slate-200 tracking-wide uppercase">{language === "ta" ? "சங்க உறுப்பினர் பதிவு" : "TNVS Member Registry"}</span>
                           </div>
-                          <p className="text-xs text-slate-400">Includes Digital Membership Card & Official Trade Wings access</p>
-                        </div>
-                        <div className="flex items-baseline gap-1 self-start sm:self-center shrink-0">
-                          <span className="text-[10px] text-slate-400 uppercase font-bold">Total:</span>
-                          <span className="font-display text-3xl font-black text-emerald-450 tracking-tight">₹500</span>
-                          <span className="text-xs text-slate-400">/year</span>
+                          <p className="text-xs text-slate-350">{language === "ta" ? "டிஜிட்டல் உறுப்பினர் அட்டை மற்றும் வணிகப் பிரிவு அணுகலை உள்ளடக்கியது" : "Official registration with digital membership pass and selected trade wing division access."}</p>
                         </div>
                       </div>
                       
@@ -1783,10 +2269,10 @@ function Membership() {
                       
                       <div className="flex flex-col sm:flex-row justify-between gap-3 text-[11px] text-slate-400 relative z-10">
                         <span className="flex items-center gap-1.5">
-                          <Shield className="w-3.5 h-3.5 text-emerald-400" /> 256-bit Secure Encryption Checkout
+                          <Shield className="w-3.5 h-3.5 text-emerald-400" /> {language === "ta" ? "உடனடி டிஜிட்டல் அட்டை உருவாக்கம்" : "Instant Digital ID Generation"}
                         </span>
-                        <span className="bg-slate-800 px-2.5 py-1 rounded-md text-[10px] text-amber-300 font-bold border border-slate-700/50">
-                          Demo Mode: No real payment processed
+                        <span className="bg-slate-800 px-2.5 py-1 rounded-md text-[10px] text-emerald-300 font-bold border border-slate-700/50">
+                          {language === "ta" ? "பாதுகாப்பான தரவு சேமிப்பு" : "Secure Member Database"}
                         </span>
                       </div>
                     </div>
@@ -1851,25 +2337,44 @@ function Membership() {
                     </div>
 
                     {/* CTA Actions */}
-                    <div className="flex flex-col sm:flex-row gap-3 w-full max-w-md justify-center">
-                      {shareMsg && <span className="text-xs text-primary font-medium w-full text-center block mb-2">{shareMsg}</span>}
-                      <button
-                        onClick={downloadCertificate}
-                        className="btn-primary flex-1 justify-center py-3 rounded-xl text-xs font-bold shadow-md cursor-pointer transition active:scale-95 flex items-center gap-1.5"
-                      >
-                        <Download className="w-4 h-4" /> Download Certificate
-                      </button>
-                      <button
-                        onClick={handlePrint}
-                        className="bg-slate-900 hover:bg-slate-800 text-white flex-1 justify-center py-3 rounded-xl text-xs font-bold shadow-xs cursor-pointer transition active:scale-95 flex items-center gap-1.5 border-none"
-                      >
-                        <Printer className="w-4 h-4" /> Print / PDF Card
-                      </button>
+                    <div className="flex flex-col gap-3 w-full max-w-md">
+                      {shareMsg && <span className="text-xs text-primary font-medium w-full text-center block mb-1">{shareMsg}</span>}
+                      
+                      <div className="flex flex-col sm:flex-row gap-3 w-full">
+                        <button
+                          onClick={downloadCertificate}
+                          className="btn-primary flex-1 justify-center py-3 rounded-xl text-xs font-bold shadow-md cursor-pointer transition active:scale-95 flex items-center gap-1.5"
+                        >
+                          <Download className="w-4 h-4" /> Download Certificate
+                        </button>
+                        <button
+                          onClick={handlePrint}
+                          className="bg-slate-900 hover:bg-slate-800 text-white flex-1 justify-center py-3 rounded-xl text-xs font-bold shadow-xs cursor-pointer transition active:scale-95 flex items-center gap-1.5 border-none"
+                        >
+                          <Printer className="w-4 h-4" /> Print / PDF Card
+                        </button>
+                      </div>
+
+                      <div className="flex flex-col sm:flex-row gap-3 w-full">
+                        <button
+                          onClick={downloadFrontCardPng}
+                          className="bg-emerald-600 hover:bg-emerald-700 text-white flex-1 justify-center py-3 rounded-xl text-xs font-bold shadow-xs cursor-pointer transition active:scale-95 flex items-center gap-1.5 border-none"
+                        >
+                          <Download className="w-4 h-4" /> Download Front ID (PNG)
+                        </button>
+                        <button
+                          onClick={downloadBackCardPng}
+                          className="bg-emerald-600 hover:bg-emerald-700 text-white flex-1 justify-center py-3 rounded-xl text-xs font-bold shadow-xs cursor-pointer transition active:scale-95 flex items-center gap-1.5 border-none"
+                        >
+                          <Download className="w-4 h-4" /> Download Back ID (PNG)
+                        </button>
+                      </div>
+
                       <button
                         onClick={() => handleShare(generatedMno)}
-                        className="bg-slate-100 hover:bg-slate-200 text-slate-700 flex-1 justify-center py-3 rounded-xl text-xs font-bold shadow-xxs cursor-pointer transition active:scale-95 flex items-center gap-1.5 border border-slate-200"
+                        className="bg-slate-100 hover:bg-slate-200 text-slate-700 w-full justify-center py-3 rounded-xl text-xs font-bold shadow-xxs cursor-pointer transition active:scale-95 flex items-center gap-1.5 border border-slate-200"
                       >
-                        <Share2 className="w-4 h-4" /> Share
+                        <Share2 className="w-4 h-4" /> Share Registration Info
                       </button>
                     </div>
                     <div className="w-full max-w-md mt-4 text-center">
@@ -1905,7 +2410,7 @@ function Membership() {
                     {submitting ? (
                       <><Loader2 className="w-4 h-4 animate-spin" /> Processing…</>
                     ) : step === 3 ? (
-                      <>Pay ₹500 & Submit <ArrowRight className="w-4 h-4" /></>
+                      <>{language === "ta" ? "பதிவைச் சமர்ப்பி" : "Submit Registration"} <ArrowRight className="w-4 h-4" /></>
                     ) : step === 2 ? (
                       <>Generate ID Card <ArrowRight className="w-4 h-4" /></>
                     ) : (

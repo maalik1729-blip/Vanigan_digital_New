@@ -1,12 +1,12 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Home, User, Search, LayoutGrid, MoreHorizontal } from "lucide-react";
+import { Home, User, Search, Store, MoreHorizontal } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 
 const BOTTOM_NAV = [
   { to: "/", icon: Home, label: "Home", labelTa: "முகப்பு" },
   { to: "/membership", icon: User, label: "Membership", labelTa: "உறுப்பினர்" },
   { to: "/voter-id", icon: Search, label: "Search", labelTa: "தேடல்" },
-  { to: "/dashboard", icon: LayoutGrid, label: "Dashboard", labelTa: "கட்டுப்பாட்டு அறை" },
+  { to: "/businesses", icon: Store, label: "Business", labelTa: "வணிகர்" },
   { to: "/services", icon: MoreHorizontal, label: "Services", labelTa: "சேவைகள்" },
 ] as const;
 

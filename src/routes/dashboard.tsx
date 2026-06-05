@@ -651,7 +651,7 @@ function Dashboard() {
                       <div className="text-xs font-bold mt-3 text-slate-800">
                         {t("கணக்கு புதுப்பித்தல்", "Card Renewal")}
                       </div>
-                      <div className="text-[10px] text-slate-400 mt-1">{t("ஆண்டுக் கட்டணம் ₹500", "Annual fee ₹500")}</div>
+                      <div className="text-[10px] text-slate-400 mt-1">{t("உறுப்பினர் புதுப்பித்தல்", "Membership Renewal")}</div>
                     </button>
                   </div>
                 </div>

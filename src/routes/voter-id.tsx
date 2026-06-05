@@ -8,7 +8,7 @@ import {
 import { useLanguage } from "@/hooks/useLanguage";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { toast } from "sonner";
-import { VoterIdCard, type Voter } from "@/components/VoterIdCard";
+import { VoterIdCard, type Voter, membershipNo, getZoneName, formatDob } from "@/components/VoterIdCard";
 import votersData from "@/data/voters.json";
 import { WINGS } from "@/data/wings";
 import ownerPhoto from "@/assets/349b584e-1b60-469e-9e5d-8d124cb057cb.png";
@@ -302,50 +302,48 @@ function SecureDownloadPage() {
               font-family: 'Inter', sans-serif;
             }
             .card-wrapper {
-              width: 2.125in;
-              height: 3.375in;
               position: relative;
               overflow: hidden;
               background: transparent;
-              box-shadow: 0 8px 24px rgba(56, 42, 38, 0.12);
+              box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
               border-radius: 12px;
               page-break-inside: avoid;
             }
-            .card-wrapper,
-            .card-wrapper * {
-              box-sizing: border-box;
+            /* Front Card Wrapper Dimensions */
+            .card-wrapper:first-of-type {
+              width: 421px;
+              height: 573px;
             }
-            .card-wrapper > div,
-            .card-wrapper > div > div,
-            .card-wrapper > div > div > div {
-              width: 960px !important;
-              height: 1520px !important;
-              transform: none !important;
-              margin: 0 !important;
+            /* Back Card Wrapper Dimensions */
+            .card-wrapper:last-of-type {
+              width: 421px;
+              height: 590px;
+            }
+            /* Clear any preview page wrapper styling */
+            .card-scale-wrapper {
               padding: 0 !important;
-              overflow: visible !important;
+              width: 100% !important;
+              height: 100% !important;
             }
-            .card-wrapper > div {
-              transform: scale(calc(2.125 * 96 / 960)) !important;
-              transform-origin: top left !important;
+            /* Prevent scale adjustments in print container */
+            .responsive-card-scale {
+              transform: none !important;
+              width: 100% !important;
+              height: 100% !important;
             }
-            .card-wrapper > div > div > div > div {
-              width: 240px !important;
-              height: 380px !important;
-              transform: scale(4) !important;
-              transform-origin: top left !important;
-              box-shadow: none !important;
-              overflow: hidden !important;
+            /* Center elements properly */
+            .card-face {
+              margin: 0 !important;
             }
             @media print {
               @page {
                 size: auto;
-                margin: 0mm;
+                margin: 10mm;
               }
               body { 
                 background: #fff; 
                 min-height: auto;
-                padding: 10mm;
+                padding: 0;
                 gap: 15mm;
               }
               .card-wrapper {
@@ -373,6 +371,362 @@ function SecureDownloadPage() {
         </body>
       </html>`);
     w.document.close();
+  };
+
+  const drawRoundedRect = (
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    radius: number,
+    fillStyle: string
+  ) => {
+    ctx.save();
+    ctx.fillStyle = fillStyle;
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + width - radius, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+    ctx.lineTo(x + width, y + height - radius);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+    ctx.lineTo(x + radius, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  };
+
+  const downloadFrontCardPng = () => {
+    if (!verifiedVoter) return;
+    const toastId = toast.loading(language === "ta" ? "முன்பக்க அட்டைப் படம் உருவாக்கப்படுகிறது..." : "Generating Front ID Card PNG...");
+    const name = verifiedVoter.VOTER_NAME.replace(/\s*-\s*$/, "").trim();
+    const W = 421, H = 573;
+    const scale = 3;
+    const canvas = document.createElement("canvas");
+    canvas.width = W * scale; canvas.height = H * scale;
+    const ctx = canvas.getContext("2d")!;
+    ctx.scale(scale, scale);
+
+    const draw = () => {
+      // 1. Draw Member Photo
+      const photoX = (W - 137) / 2;
+      const photoY = 182;
+      const photoW = 137;
+      const photoH = 136;
+      const radius = 22;
+
+      // Draw white background outer container for the ring frame
+      drawRoundedRect(ctx, photoX, photoY, photoW, photoH, radius, "#ffffff");
+
+      // Draw Photo image (rounded and inset by 3px for white offset padding ring)
+      if (imgPhoto.complete && imgPhoto.naturalWidth > 0) {
+        ctx.save();
+        const insetX = photoX + 3;
+        const insetY = photoY + 3;
+        const insetW = photoW - 6;
+        const insetH = photoH - 6;
+        const insetR = radius - 3;
+        ctx.beginPath();
+        ctx.moveTo(insetX + insetR, insetY);
+        ctx.lineTo(insetX + insetW - insetR, insetY);
+        ctx.quadraticCurveTo(insetX + insetW, insetY, insetX + insetW, insetY + insetR);
+        ctx.lineTo(insetX + insetW, insetY + insetH - insetR);
+        ctx.quadraticCurveTo(insetX + insetW, insetY + insetH, insetX + insetW - insetR, insetY + insetH);
+        ctx.lineTo(insetX + insetR, insetY + insetH);
+        ctx.quadraticCurveTo(insetX, insetY + insetH, insetX, insetY + insetH - insetR);
+        ctx.lineTo(insetX, insetY + insetR);
+        ctx.quadraticCurveTo(insetX, insetY, insetX + insetR, insetY);
+        ctx.closePath();
+        ctx.clip();
+        ctx.drawImage(imgPhoto, insetX, insetY, insetW, insetH);
+        ctx.restore();
+      }
+
+      // Draw green border (thinner 3px outer stroke)
+      ctx.save();
+      ctx.strokeStyle = "#009245";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(photoX + radius, photoY);
+      ctx.lineTo(photoX + photoW - radius, photoY);
+      ctx.quadraticCurveTo(photoX + photoW, photoY, photoX + photoW, photoY + radius);
+      ctx.lineTo(photoX + photoW, photoY + photoH - radius);
+      ctx.quadraticCurveTo(photoX + photoW, photoY + photoH, photoX + photoW - radius, photoY + photoH);
+      ctx.lineTo(photoX + radius, photoY + photoH);
+      ctx.quadraticCurveTo(photoX, photoY + photoH, photoX, photoY + photoH - radius);
+      ctx.lineTo(photoX, photoY + radius);
+      ctx.quadraticCurveTo(photoX, photoY, photoX + radius, photoY);
+      ctx.closePath();
+      ctx.stroke();
+      ctx.restore();
+
+      // 2. Draw Text Stack
+      ctx.textAlign = "center";
+      
+      // Name
+      ctx.font = "bold 23px Arial, sans-serif";
+      ctx.fillStyle = "#009245";
+      ctx.fillText(name.toUpperCase(), W / 2, 350);
+
+      // Assembly : Value
+      ctx.textAlign = "center";
+      const assmLabel = "Assembly : ";
+      const assmValue = verifiedVoter.ASSEMBLY_NAME || "—";
+      ctx.font = "500 13px Arial, sans-serif";
+      const assmLabelW = ctx.measureText(assmLabel).width;
+      ctx.font = "500 16px Arial, sans-serif";
+      const assmValueW = ctx.measureText(assmValue).width;
+      const assmLineW = assmLabelW + assmValueW;
+      const assmLineX = W / 2 - assmLineW / 2;
+      ctx.font = "500 13px Arial, sans-serif";
+      ctx.fillStyle = "#9ca3af";
+      ctx.textAlign = "left";
+      ctx.fillText(assmLabel, assmLineX, 382);
+      ctx.font = "500 16px Arial, sans-serif";
+      ctx.fillStyle = "#111827";
+      ctx.fillText(assmValue, assmLineX + assmLabelW, 382);
+
+      // Dist : Value
+      const distLabel = "Dist : ";
+      const distValue = verifiedVoter.DISTRICT || "—";
+      ctx.font = "500 13px Arial, sans-serif";
+      const distLabelW = ctx.measureText(distLabel).width;
+      ctx.font = "500 16px Arial, sans-serif";
+      const distValueW = ctx.measureText(distValue).width;
+      const distLineW = distLabelW + distValueW;
+      const distLineX = W / 2 - distLineW / 2;
+      ctx.font = "500 13px Arial, sans-serif";
+      ctx.fillStyle = "#9ca3af";
+      ctx.fillText(distLabel, distLineX, 414);
+      ctx.font = "500 16px Arial, sans-serif";
+      ctx.fillStyle = "#111827";
+      ctx.fillText(distValue, distLineX + distLabelW, 414);
+
+      // Zone : Value
+      const zoneLabel = "Zone : ";
+      const zoneText = getZoneName(verifiedVoter.DISTRICT, verifiedVoter.ASSEMBLY_NAME);
+      ctx.font = "500 13px Arial, sans-serif";
+      const zoneLabelW = ctx.measureText(zoneLabel).width;
+      ctx.font = "500 16px Arial, sans-serif";
+      const zoneValueW = ctx.measureText(zoneText).width;
+      const zoneLineW = zoneLabelW + zoneValueW;
+      const zoneLineX = W / 2 - zoneLineW / 2;
+      ctx.font = "500 13px Arial, sans-serif";
+      ctx.fillStyle = "#9ca3af";
+      ctx.fillText(zoneLabel, zoneLineX, 446);
+      ctx.font = "500 16px Arial, sans-serif";
+      ctx.fillStyle = "#111827";
+      ctx.fillText(zoneText, zoneLineX + zoneLabelW, 446);
+
+      // ID/Membership Number (bold)
+      const mno = membershipNo(verifiedVoter);
+      ctx.font = "bold 18px Arial, sans-serif";
+      ctx.fillStyle = "#000000";
+      ctx.fillText(mno, W / 2, 478);
+
+      // Trigger download
+      const link = document.createElement("a");
+      link.download = `id-card-front-${mno}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+      toast.dismiss(toastId);
+      toast.success(language === "ta" ? "முன்பக்க அட்டைப் படம் பதிவிறக்கப்பட்டது!" : "Front ID Card downloaded!");
+    };
+
+    // Load Background & Photo
+    const imgBg = new Image();
+    imgBg.crossOrigin = "anonymous";
+    imgBg.src = "https://res.cloudinary.com/dqndhcmu2/image/upload/v1773232516/vanigan/templates/ID_Front.png";
+
+    const imgPhoto = new Image();
+    imgPhoto.crossOrigin = "anonymous";
+    imgPhoto.src = verifiedVoter.PHOTO_URL || ownerPhoto;
+
+    let loaded = 0;
+    const handleLoad = () => {
+      loaded++;
+      if (loaded === 2) {
+        const cardRadius = 24;
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(cardRadius, 0);
+        ctx.lineTo(W - cardRadius, 0);
+        ctx.quadraticCurveTo(W, 0, W, cardRadius);
+        ctx.lineTo(W, H - cardRadius);
+        ctx.quadraticCurveTo(W, H, W - cardRadius, H);
+        ctx.lineTo(cardRadius, H);
+        ctx.quadraticCurveTo(0, H, 0, H - cardRadius);
+        ctx.lineTo(0, cardRadius);
+        ctx.quadraticCurveTo(0, 0, cardRadius, 0);
+        ctx.closePath();
+        ctx.clip();
+
+        ctx.drawImage(imgBg, 0, 0, W, H);
+        draw();
+        ctx.restore();
+      }
+    };
+    imgBg.onerror = imgPhoto.onerror = () => {
+      toast.dismiss(toastId);
+      toast.error(language === "ta" ? "படங்களை ஏற்றுவதில் பிழை ஏற்பட்டது." : "Error loading card images.");
+    };
+    imgBg.onload = imgPhoto.onload = handleLoad;
+  };
+
+  const downloadBackCardPng = () => {
+    if (!verifiedVoter) return;
+    const toastId = toast.loading(language === "ta" ? "பின்பக்க அட்டைப் படம் உருவாக்கப்படுகிறது..." : "Generating Back ID Card PNG...");
+    const W = 421, H = 590;
+    const scale = 3;
+    const canvas = document.createElement("canvas");
+    canvas.width = W * scale; canvas.height = H * scale;
+    const ctx = canvas.getContext("2d")!;
+    ctx.scale(scale, scale);
+
+    const mno = membershipNo(verifiedVoter);
+    const dobString = formatDob(verifiedVoter.DOB, verifiedVoter.AGE);
+    const mobile = verifiedVoter.MOBILE_NUMBER && verifiedVoter.MOBILE_NUMBER !== "-" ? verifiedVoter.MOBILE_NUMBER : "—";
+    const rawAddress = verifiedVoter.POLLING_STATION_ADDRESS || (verifiedVoter.HOUSE_NO ? `No ${verifiedVoter.HOUSE_NO}, ${verifiedVoter.MAIN_TOWN || verifiedVoter.DISTRICT}` : "");
+    const address = rawAddress ? rawAddress.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase()) : "—";
+
+    const draw = () => {
+      // 1. Draw details rows
+      let y = 188;
+      const drawRow = (label: string, value: string, isAddress = false) => {
+        ctx.textAlign = "left";
+        ctx.font = "500 12px Arial, sans-serif";
+        ctx.fillStyle = "#4b5563";
+        ctx.fillText(label, 22, y);
+        
+        ctx.textAlign = "center";
+        ctx.font = "500 16px Arial, sans-serif";
+        ctx.fillStyle = "#4b5563";
+        ctx.fillText(":", 168, y);
+        
+        ctx.textAlign = "left";
+        ctx.font = "bold 17px Arial, sans-serif";
+        ctx.fillStyle = "#000000";
+        if (isAddress) {
+          const words = value.split(" ");
+          let line = "";
+          let currentY = y;
+          for (let n = 0; n < words.length; n++) {
+            let testLine = line + words[n] + " ";
+            let testWidth = ctx.measureText(testLine).width;
+            if (testWidth > 212 && n > 0) {
+              ctx.fillText(line, 188, currentY);
+              line = words[n] + " ";
+              currentY += 23;
+            } else {
+              line = testLine;
+            }
+          }
+          ctx.fillText(line, 188, currentY);
+          y = currentY + 25;
+        } else {
+          ctx.fillText(value, 188, y);
+          y += 22;
+        }
+      };
+
+      drawRow("DATE OF BIRTH", dobString);
+      drawRow("AGE", verifiedVoter.AGE || "—");
+      drawRow("BLOOD GROUP", verifiedVoter.BLOOD_GROUP || "—");
+      drawRow("ADDRESS", address, true);
+
+      // Contact row
+      y += 6;
+      ctx.textAlign = "left";
+      ctx.font = "500 12px Arial, sans-serif";
+      ctx.fillStyle = "#4b5563";
+      ctx.fillText("CONTACT", 22, y);
+      
+      ctx.textAlign = "center";
+      ctx.font = "500 16px Arial, sans-serif";
+      ctx.fillStyle = "#4b5563";
+      ctx.fillText(":", 168, y);
+      
+      ctx.font = "bold 17px Arial, sans-serif";
+      const mobileWidth = ctx.measureText(mobile).width;
+      ctx.fillStyle = "rgba(255, 255, 255, 0.78)";
+      ctx.fillRect(188 - 4, y - 14, mobileWidth + 8, 20);
+      ctx.fillStyle = "#000000";
+      ctx.textAlign = "left";
+      ctx.fillText(mobile, 188, y);
+
+      // 2. Draw QR Code
+      if (imgQr.complete && imgQr.naturalWidth > 0) {
+        ctx.drawImage(imgQr, 42, 460, 96, 88);
+      }
+
+      // 3. Draw Signature & President details
+      if (imgSign.complete && imgSign.naturalWidth > 0) {
+        ctx.drawImage(imgSign, 325 - 180 / 2, 405, 180, 75);
+      }
+
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#000000";
+      ctx.font = "bold 14px Arial, sans-serif";
+      ctx.fillText("SENTHIL KUMAR N", 325, 482);
+      ctx.font = "bold 12px Arial, sans-serif";
+      ctx.fillText("Founder & State President", 325, 498);
+      ctx.fillText("Tamilnadu Vanigargalin Sangamam", 325, 514);
+
+      // Trigger download
+      const link = document.createElement("a");
+      link.download = `id-card-back-${mno}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+      toast.dismiss(toastId);
+      toast.success(language === "ta" ? "பின்பக்க அட்டைப் படம் பதிவிறக்கப்பட்டது!" : "Back ID Card downloaded!");
+    };
+
+    // Load Background, QR Code and Signature
+    const imgBg = new Image();
+    imgBg.crossOrigin = "anonymous";
+    imgBg.src = "https://res.cloudinary.com/dqndhcmu2/image/upload/v1773232519/vanigan/templates/ID_Back.png";
+
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=96x88&data=${encodeURIComponent(mno)}`;
+    const imgQr = new Image();
+    imgQr.crossOrigin = "anonymous";
+    imgQr.src = qrUrl;
+
+    const imgSign = new Image();
+    imgSign.crossOrigin = "anonymous";
+    imgSign.src = signImg;
+
+    let loaded = 0;
+    const handleLoad = () => {
+      loaded++;
+      if (loaded === 3) {
+        const cardRadius = 24;
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(cardRadius, 0);
+        ctx.lineTo(W - cardRadius, 0);
+        ctx.quadraticCurveTo(W, 0, W, cardRadius);
+        ctx.lineTo(W, H - cardRadius);
+        ctx.quadraticCurveTo(W, H, W - cardRadius, H);
+        ctx.lineTo(cardRadius, H);
+        ctx.quadraticCurveTo(0, H, 0, H - cardRadius);
+        ctx.lineTo(0, cardRadius);
+        ctx.quadraticCurveTo(0, 0, cardRadius, 0);
+        ctx.closePath();
+        ctx.clip();
+
+        ctx.drawImage(imgBg, 0, 0, W, H);
+        draw();
+        ctx.restore();
+      }
+    };
+    imgBg.onerror = imgQr.onerror = imgSign.onerror = () => {
+      toast.dismiss(toastId);
+      toast.error(language === "ta" ? "படங்களை ஏற்றுவதில் பிழை ஏற்பட்டது." : "Error loading card images.");
+    };
+    imgBg.onload = imgQr.onload = imgSign.onload = handleLoad;
   };
 
   const handleShare = (mno: string) => {
@@ -603,6 +957,18 @@ function SecureDownloadPage() {
                     className="bg-slate-900 hover:bg-slate-800 text-white w-full justify-center py-3 rounded-xl font-bold text-xs flex items-center gap-2 border-none cursor-pointer shadow-xs"
                   >
                     <Printer className="w-4 h-4" /> Print / PDF Membership Card
+                  </button>
+                  <button
+                    onClick={downloadFrontCardPng}
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white w-full justify-center py-3 rounded-xl font-bold text-xs flex items-center gap-2 border-none cursor-pointer shadow-xs"
+                  >
+                    <Download className="w-4 h-4" /> Download Front Card (PNG)
+                  </button>
+                  <button
+                    onClick={downloadBackCardPng}
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white w-full justify-center py-3 rounded-xl font-bold text-xs flex items-center gap-2 border-none cursor-pointer shadow-xs"
+                  >
+                    <Download className="w-4 h-4" /> Download Back Card (PNG)
                   </button>
                   <button
                     onClick={() => handleShare(generatedMno)}
