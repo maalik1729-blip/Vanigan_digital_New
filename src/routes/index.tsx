@@ -34,10 +34,25 @@ export const Route = createFileRoute("/")({
 });
 
 const stats = [
-  { v: "1,24,560+", l: "Registered Members", t: "உறுப்பினர்கள்" },
-  { v: "38",         l: "Districts Covered",  t: "மாவட்டங்கள்" },
-  { v: "12+",        l: "Years of Service",   t: "ஆண்டுகள்" },
-  { v: "100%",       l: "Digital Verified",   t: "டிஜிட்டல் அட்டை" },
+  { v: "1,24,560+", l: "Registered Members",  t: "உறுப்பினர்கள்" },
+  { v: "276",        l: "ID Cards Generated",  t: "அட்டைகள் உருவாக்கப்பட்டவை" },
+  { v: "29",         l: "Referrals This Month", t: "பரிந்துரைகள்" },
+  { v: "92.4%",      l: "Profiles Completed",  t: "விவரங்கள் நிரப்பப்பட்டவை" },
+];
+
+// WhatsApp bot quick-action flow icons from vanigan.digital
+const FLOW_ACTIONS = [
+  { img: "/flow-images/flow_register_1775026021.png",         label: "Register",        labelTa: "பதிவு",          to: "/membership" },
+  { img: "/flow-images/flow_view_card_1775026089.png",        label: "Get ID Card",     labelTa: "அட்டை பெறு",     to: "/voter-id" },
+  { img: "/flow-images/flow_how_to_register_1775026438.png",  label: "How to Register", labelTa: "எப்படி பதிவு?",   to: "/membership" },
+  { img: "/flow-images/flow_refer_friend_1775026106.png",     label: "Refer a Friend",  labelTa: "நண்பரை அழை",    to: "/membership" },
+  { img: "/flow-images/flow_become_organizer_1775026124.png", label: "Be an Organizer", labelTa: "நிர்வாகி ஆகு",   to: "/members" },
+  { img: "/flow-images/flow_your_members_1775026138.png",     label: "Your Members",    labelTa: "உறுப்பினர்கள்",  to: "/members" },
+  { img: "/flow-images/flow_request_loan_1775026153.png",     label: "Request Loan",    labelTa: "கடன் கோரிக்கை", to: "/members" },
+  { img: "/flow-images/flow_wings_list_1775026034.png",       label: "Wings",           labelTa: "பிரிவுகள்",       to: "/wings" },
+  { img: "/flow-images/flow_website_1775026047.png",          label: "Website",         labelTa: "இணையதளம்",       to: "/" },
+  { img: "/flow-images/flow_download_1775026063.png",         label: "Download",        labelTa: "பதிவிறக்கம்",    to: "/voter-id" },
+  { img: "/flow-images/flow_help_support_1775026075.png",     label: "Help & Support",  labelTa: "உதவி",            to: "/assistant" },
 ];
 
 const faqs = [
@@ -343,6 +358,53 @@ function Home() {
 
       {/* HOW IT WORKS — Horizontal scroll-linked steps */}
       <HorizontalSteps />
+
+      {/* QUICK ACTIONS — WhatsApp Bot Flow Icons */}
+      <Section className="py-14 border-t border-border bg-gradient-to-br from-slate-50 to-white">
+        <ScrollReveal direction="up" blur className="text-center mb-10">
+          {/* Welcome banner from admin flow images */}
+          <div className="mb-6 rounded-2xl overflow-hidden max-w-3xl mx-auto shadow-lg">
+            <img
+              src="/flow-images/flow_welcome_banner_1775048805.jpg"
+              alt="Vanigan Digital - Official TNVS Portal"
+              className="w-full object-cover"
+            />
+          </div>
+          <SectionLabel>{t("விரைவு சேவைகள்", "Quick Actions")}</SectionLabel>
+          <h2 className="mt-3 font-display text-2xl md:text-3xl font-semibold text-ink">
+            {t("WhatsApp வழியாக இந்த சேவைகளை பயன்படுத்துங்கள்", "Access our services instantly")}
+          </h2>
+          <p className="mt-2 text-sm text-muted-foreground max-w-xl mx-auto">
+            {t(
+              "எங்கள் டிஜிட்டல் போட் மூலம் பதிவு, அட்டை பதிவிறக்கம், கடன் கோரிக்கை மற்றும் பல சேவைகளை எளிதாக அணுகலாம்.",
+              "Register, download your ID card, request loans, and more — all accessible through our digital portal."
+            )}
+          </p>
+        </ScrollReveal>
+
+        <ScrollReveal direction="up" delay={0.1}>
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-11 gap-3 max-w-5xl mx-auto">
+            {FLOW_ACTIONS.map((action) => (
+              <Link
+                key={action.label}
+                to={action.to}
+                className="group flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-primary/5 hover:shadow-md transition-all duration-200 cursor-pointer"
+              >
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl overflow-hidden border-2 border-slate-100 group-hover:border-primary/30 transition-all duration-200 shadow-sm group-hover:shadow-md group-hover:scale-110">
+                  <img
+                    src={action.img}
+                    alt={action.label}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <span className="text-[10px] sm:text-xs font-semibold text-slate-600 group-hover:text-primary transition-colors text-center leading-tight">
+                  {t(action.labelTa, action.label)}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </ScrollReveal>
+      </Section>
 
       {/* CTA after steps */}
       <div className="flex justify-center py-8 border-b border-border bg-slate-50/40">
