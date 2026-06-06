@@ -977,7 +977,7 @@ function MembersPage() {
                             </div>
                             <div className="min-w-0 text-left">
                               <h3 className="font-bold text-slate-800 text-sm truncate leading-tight group-hover:text-primary transition-colors">{biz.name}</h3>
-                              <div className="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded-md bg-slate-50 border border-slate-100/80 font-mono text-[9px] font-bold text-slate-450 tracking-wider font-mono">
+                              <div className="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded-md bg-slate-50 border border-slate-100/80 font-mono text-[9px] font-bold text-slate-450 tracking-wider">
                                 {biz.listingCode || `ID: ${biz._id.slice(-6).toUpperCase()}`}
                               </div>
                             </div>
