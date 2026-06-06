@@ -360,7 +360,7 @@ function Home() {
       <HorizontalSteps />
 
       {/* QUICK ACTIONS — WhatsApp Bot Flow Icons */}
-      <Section className="py-14 border-t border-border bg-gradient-to-br from-slate-50 to-white">
+      <Section className="py-14 border-t border-border bg-linear-to-br from-slate-50 to-white">
         <ScrollReveal direction="up" blur className="text-center mb-10">
           {/* Welcome banner from admin flow images */}
           <div className="mb-6 rounded-2xl overflow-hidden max-w-3xl mx-auto shadow-lg">

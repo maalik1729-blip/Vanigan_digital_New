@@ -375,15 +375,25 @@ const SUBCATEGORY_MAPPING: Record<string, readonly string[]> = {
 } as const;
 
 const NAV = [
-  { to: "/",          label: "முகப்பு",     en: "Home" },
+  { to: "/",          label: "முகப்பு",   en: "Home" },
   {
     to: "/members",
+    label: "அட்டவணை",
+    en: "Directory",
+    dropdown: [
+      { to: "/members", search: { tab: "members" },     label: "உறுப்பினர்கள் பட்டியல்",  en: "Members Directory",    desc: "சங்கத்தின் பதிவு செய்யப்பட்ட உறுப்பினர்கள்", descEn: "View all registered members" },
+      { to: "/members", search: { tab: "businesses" },  label: "வணிகங்கள் பட்டியல்",      en: "Business Directory",   desc: "பல்வேறு வணிகப் பிரிவுகள் மற்றும் நிறுவனங்கள்", descEn: "Search merchants & local businesses" },
+      { to: "/members", search: { tab: "organizers" },  label: "நிர்வாகிகள் பட்டியல்",    en: "Organizers Directory", desc: "சங்கத்தின் மாநில/மாவட்ட நிர்வாகிகள்",         descEn: "View state & district coordinators" }
+    ]
+  },
+  {
+    to: "/services",
     label: "சேவைகள்",
     en: "Services",
     dropdown: [
-      { to: "/members", search: { tab: "members" }, label: "உறுப்பினர்கள் பட்டியல்", en: "Members Directory", desc: "சங்கத்தின் பதிவு செய்யப்பட்ட உறுப்பினர்கள்", descEn: "View registered members directory" },
-      { to: "/members", search: { tab: "businesses" }, label: "வணிகங்கள் பட்டியல்", en: "Business Directory", desc: "பல்வேறு வணிகப் பிரிவுகள் மற்றும் நிறுவனங்கள்", descEn: "Search and filter local merchants & shops" },
-      { to: "/members", search: { tab: "organizers" }, label: "நிர்வாகிகள் பட்டியல்", en: "Organizers Directory", desc: "சங்கத்தின் மாநில/மாவட்ட நிர்வாகிகள்", descEn: "View state and district coordinators" }
+      { to: "/services",    label: "அனைத்து சேவைகள்",          en: "All Services",          desc: "சங்கம் வழங்கும் முழு சேவைகள் பட்டியல்",        descEn: "Full list of services offered" },
+      { to: "/membership",  label: "உறுப்பினர் சேர்க்கை",       en: "Apply for Membership",  desc: "ஆன்லைனில் 5 நிமிடங்களில் விண்ணப்பிக்கவும்",      descEn: "Apply online in 5 minutes" },
+      { to: "/voter-id",    label: "சங்கம அட்டை பெறுக",         en: "Get My ID Card",        desc: "EPIC எண் மூலம் அட்டை உடனே பதிவிறக்கம்",         descEn: "Download your membership ID card" }
     ]
   },
   {
@@ -391,8 +401,8 @@ const NAV = [
     label: "அலகுகள்",
     en: "Wings",
     dropdown: [
-      { to: "/wings", label: "34 சிறப்பு வணிகப் பிரிவுகள்", en: "34 Specialized Wings", desc: "மகளிர், IT, உணவகம், சில்லறை வணிகம்", descEn: "Women, IT, Retail, Food divisions" },
-      { to: "/wings", label: "மண்டலங்கள் & மாவட்டங்கள்", en: "Regional Zones", desc: "தமிழ்நாட்டின் அனைத்து மாவட்ட பிரிவுகள்", descEn: "Regional wings across Tamil Nadu" }
+      { to: "/wings",  label: "34 சிறப்பு வணிகப் பிரிவுகள்", en: "34 Specialized Wings", desc: "மகளிர், IT, உணவகம், சில்லறை வணிகம்", descEn: "Women, IT, Retail, Food divisions" },
+      { to: "/zones",  label: "மண்டலங்கள் & மாவட்டங்கள்",    en: "Regional Zones",       desc: "தமிழ்நாட்டின் அனைத்து மாவட்ட பிரிவுகள்",  descEn: "Regional wings across Tamil Nadu" }
     ]
   },
   {
@@ -400,9 +410,9 @@ const NAV = [
     label: "ஆதரவு",
     en: "Support",
     dropdown: [
-      { to: "/assistant", label: "உதவி மையம் & FAQs", en: "Support Center & FAQs", desc: "அடிக்கடி கேட்கப்படும் கேள்விகள்", descEn: "Frequently asked questions" },
-      { to: "/assistant", label: "நிலவரம் சரிபார்த்தல்", en: "Verify Status", desc: "உறுப்பினர் விண்ணப்ப நிலை அறிய", descEn: "Check membership application status" },
-      { to: "/assistant", label: "உதவி எண்: 044-2345-6789", en: "Helpline Support", desc: "மாவட்ட சங்க தொடர்பு விவரங்கள்", descEn: "Contact district office directly" }
+      { to: "/assistant", label: "உதவி மையம் & FAQs",         en: "Support Center & FAQs", desc: "அடிக்கடி கேட்கப்படும் கேள்விகள்",       descEn: "Frequently asked questions" },
+      { to: "/assistant", label: "நிலவரம் சரிபார்த்தல்",       en: "Verify Status",          desc: "உறுப்பினர் விண்ணப்ப நிலை அறிய",         descEn: "Check membership application status" },
+      { to: "/contact",   label: "தொடர்பு கொள்ளவும்",          en: "Contact Us",             desc: "மாவட்ட சங்க தொடர்பு விவரங்கள்",          descEn: "Contact our district office" }
     ]
   },
 ] as const;
