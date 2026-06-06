@@ -402,7 +402,7 @@ const NAV = [
     en: "Wings",
     dropdown: [
       { to: "/wings",  label: "34 சிறப்பு வணிகப் பிரிவுகள்", en: "34 Specialized Wings", desc: "மகளிர், IT, உணவகம், சில்லறை வணிகம்", descEn: "Women, IT, Retail, Food divisions" },
-      { to: "/zones",  label: "மண்டலங்கள் & மாவட்டங்கள்",    en: "Regional Zones",       desc: "தமிழ்நாட்டின் அனைத்து மாவட்ட பிரிவுகள்",  descEn: "Regional wings across Tamil Nadu" }
+      { to: "/wings",  label: "மண்டலங்கள் & மாவட்டங்கள்",    en: "Regional Zones",       desc: "தமிழ்நாட்டின் அனைத்து மாவட்ட பிரிவுகள்",  descEn: "Regional wings across Tamil Nadu" }
     ]
   },
   {
