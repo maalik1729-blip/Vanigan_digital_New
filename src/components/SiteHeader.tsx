@@ -426,8 +426,8 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [hidden, setHidden] = useState(false);       // true = navbar slid up
   const [scrolled, setScrolled] = useState(false);   // true = past threshold (glass intensifies)
-  const [hoveredCat, setHoveredCat] = useState<string | null>(null);
-  const [hoveredBusinessItem, setHoveredBusinessItem] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null); // which nav item dropdown is open
+  const [showBizCategories, setShowBizCategories] = useState(false);
 
   const loc = useLocation();
   const { language, setLanguage } = useLanguage();
@@ -465,8 +465,22 @@ export function SiteHeader() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Close mobile menu on route change
-  useEffect(() => { setOpen(false); }, [loc.pathname]);
+  // Close mobile menu + desktop dropdown on route change
+  useEffect(() => { setOpen(false); setActiveDropdown(null); setShowBizCategories(false); }, [loc.pathname]);
+
+  // Close desktop dropdown on outside click
+  useEffect(() => {
+    if (!activeDropdown) return;
+    const handler = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest('[data-nav-dropdown]')) {
+        setActiveDropdown(null);
+        setShowBizCategories(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [activeDropdown]);
 
   // ESC closes mobile menu + lock body & html scroll
   useEffect(() => {
@@ -599,25 +613,36 @@ export function SiteHeader() {
               return (
                 <div
                   key={n.to}
-                  className="relative group/nav min-h-[44px] flex items-center"
+                  data-nav-dropdown
+                  className="relative min-h-[44px] flex items-center"
                 >
-                  <Link
-                    to={n.to}
-                    onClick={(e) => { if (hasDropdown) e.preventDefault(); }}
+                  <button
+                    onClick={() => {
+                      if (hasDropdown) {
+                        setActiveDropdown(activeDropdown === n.en ? null : n.en);
+                        setShowBizCategories(false);
+                      } else {
+                        // direct navigation — use Link via programmatic navigate
+                      }
+                    }}
                     aria-current={active ? "page" : undefined}
+                    aria-expanded={hasDropdown ? activeDropdown === n.en : undefined}
                     className={[
-                      "relative px-3 py-2 text-sm font-semibold transition-colors duration-200 min-h-[40px] inline-flex items-center justify-center rounded-lg whitespace-nowrap group/link gap-1",
+                      "relative px-3 py-2 text-sm font-semibold transition-colors duration-200 min-h-[40px] inline-flex items-center justify-center rounded-lg whitespace-nowrap gap-1 border-none bg-transparent cursor-pointer",
                       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
                       active
                         ? "text-primary font-bold"
                         : "text-slate-500 hover:text-primary hover:bg-slate-50/60",
                     ].join(" ")}
                   >
+                    {/* If no dropdown, wrap in Link for proper navigation */}
+                    {!hasDropdown ? (
+                      <Link to={n.to} className="absolute inset-0" aria-label={n.en} />
+                    ) : null}
                     <span className="relative z-10 text-sm">{language === "ta" ? n.label : n.en}</span>
                     {hasDropdown && (
-                      <ChevronDown className="w-3 h-3 text-slate-400 group-hover/nav:rotate-180 transition-transform duration-300 relative z-10" />
+                      <ChevronDown className={`w-3 h-3 text-slate-400 transition-transform duration-300 relative z-10 ${activeDropdown === n.en ? 'rotate-180' : ''}`} />
                     )}
-                    
                     {active ? (
                       <motion.div
                         layoutId="activeNavUnderline"
@@ -629,30 +654,26 @@ export function SiteHeader() {
                         </svg>
                       </motion.div>
                     ) : (
-                      <div className="absolute -bottom-px left-1.5 right-1.5 h-[8px] scale-x-0 group-hover/nav:scale-x-100 transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] z-0 origin-center text-gold/30 flex items-center">
+                      <div className="absolute -bottom-px left-1.5 right-1.5 h-[8px] scale-x-0 hover:scale-x-100 transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] z-0 origin-center text-gold/30 flex items-center">
                         <svg viewBox="0 0 100 10" preserveAspectRatio="none" className="w-full h-full" fill="none">
                           <path d="M 2,2 Q 6,8 12,8 L 88,8 Q 94,8 98,2" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
                         </svg>
                       </div>
                     )}
-                  </Link>
+                  </button>
 
-                  {/* Desktop Dropdown Card */}
-                  {hasDropdown && (
-                    <div className="absolute top-[85%] left-1/2 -translate-x-1/2 w-64 pt-3 opacity-0 invisible group-hover/nav:opacity-100 group-hover/nav:visible transition-all duration-300 transform scale-95 group-hover/nav:scale-100 z-50 pointer-events-none group-hover/nav:pointer-events-auto">
+                  {/* Desktop Dropdown — click-toggled, reliable */}
+                  {hasDropdown && activeDropdown === n.en && (
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-64 pt-2 z-50">
                       <div className="bg-white rounded-2xl border border-slate-100 shadow-2xl p-2.5 space-y-0.5">
                         {n.dropdown.map((sub) => {
                           const isBusinessSub = sub.to === "/members" && (sub as any).search?.tab === "businesses";
                           return (
-                            <div
-                              key={sub.en}
-                              className="relative"
-                              onMouseEnter={() => { if (isBusinessSub) setHoveredBusinessItem(true); }}
-                              onMouseLeave={() => { if (isBusinessSub) setHoveredBusinessItem(false); }}
-                            >
+                            <div key={sub.en} className="relative">
                               <Link
                                 to={sub.to}
                                 search={"search" in sub ? (sub as any).search : undefined}
+                                onClick={() => { setActiveDropdown(null); setShowBizCategories(false); }}
                                 className="block px-3.5 py-2.5 rounded-xl hover:bg-slate-50 transition text-left cursor-pointer group/item"
                               >
                                 <div className="flex items-center justify-between">
@@ -660,7 +681,14 @@ export function SiteHeader() {
                                     {language === "ta" ? sub.label : sub.en}
                                   </div>
                                   {isBusinessSub && (
-                                    <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover/item:text-primary transition-colors" />
+                                    <button
+                                      type="button"
+                                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowBizCategories(!showBizCategories); }}
+                                      className="ml-1 p-0.5 rounded hover:bg-primary/10 transition"
+                                      aria-label="Show categories"
+                                    >
+                                      <ChevronRight className={`w-3.5 h-3.5 text-slate-400 transition-transform ${showBizCategories ? 'rotate-90' : ''}`} />
+                                    </button>
                                   )}
                                 </div>
                                 {sub.desc && (
@@ -670,31 +698,28 @@ export function SiteHeader() {
                                 )}
                               </Link>
 
-                              {/* Nested Categories flyout when hoveredBusinessItem is true */}
-                              {isBusinessSub && hoveredBusinessItem && (
-                                <div className="absolute left-[95%] top-[-10px] w-[500px] pl-4 z-50 pointer-events-auto">
-                                  <div className="bg-white rounded-2xl border border-slate-100 shadow-[0_12px_36px_rgba(0,0,0,0.12)] p-4 text-left">
-                                    <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-100">
-                                      <div className="flex items-center gap-2">
-                                        <Building2 className="w-4 h-4 text-primary" />
-                                        <span className="font-bold text-slate-800 text-sm">
-                                          {language === "ta" ? "வணிகப் பிரிவுகள்" : "Business Categories"}
-                                        </span>
-                                      </div>
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-1.5 max-h-[300px] overflow-y-auto pr-1 scrollbar-thin">
-                                      {CATEGORIES.map((cat) => (
-                                        <Link
-                                          key={cat.name}
-                                          to="/members"
-                                          search={{ tab: "businesses", category: cat.name }}
-                                          className="flex items-center gap-2 px-2.5 py-2 rounded-xl text-left transition hover:bg-slate-50 text-slate-655 hover:text-primary hover:font-bold"
-                                        >
-                                          <span className="text-sm shrink-0 select-none">{cat.icon}</span>
-                                          <span className="text-xs truncate font-medium">{cat.name}</span>
-                                        </Link>
-                                      ))}
-                                    </div>
+                              {/* Expandable Categories panel below Business Directory row */}
+                              {isBusinessSub && showBizCategories && (
+                                <div className="mt-1 ml-2 border-l-2 border-primary/20 pl-3">
+                                  <div className="flex items-center gap-1.5 mb-2">
+                                    <Building2 className="w-3.5 h-3.5 text-primary" />
+                                    <span className="text-[11px] font-bold text-slate-700">
+                                      {language === "ta" ? "வணிகப் பிரிவுகள்" : "Business Categories"}
+                                    </span>
+                                  </div>
+                                  <div className="max-h-52 overflow-y-auto space-y-0.5 pr-1 scrollbar-thin">
+                                    {CATEGORIES.map((cat) => (
+                                      <Link
+                                        key={cat.name}
+                                        to="/members"
+                                        search={{ tab: "businesses", category: cat.name }}
+                                        onClick={() => { setActiveDropdown(null); setShowBizCategories(false); }}
+                                        className="flex items-center gap-2 px-2 py-1.5 rounded-lg text-left transition hover:bg-slate-50 hover:text-primary"
+                                      >
+                                        <span className="text-sm shrink-0">{cat.icon}</span>
+                                        <span className="text-[11px] font-medium truncate">{cat.name}</span>
+                                      </Link>
+                                    ))}
                                   </div>
                                 </div>
                               )}
