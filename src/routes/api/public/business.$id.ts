@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { getDbPool } from "@/lib/db";
+import { getDbPool, upsertBusinesses } from "@/lib/db";
 
-export const Route = createFileRoute("/api/public/businesses/$id")({
+export const Route = createFileRoute("/api/public/business/$id")({
   server: {
     handlers: {
       GET: async ({ params }) => {
         const { id } = params;
+
         try {
           const pool = getDbPool();
           const [rows]: any = await pool.execute(

@@ -10,45 +10,91 @@ export const Route = createFileRoute("/api/public/members")({
         const mobile = url.searchParams.get("mobile")?.trim();
         const pin = url.searchParams.get("pin")?.trim();
 
-        if (!epic && !mobile) {
-          return Response.json({ error: "Missing epic or mobile query parameter" }, { status: 400 });
+        // If specific search parameters are provided, perform specific member retrieval
+        if (epic || mobile) {
+          try {
+            const pool = getDbPool();
+            let rows: any = [];
+            if (epic) {
+              const [result]: any = await pool.execute(
+                "SELECT * FROM member_list WHERE epic = ? LIMIT 1",
+                [epic]
+              );
+              rows = result;
+            } else if (mobile) {
+              const [result]: any = await pool.execute(
+                "SELECT * FROM member_list WHERE mobile = ? LIMIT 1",
+                [mobile]
+              );
+              rows = result;
+            }
+
+            if (rows.length === 0) {
+              return Response.json({ error: "Member not found" }, { status: 404 });
+            }
+
+            const member = rows[0];
+
+            // If a pin is provided, verify it. Otherwise, return the profile (safe fields).
+            if (pin !== undefined) {
+              if (member.pin !== pin) {
+                return Response.json({ error: "Invalid Security PIN" }, { status: 401 });
+              }
+            }
+
+            // Exclude pin from response
+            const { pin: _, ...profile } = member;
+            return Response.json(profile);
+          } catch (error: any) {
+            console.error("Local database error fetching member:", error);
+            return Response.json({ error: error.message }, { status: 500 });
+          }
         }
+
+        // Otherwise, return all members (excluding sensitive fields like pin)
+        const search = url.searchParams.get("search")?.trim() || undefined;
+        const district = url.searchParams.get("district")?.trim() || undefined;
+        const assembly = url.searchParams.get("assembly")?.trim() || undefined;
+        const page = Math.max(1, parseInt(url.searchParams.get("page") || "1", 10));
+        const limit = Math.max(1, parseInt(url.searchParams.get("limit") || "12", 10));
 
         try {
           const pool = getDbPool();
-          let rows: any = [];
-          if (epic) {
-            const [result]: any = await pool.execute(
-              "SELECT * FROM member_list WHERE epic = ? LIMIT 1",
-              [epic]
-            );
-            rows = result;
-          } else if (mobile) {
-            const [result]: any = await pool.execute(
-              "SELECT * FROM member_list WHERE mobile = ? LIMIT 1",
-              [mobile]
-            );
-            rows = result;
+
+          let query = "SELECT id, name, epic, mobile, email, dob, age, gender, bloodGroup, assembly, district, shop, type, address, years, wing, selfie, idProof, bizProof, created_at FROM member_list WHERE 1=1";
+          let countQuery = "SELECT COUNT(*) as total FROM member_list WHERE 1=1";
+          const params: any[] = [];
+
+          if (district) {
+            query += " AND district = ?";
+            countQuery += " AND district = ?";
+            params.push(district);
           }
 
-          if (rows.length === 0) {
-            return Response.json({ error: "Member not found" }, { status: 404 });
+          if (assembly) {
+            query += " AND assembly = ?";
+            countQuery += " AND assembly = ?";
+            params.push(assembly);
           }
 
-          const member = rows[0];
-
-          // If a pin is provided, verify it. Otherwise, return the profile (safe fields).
-          if (pin !== undefined) {
-            if (member.pin !== pin) {
-              return Response.json({ error: "Invalid Security PIN" }, { status: 401 });
-            }
+          if (search) {
+            const likePat = `%${search}%`;
+            const searchSql = " AND (name LIKE ? OR epic LIKE ? OR mobile LIKE ? OR shop LIKE ? OR email LIKE ?)";
+            query += searchSql;
+            countQuery += searchSql;
+            params.push(likePat, likePat, likePat, likePat, likePat);
           }
 
-          // Exclude pin from response
-          const { pin: _, ...profile } = member;
-          return Response.json(profile);
+          const [countRows]: any = await pool.execute(countQuery, params);
+          const total = countRows[0]?.total || 0;
+
+          const offset = (page - 1) * limit;
+          query += ` ORDER BY id DESC LIMIT ${limit} OFFSET ${offset}`;
+          const [rows]: any = await pool.execute(query, params);
+
+          return Response.json({ members: rows, total });
         } catch (error: any) {
-          console.error("Local database error fetching member:", error);
+          console.error("Local database error listing members:", error);
           return Response.json({ error: error.message }, { status: 500 });
         }
       },

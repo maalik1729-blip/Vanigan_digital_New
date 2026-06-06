@@ -25,9 +25,9 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Tamil Nadu Vanigargalin Sangamam — Official Trader Portal" },
-      { name: "description", content: "Join Tamil Nadu's official traders association. Membership, certificates, advocacy and welfare for vanigars across the state." },
+      { name: "description", content: "Join Tamil Nadu's official traders association. Membership, certificates, advocacy and business support for vanigars across the state." },
       { property: "og:title", content: "Tamil Nadu Vanigargalin Sangamam" },
-      { property: "og:description", content: "Official portal for trader membership, services and welfare." },
+      { property: "og:description", content: "Official portal for trader membership, services and business support." },
     ],
   }),
   component: Home,
@@ -56,8 +56,8 @@ const faqs = [
   {
     q: "இந்த டிஜிட்டல் சான்றிதழ் சட்டப்பூர்வமாக செல்லுபடியாகுமா?",
     e: "Is the digital certificate legally valid?",
-    a: "ஆம், தமிழ்நாடு வணிகர்களின் சங்கமம் பதிவு எண். 2012/TNVS கீழ் பதிவு செய்யப்பட்ட அதிகாரப்பூர்வ அமைப்பாகும். QR குறியீடு சரிபார்ப்புடன் கூடிய இந்த டிஜிட்டல் சான்றிதழ் வங்கி வணிகக் கடன்கள், வர்த்தக அங்கீகாரங்கள் மற்றும் அரசு நலத்திட்ட உதவிகளுக்குச் செல்லுபடியாகும்.",
-    ae: "Yes, Tamil Nadu Vanigargalin Sangamam is a registered traders association (Reg No. 2012/TNVS). The QR-code-verified digital certificate is widely accepted for bank business loans, trade references, and government welfare benefits."
+    a: "ஆம், தமிழ்நாடு வணிகர்களின் சங்கமம் பதிவு எண். 2012/TNVS கீழ் பதிவு செய்யப்பட்ட அதிகாரப்பூர்வ அமைப்பாகும். QR குறியீடு சரிபார்ப்புடன் கூடிய இந்த டிஜிட்டல் சான்றிதழ் வங்கி வணிகக் கடன்கள், வர்த்தக அங்கீகாரங்கள் மற்றும் இதர வணிகச் சரிபார்ப்புகளுக்குச் செல்லுபடியாகும்.",
+    ae: "Yes, Tamil Nadu Vanigargalin Sangamam is a registered traders association (Reg No. 2012/TNVS). The QR-code-verified digital certificate is widely accepted for bank business loans, trade references, and official merchant verifications."
   },
   {
     q: "உறுப்பினர் அட்டை மற்றும் சான்றிதழ் செல்லுபடியாகும் காலம் எவ்வளவு?",
@@ -98,7 +98,7 @@ const TOP_SERVICES = [
     e: "Trade Protection",
     d: "Advocacy, legal support, and trade rights mediation for all registered traders.",
     td: "வணிகர்களுக்கான சட்ட உதவி, வர்த்தக உரிமைப் பாதுகாப்பு மற்றும் ஆலோசனைகள்.",
-    to: "/services",
+    to: "/members",
     badge: null,
     className: "md:col-span-1",
   },
@@ -108,7 +108,7 @@ const TOP_SERVICES = [
     e: "Interest-Free Loans",
     d: "Access micro-credit schemes and interest-free business loans for small traders.",
     td: "குறுந்தொழில் மற்றும் சிறு வணிகர்களுக்கான வட்டி இல்லா கடன் மற்றும் நிதி உதவிகள்.",
-    to: "/services",
+    to: "/members",
     badge: "NEW",
     className: "md:col-span-1",
   },
@@ -363,7 +363,7 @@ function Home() {
             </h2>
           </div>
           <Link
-            to="/services"
+            to="/members"
             className="text-primary text-sm font-semibold hover:underline inline-flex items-center gap-1"
           >
             {t("அனைத்து சேவைகளையும் காண்க", "View all services")}

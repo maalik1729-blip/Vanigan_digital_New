@@ -376,15 +376,14 @@ const SUBCATEGORY_MAPPING: Record<string, readonly string[]> = {
 
 const NAV = [
   { to: "/",          label: "முகப்பு",     en: "Home" },
-  { to: "/businesses", label: "வணிகங்கள்",   en: "Businesses", hasMegaMenu: true },
   {
-    to: "/services",
+    to: "/members",
     label: "சேவைகள்",
     en: "Services",
     dropdown: [
-      { to: "/membership", label: "புதிய உறுப்பினர் சேர்க்கை", en: "Apply for Membership", desc: "5 நிமிடங்களில் ஆன்லைனில் பதிவு செய்ய", descEn: "Register online in 5 minutes" },
-      { to: "/voter-id", label: "சங்கம அட்டை & சான்றிதழ்", en: "Get Membership Card", desc: "PDF அட்டை & சான்றிதழ் பெற", descEn: "Download digital card & certificate" },
-      { to: "/services", label: "அனைத்து சேவைகள்", en: "View All Services", desc: "கடனுதவி மற்றும் வணிக சேவைகள்", descEn: "Loan assistance and legal support" }
+      { to: "/members", search: { tab: "members" }, label: "உறுப்பினர்கள் பட்டியல்", en: "Members Directory", desc: "சங்கத்தின் பதிவு செய்யப்பட்ட உறுப்பினர்கள்", descEn: "View registered members directory" },
+      { to: "/members", search: { tab: "businesses" }, label: "வணிகங்கள் பட்டியல்", en: "Business Directory", desc: "பல்வேறு வணிகப் பிரிவுகள் மற்றும் நிறுவனங்கள்", descEn: "Search and filter local merchants & shops" },
+      { to: "/members", search: { tab: "organizers" }, label: "நிர்வாகிகள் பட்டியல்", en: "Organizers Directory", desc: "சங்கத்தின் மாநில/மாவட்ட நிர்வாகிகள்", descEn: "View state and district coordinators" }
     ]
   },
   {
@@ -418,6 +417,7 @@ export function SiteHeader() {
   const [hidden, setHidden] = useState(false);       // true = navbar slid up
   const [scrolled, setScrolled] = useState(false);   // true = past threshold (glass intensifies)
   const [hoveredCat, setHoveredCat] = useState<string | null>(null);
+  const [hoveredBusinessItem, setHoveredBusinessItem] = useState(false);
 
   const loc = useLocation();
   const { language, setLanguage } = useLanguage();
@@ -537,13 +537,13 @@ export function SiteHeader() {
               <div className="animate-marquee whitespace-nowrap flex gap-16 font-tamil text-xs">
                 <span>
                   {language === "ta"
-                    ? "புதிய நலத்திட்டம்: ₹2 லட்சம் மருத்துவ காப்பீட்டுக்கு உடனே விண்ணப்பிக்கவும்! ✦ புதிய அரசு சுற்றறிக்கை: குறுந்தொழில் முனைவோருக்கான சிறப்பு ஜிஎஸ்டி சலுகை அறிவிப்பு! ✦ சங்கமத்தின் அதிகாரப்பூர்வ சான்றிதழ் வங்கி கடன் பெற செல்லுபடியாகும்! ✦ ஆண்டு பொதுக்குழு கூட்டம் ஜூன் 15 அன்று சென்னையில் நடைபெறும்! ✦ "
-                    : "New Welfare Scheme: Apply for ₹2 Lakh Health Cover now! ✦ Latest Govt Circular: Special GST relief for micro-traders announced! ✦ TNVS Stamped Certificate is now legally valid for bank loan applications! ✦ Annual General Meeting to be held on June 15th at Chennai! ✦ "}
+                    ? "புதிய அரசு சுற்றறிக்கை: குறுந்தொழில் முனைவோருக்கான சிறப்பு ஜிஎஸ்டி சலுகை அறிவிப்பு! ✦ சங்கமத்தின் அதிகாரப்பூர்வ சான்றிதழ் வங்கி கடன் பெற செல்லுபடியாகும்! ✦ ஆண்டு பொதுக்குழு கூட்டம் ஜூன் 15 அன்று சென்னையில் நடைபெறும்! ✦ "
+                    : "Latest Govt Circular: Special GST relief for micro-traders announced! ✦ TNVS Stamped Certificate is now legally valid for bank loan applications! ✦ Annual General Meeting to be held on June 15th at Chennai! ✦ "}
                 </span>
                 <span>
                   {language === "ta"
-                    ? "புதிய நலத்திட்டம்: ₹2 லட்சம் மருத்துவ காப்பீட்டுக்கு உடனே விண்ணப்பிக்கவும்! ✦ புதிய அரசு சுற்றறிக்கை: குறுந்தொழில் முனைவோருக்கான சிறப்பு ஜிஎஸ்டி சலுகை அறிவிப்பு! ✦ சங்கமத்தின் அதிகாரப்பூர்வ சான்றிதழ் வங்கி கடன் பெற செல்லுபடியாகும்! ✦ ஆண்டு பொதுக்குழு கூட்டம் ஜூன் 15 அன்று சென்னையில் நடைபெறும்! ✦ "
-                    : "New Welfare Scheme: Apply for ₹2 Lakh Health Cover now! ✦ Latest Govt Circular: Special GST relief for micro-traders announced! ✦ TNVS Stamped Certificate is now legally valid for bank loan applications! ✦ Annual General Meeting to be held on June 15th at Chennai! ✦ "}
+                    ? "புதிய அரசு சுற்றறிக்கை: குறுந்தொழில் முனைவோருக்கான சிறப்பு ஜிஎஸ்டி சலுகை அறிவிப்பு! ✦ சங்கமத்தின் அதிகாரப்பூர்வ சான்றிதழ் வங்கி கடன் பெற செல்லுபடியாகும்! ✦ ஆண்டு பொதுக்குழு கூட்டம் ஜூன் 15 அன்று சென்னையில் நடைபெறும்! ✦ "
+                    : "Latest Govt Circular: Special GST relief for micro-traders announced! ✦ TNVS Stamped Certificate is now legally valid for bank loan applications! ✦ Annual General Meeting to be held on June 15th at Chennai! ✦ "}
                 </span>
               </div>
             </div>
@@ -586,15 +586,14 @@ export function SiteHeader() {
             {NAV.map((n) => {
               const active = loc.pathname === n.to;
               const hasDropdown = "dropdown" in n;
-              const hasMegaMenu = "hasMegaMenu" in n && n.hasMegaMenu;
               return (
                 <div
                   key={n.to}
                   className="relative group/nav min-h-[44px] flex items-center"
-                  onMouseLeave={() => { if (hasMegaMenu) setHoveredCat(null); }}
                 >
                   <Link
                     to={n.to}
+                    onClick={(e) => { if (hasDropdown) e.preventDefault(); }}
                     aria-current={active ? "page" : undefined}
                     className={[
                       "relative px-3 py-2 text-sm font-semibold transition-colors duration-200 min-h-[40px] inline-flex items-center justify-center rounded-lg whitespace-nowrap group/link gap-1",
@@ -605,7 +604,7 @@ export function SiteHeader() {
                     ].join(" ")}
                   >
                     <span className="relative z-10 text-sm">{language === "ta" ? n.label : n.en}</span>
-                    {(hasDropdown || hasMegaMenu) && (
+                    {hasDropdown && (
                       <ChevronDown className="w-3 h-3 text-slate-400 group-hover/nav:rotate-180 transition-transform duration-300 relative z-10" />
                     )}
                     
@@ -631,136 +630,67 @@ export function SiteHeader() {
                   {/* Desktop Dropdown Card */}
                   {hasDropdown && (
                     <div className="absolute top-[85%] left-1/2 -translate-x-1/2 w-64 pt-3 opacity-0 invisible group-hover/nav:opacity-100 group-hover/nav:visible transition-all duration-300 transform scale-95 group-hover/nav:scale-100 z-50 pointer-events-none group-hover/nav:pointer-events-auto">
-                      <div className="bg-white rounded-2xl border border-slate-100 shadow-2xl p-2.5 space-y-0.5 overflow-hidden">
-                        {n.dropdown.map((sub) => (
-                          <Link
-                            key={sub.en}
-                            to={sub.to}
-                            className="block px-3.5 py-2.5 rounded-xl hover:bg-slate-50 transition text-left cursor-pointer group/item"
-                          >
-                            <div className="font-semibold text-slate-800 text-[13px] group-hover/item:text-primary transition-colors leading-tight">
-                              {language === "ta" ? sub.label : sub.en}
-                            </div>
-                            {sub.desc && (
-                              <div className="text-[10px] text-slate-400 font-normal leading-normal mt-0.5 font-tamil">
-                                {language === "ta" ? sub.desc : sub.descEn}
-                              </div>
-                            )}
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Desktop Mega Menu for Businesses */}
-                  {hasMegaMenu && (
-                    <div className="absolute top-[85%] left-1/2 translate-x-[-40%] w-[820px] pt-3 opacity-0 invisible group-hover/nav:opacity-100 group-hover/nav:visible transition-all duration-300 transform scale-95 group-hover/nav:scale-100 z-50 pointer-events-none group-hover/nav:pointer-events-auto">
-                      <div className="bg-white/95 backdrop-blur-2xl rounded-3xl border border-slate-200/60 shadow-[0_24px_54px_rgba(0,0,0,0.12)] p-6 grid grid-cols-[1fr_300px] gap-6 overflow-hidden text-left">
-                        {/* Left Pane: Categories Grid */}
-                        <div className="flex flex-col justify-between">
-                          <div>
-                            <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-100">
-                              <div className="flex items-center gap-2">
-                                <Building2 className="w-4 h-4 text-primary" />
-                                <span className="font-bold text-slate-800 text-sm">
-                                  {language === "ta" ? "வணிகப் பிரிவுகள்" : "Business Categories"}
-                                </span>
-                              </div>
+                      <div className="bg-white rounded-2xl border border-slate-100 shadow-2xl p-2.5 space-y-0.5">
+                        {n.dropdown.map((sub) => {
+                          const isBusinessSub = sub.to === "/members" && (sub as any).search?.tab === "businesses";
+                          return (
+                            <div
+                              key={sub.en}
+                              className="relative"
+                              onMouseEnter={() => { if (isBusinessSub) setHoveredBusinessItem(true); }}
+                              onMouseLeave={() => { if (isBusinessSub) setHoveredBusinessItem(false); }}
+                            >
                               <Link
-                                to="/businesses"
-                                className="text-xs font-bold text-primary hover:text-primary/80 flex items-center gap-0.5 transition-colors"
+                                to={sub.to}
+                                search={"search" in sub ? (sub as any).search : undefined}
+                                className="block px-3.5 py-2.5 rounded-xl hover:bg-slate-50 transition text-left cursor-pointer group/item"
                               >
-                                {language === "ta" ? "அனைத்தையும் காட்டு" : "View All"}
-                                <ChevronRight className="w-3 h-3" />
-                              </Link>
-                            </div>
-                            
-                            <div className="grid grid-cols-3 gap-x-2 gap-y-1.5 max-h-[360px] overflow-y-auto pr-1 scrollbar-thin">
-                              {CATEGORIES.map((cat) => (
-                                <Link
-                                  key={cat.name}
-                                  to="/businesses"
-                                  search={{ category: cat.name }}
-                                  onMouseEnter={() => setHoveredCat(cat.name)}
-                                  className={`flex items-center gap-2 px-2.5 py-1.5 rounded-xl text-left transition-all duration-150 cursor-pointer ${
-                                    hoveredCat === cat.name
-                                      ? "bg-primary/6 text-primary font-bold"
-                                      : "hover:bg-slate-50 text-slate-600 hover:text-slate-900"
-                                  }`}
-                                >
-                                  <span className="text-base shrink-0 select-none">{cat.icon}</span>
-                                  <span className="text-xs truncate font-medium">{cat.name}</span>
-                                </Link>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Right Pane: Subcategory Preview / Welcome Panel */}
-                        <div className="bg-slate-50/50 rounded-2xl border border-slate-200/60 p-5 flex flex-col justify-between min-h-[380px]">
-                          {hoveredCat ? (
-                            <div className="flex flex-col h-full justify-between">
-                              <div className="flex-1">
-                                <div className="flex items-center gap-2.5 mb-3.5">
-                                  <span className="text-2xl select-none">
-                                    {CATEGORIES.find(c => c.name === hoveredCat)?.icon || "🏪"}
-                                  </span>
-                                  <span className="font-extrabold text-slate-800 text-sm tracking-tight leading-tight">
-                                    {hoveredCat}
-                                  </span>
-                                </div>
-                                
-                                <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-2">
-                                  {language === "ta" ? "துணைப் பிரிவுகள்" : "Subcategories"}
-                                </div>
-                                
-                                {SUBCATEGORY_MAPPING[hoveredCat] && SUBCATEGORY_MAPPING[hoveredCat].length > 0 ? (
-                                  <div className="flex flex-wrap gap-1.5 max-h-[220px] overflow-y-auto pr-1 scrollbar-thin">
-                                    {SUBCATEGORY_MAPPING[hoveredCat].map((sub) => (
-                                      <Link
-                                        key={sub}
-                                        to="/businesses"
-                                        search={{ category: hoveredCat, subCategory: sub }}
-                                        className="px-2.5 py-1 rounded-full text-[10.5px] font-semibold bg-white border border-slate-200/80 text-slate-650 hover:bg-primary/5 hover:text-primary hover:border-primary/30 transition-all duration-150"
-                                      >
-                                        {sub}
-                                      </Link>
-                                    ))}
+                                <div className="flex items-center justify-between">
+                                  <div className="font-semibold text-slate-800 text-[13px] group-hover/item:text-primary transition-colors leading-tight">
+                                    {language === "ta" ? sub.label : sub.en}
                                   </div>
-                                ) : (
-                                  <div className="text-[11px] text-slate-400 italic">
-                                    {language === "ta" ? "துணைப் பிரிவுகள் இல்லை" : "No subcategories"}
+                                  {isBusinessSub && (
+                                    <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover/item:text-primary transition-colors" />
+                                  )}
+                                </div>
+                                {sub.desc && (
+                                  <div className="text-[10px] text-slate-400 font-normal leading-normal mt-0.5 font-tamil">
+                                    {language === "ta" ? sub.desc : sub.descEn}
                                   </div>
                                 )}
-                              </div>
+                              </Link>
 
-                              <div className="pt-4 border-t border-slate-200/80 mt-auto shrink-0">
-                                <Link
-                                  to="/businesses"
-                                  search={{ category: hoveredCat }}
-                                  className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-primary text-white font-bold text-xs hover:bg-primary/90 transition-all duration-200 shadow-md shadow-primary/10 hover:shadow-lg hover:shadow-primary/15 group/btn"
-                                >
-                                  {language === "ta" ? "அனைத்தையும் ஆராய்க" : `Explore All in ${hoveredCat}`}
-                                  <ChevronRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />
-                                </Link>
-                              </div>
+                              {/* Nested Categories flyout when hoveredBusinessItem is true */}
+                              {isBusinessSub && hoveredBusinessItem && (
+                                <div className="absolute left-[95%] top-[-10px] w-[500px] pl-4 z-50 pointer-events-auto">
+                                  <div className="bg-white rounded-2xl border border-slate-100 shadow-[0_12px_36px_rgba(0,0,0,0.12)] p-4 text-left">
+                                    <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-100">
+                                      <div className="flex items-center gap-2">
+                                        <Building2 className="w-4 h-4 text-primary" />
+                                        <span className="font-bold text-slate-800 text-sm">
+                                          {language === "ta" ? "வணிகப் பிரிவுகள்" : "Business Categories"}
+                                        </span>
+                                      </div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-1.5 max-h-[300px] overflow-y-auto pr-1 scrollbar-thin">
+                                      {CATEGORIES.map((cat) => (
+                                        <Link
+                                          key={cat.name}
+                                          to="/members"
+                                          search={{ tab: "businesses", category: cat.name }}
+                                          className="flex items-center gap-2 px-2.5 py-2 rounded-xl text-left transition hover:bg-slate-50 text-slate-655 hover:text-primary hover:font-bold"
+                                        >
+                                          <span className="text-sm shrink-0 select-none">{cat.icon}</span>
+                                          <span className="text-xs truncate font-medium">{cat.name}</span>
+                                        </Link>
+                                      ))}
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
                             </div>
-                          ) : (
-                            <div className="flex flex-col items-center justify-center text-center h-full my-auto">
-                              <div className="w-12 h-12 rounded-2xl bg-primary/8 flex items-center justify-center text-primary mb-3">
-                                <Building2 className="w-6 h-6" />
-                              </div>
-                              <h4 className="font-bold text-slate-800 text-sm mb-1.5">
-                                {language === "ta" ? "வணிகக் கோப்பகம்" : "Business Directory"}
-                              </h4>
-                              <p className="text-[11px] text-slate-400 max-w-[200px] leading-relaxed font-tamil">
-                                {language === "ta"
-                                  ? "துணைப் பிரிவுகளைக் காண ஏதேனும் ஒரு பிரிவின் மீது நகர்த்தவும்."
-                                  : "Hover over any category to view its subcategories and start exploring."}
-                              </p>
-                            </div>
-                          )}
-                        </div>
+                          );
+                        })}
                       </div>
                     </div>
                   )}
@@ -872,7 +802,13 @@ export function SiteHeader() {
                   <div key={n.to} className="space-y-1">
                     <Link
                       to={n.to}
-                      onClick={() => setOpen(false)}
+                      onClick={(e) => {
+                        if (hasDropdown) {
+                          e.preventDefault();
+                        } else {
+                          setOpen(false);
+                        }
+                      }}
                       aria-current={active ? "page" : undefined}
                       className={[
                         "flex items-center justify-between px-4 min-h-[48px] rounded-xl transition",
@@ -892,41 +828,44 @@ export function SiteHeader() {
                     
                     {hasDropdown && (
                       <div className="pl-4 pr-2 py-1 space-y-1 border-l-2 border-slate-100/85 ml-4">
-                        {n.dropdown.map((sub) => (
-                          <Link
-                            key={sub.en}
-                            to={sub.to}
-                            onClick={() => setOpen(false)}
-                            className="flex flex-col px-3.5 py-2 rounded-lg text-slate-650 hover:bg-slate-50 transition text-left cursor-pointer"
-                          >
-                            <span className="text-xs font-semibold text-slate-800">
-                              {language === "ta" ? sub.label : sub.en}
-                            </span>
-                            {sub.desc && (
-                              <span className="text-[10px] text-slate-400 font-normal leading-normal font-tamil mt-0.5">
-                                {language === "ta" ? sub.desc : sub.descEn}
-                              </span>
-                            )}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Business categories in mobile drawer */}
-                    {n.to === "/businesses" && (
-                      <div className="pl-4 pr-2 py-1 border-l-2 border-slate-100/85 ml-4 max-h-52 overflow-y-auto space-y-0.5 scrollbar-thin">
-                        {CATEGORIES.map(cat => (
-                          <Link
-                            key={cat.name}
-                            to="/businesses"
-                            search={{ category: cat.name }}
-                            onClick={() => setOpen(false)}
-                            className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-slate-650 hover:bg-slate-50 hover:text-primary transition"
-                          >
-                            <span className="text-sm shrink-0 select-none">{cat.icon}</span>
-                            <span className="text-xs font-semibold">{cat.name}</span>
-                          </Link>
-                        ))}
+                        {n.dropdown.map((sub) => {
+                          const isBusinessSub = sub.to === "/members" && (sub as any).search?.tab === "businesses";
+                          return (
+                            <div key={sub.en} className="space-y-1">
+                              <Link
+                                to={sub.to}
+                                search={"search" in sub ? (sub as any).search : undefined}
+                                onClick={() => setOpen(false)}
+                                className="flex flex-col px-3.5 py-2 rounded-lg text-slate-655 hover:bg-slate-50 transition text-left cursor-pointer"
+                              >
+                                <span className="text-xs font-semibold text-slate-800">
+                                  {language === "ta" ? sub.label : sub.en}
+                                </span>
+                                {sub.desc && (
+                                  <span className="text-[10px] text-slate-400 font-normal leading-normal font-tamil mt-0.5">
+                                    {language === "ta" ? sub.desc : sub.descEn}
+                                  </span>
+                                )}
+                              </Link>
+                              {isBusinessSub && (
+                                <div className="pl-4 pr-2 py-1 border-l border-slate-200 ml-4 max-h-48 overflow-y-auto space-y-0.5 scrollbar-thin">
+                                  {CATEGORIES.map((cat) => (
+                                    <Link
+                                      key={cat.name}
+                                      to="/members"
+                                      search={{ tab: "businesses", category: cat.name }}
+                                      onClick={() => setOpen(false)}
+                                      className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-slate-600 hover:bg-slate-50 hover:text-primary transition"
+                                    >
+                                      <span className="text-sm shrink-0 select-none">{cat.icon}</span>
+                                      <span className="text-[11px] font-semibold">{cat.name}</span>
+                                    </Link>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
                       </div>
                     )}
                   </div>

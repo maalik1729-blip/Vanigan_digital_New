@@ -79,7 +79,7 @@ function Assistant() {
     <div className="max-w-5xl mx-auto px-4 py-6 sm:py-8 space-y-6 sm:space-y-8 overflow-x-hidden">
       {/* Top Breadcrumb */}
       <div>
-        <Link to="/services" className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline pt-4 pb-2 transition-all">
+        <Link to="/members" className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline pt-4 pb-2 transition-all">
           <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" /> {t("சேவைகளுக்குத் திரும்பு", "Back to Services")}
         </Link>
       </div>
@@ -277,7 +277,7 @@ function Assistant() {
                       {t("அட்டை பெறுக", "Get ID Card")} <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
                     <Link 
-                      to="/services" 
+                      to="/members" 
                       className="text-xs bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2.5 rounded-xl font-bold inline-flex items-center gap-1.5 transition active:scale-95 cursor-pointer min-h-[38px]"
                     >
                       <FileText className="w-3.5 h-3.5 text-slate-400" /> {t("சான்றிதழ் பெறுக", "Download Certificate")}

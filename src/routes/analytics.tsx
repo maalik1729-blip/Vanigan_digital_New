@@ -59,8 +59,8 @@ export const districtStats: DistrictStat[] = [
   { nameEn: "Others", nameTa: "இதர மாவட்டங்கள்", zone: "Statewide", count: 10000, claims: 9, ratio: "0.09%" },
 ];
 
-export type WelfareSegment = { nameEn: string; nameTa: string; value: number; amount: string; percentage: number; color: string; dashArray: string; dashOffset: string };
-export const welfareDistribution: WelfareSegment[] = [
+export type LoanSegment = { nameEn: string; nameTa: string; value: number; amount: string; percentage: number; color: string; dashArray: string; dashOffset: string };
+export const loanDistribution: LoanSegment[] = [
   { nameEn: "Retail Trader Loans", nameTa: "சில்லறை வணிகக் கடன்", value: 45, amount: "₹5.62 Cr", percentage: 45, color: "#10b981", dashArray: "282.7", dashOffset: "0" },
   { nameEn: "Young Entrepreneur Loans", nameTa: "இளைய தொழில்முனைவோர் கடன்", value: 30, amount: "₹3.75 Cr", percentage: 30, color: "#3b82f6", dashArray: "282.7", dashOffset: "127.2" },
   { nameEn: "Micro & Street Vendor Loans", nameTa: "குறுந்தொழில் கடன்", value: 25, amount: "₹3.13 Cr", percentage: 25, color: "#f59e0b", dashArray: "282.7", dashOffset: "212.0" },
@@ -68,7 +68,7 @@ export const welfareDistribution: WelfareSegment[] = [
 
 function AnalyticsDashboard() {
   const { t, language } = useLanguage();
-  const [activeTab, setActiveTab] = useState<"overview" | "regional" | "welfare">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "regional" | "loans">("overview");
   
   // Sort State for Districts Leaderboard
   const [sortField, setSortField] = useState<"count" | "claims">("count");
@@ -151,7 +151,7 @@ function AnalyticsDashboard() {
             {[
               { id: "overview", ta: "பொது விவரங்கள்", en: "Overview" },
               { id: "regional", ta: "மண்டல வாரியாக", en: "Regional Layout" },
-              { id: "welfare", ta: "நிதியுதவி & கடன்கள்", en: "Loans & Credit" },
+              { id: "loans", ta: "கடன்கள் & நிதி", en: "Loans & Credit" },
             ].map((tab) => {
               const active = activeTab === tab.id;
               return (
@@ -617,10 +617,10 @@ function AnalyticsDashboard() {
             </motion.div>
           )}
 
-          {/* TAB 3: WELFARE & CREDIT CAPITAL */}
-          {activeTab === "welfare" && (
+          {/* TAB 3: LOANS & CREDIT CAPITAL */}
+          {activeTab === "loans" && (
             <motion.div
-              key="welfare-panel"
+              key="loans-panel"
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
@@ -645,43 +645,43 @@ function AnalyticsDashboard() {
                   <div className="relative w-40 h-40">
                     <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90">
                       <circle cx="50" cy="50" r="45" fill="none" stroke="#e2e8f0" strokeWidth="9" />
-                      {welfareDistribution.map((seg, idx) => (
-                        <circle
-                          key={idx}
-                          cx="50"
-                          cy="50"
-                          r="45"
-                          fill="none"
-                          stroke={seg.color}
-                          strokeWidth="9"
-                          strokeDasharray={seg.dashArray}
-                          strokeDashoffset={seg.dashOffset}
-                          strokeLinecap="round"
-                        />
-                      ))}
-                    </svg>
-                    {/* Centered label */}
-                    <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <span className="text-[10px] font-black uppercase text-slate-400 font-sans tracking-wide">TOTAL LOANS</span>
-                      <span className="text-sm font-black text-slate-800 font-mono">₹12.50 Cr</span>
-                    </div>
-                  </div>
-
-                  {/* Legends List */}
-                  <div className="w-full grid grid-cols-1 gap-2 pt-2 text-xs">
-                    {welfareDistribution.map((seg, idx) => (
-                      <div key={idx} className="flex justify-between items-center bg-slate-50/50 hover:bg-slate-50 border border-slate-100 p-2.5 rounded-xl transition">
-                        <div className="flex items-center gap-2">
-                          <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: seg.color }} />
-                          <span className="font-bold text-slate-700">
-                            {language === "ta" ? seg.nameTa : seg.nameEn}
-                          </span>
-                        </div>
-                        <div className="font-mono font-bold text-slate-800">
-                          {seg.amount} <span className="text-[10px] text-slate-400 font-normal">({seg.percentage}%)</span>
-                        </div>
-                      </div>
+                    {loanDistribution.map((seg, idx) => (
+                      <circle
+                        key={idx}
+                        cx="50"
+                        cy="50"
+                        r="45"
+                        fill="none"
+                        stroke={seg.color}
+                        strokeWidth="9"
+                        strokeDasharray={seg.dashArray}
+                        strokeDashoffset={seg.dashOffset}
+                        strokeLinecap="round"
+                      />
                     ))}
+                  </svg>
+                  {/* Centered label */}
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <span className="text-[10px] font-black uppercase text-slate-400 font-sans tracking-wide">TOTAL LOANS</span>
+                    <span className="text-sm font-black text-slate-800 font-mono">₹12.50 Cr</span>
+                  </div>
+                </div>
+
+                {/* Legends List */}
+                <div className="w-full grid grid-cols-1 gap-2 pt-2 text-xs">
+                  {loanDistribution.map((seg, idx) => (
+                    <div key={idx} className="flex justify-between items-center bg-slate-50/50 hover:bg-slate-50 border border-slate-100 p-2.5 rounded-xl transition">
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: seg.color }} />
+                        <span className="font-bold text-slate-700">
+                          {language === "ta" ? seg.nameTa : seg.nameEn}
+                        </span>
+                      </div>
+                      <div className="font-mono font-bold text-slate-800">
+                        {seg.amount} <span className="text-[10px] text-slate-400 font-normal">({seg.percentage}%)</span>
+                      </div>
+                    </div>
+                  ))}
                   </div>
                 </div>
               </div>

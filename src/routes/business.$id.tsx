@@ -7,9 +7,9 @@ import {
 } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const API = import.meta.env.VITE_API_BASE_URL ?? "https://vanigan-app-automation-5il0.onrender.com";
+const API = import.meta.env.VITE_API_BASE_URL ?? "";
 
-export const Route = createFileRoute("/businesses/$id")({
+export const Route = createFileRoute("/business/$id")({
   head: () => ({
     meta: [
       { title: "Business Details · TNVS Directory" },
@@ -666,12 +666,11 @@ function BusinessDetailPage() {
     setError(null);
     setImgError(false);
 
-    // Try the direct ID route first
-    fetch(`${API}/api/public/businesses/${id}`)
+    fetch(`${API}/api/public/business/${id}`)
       .then(async (res) => {
         if (!res.ok) {
           // If direct route fails, try query parameter search fallback
-          const fallbackRes = await fetch(`${API}/api/public/businesses?id=${id}`);
+          const fallbackRes = await fetch(`${API}/api/public/business?id=${id}`);
           if (!fallbackRes.ok) {
             throw new Error(`Business not found (${res.status})`);
           }
@@ -725,7 +724,8 @@ function BusinessDetailPage() {
           </h2>
           <p className="text-muted-foreground text-sm mb-6">{error || "The business you're looking for doesn't exist."}</p>
           <Link
-            to="/businesses"
+            to="/members"
+            search={{ tab: "businesses" }}
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl text-sm font-semibold hover:bg-primary/90 transition"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -757,8 +757,8 @@ function BusinessDetailPage() {
         {/* Back button on hero */}
         <div className="absolute top-4 left-4">
           <Link
-            to="/businesses"
-            search={{ category: business.category }}
+            to="/members"
+            search={{ tab: "businesses", category: business.category }}
             className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-black/40 backdrop-blur-sm text-white text-sm font-semibold hover:bg-black/60 transition"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -811,11 +811,11 @@ function BusinessDetailPage() {
         <nav className="flex items-center gap-1.5 text-xs text-muted-foreground mb-8 flex-wrap" aria-label="Breadcrumb">
           <Link to="/" className="hover:text-primary transition">{t("முகப்பு", "Home")}</Link>
           <ChevronRight className="w-3 h-3" />
-          <Link to="/businesses" className="hover:text-primary transition">{t("வணிகர் பட்டியல்", "Business Directory")}</Link>
+          <Link to="/members" search={{ tab: "businesses" }} className="hover:text-primary transition">{t("வணிகர் பட்டியல்", "Business Directory")}</Link>
           {business.category && (
             <>
               <ChevronRight className="w-3 h-3" />
-              <Link to="/businesses" search={{ category: business.category }} className="hover:text-primary transition">
+              <Link to="/members" search={{ tab: "businesses", category: business.category }} className="hover:text-primary transition">
                 {business.category}
               </Link>
             </>
@@ -823,7 +823,7 @@ function BusinessDetailPage() {
           {business.subCategory && (
             <>
               <ChevronRight className="w-3 h-3" />
-              <Link to="/businesses" search={{ category: business.category, subCategory: business.subCategory }} className="hover:text-primary transition">
+              <Link to="/members" search={{ tab: "businesses", category: business.category, subCategory: business.subCategory }} className="hover:text-primary transition">
                 {business.subCategory}
               </Link>
             </>
@@ -873,8 +873,8 @@ function BusinessDetailPage() {
             <div className="flex flex-wrap gap-2">
               {business.category && (
                 <Link
-                  to="/businesses"
-                  search={{ category: business.category }}
+                  to="/members"
+                  search={{ tab: "businesses", category: business.category }}
                   className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-white bg-linear-to-r ${meta.color} hover:opacity-90 transition`}
                 >
                   <Tag className="w-3 h-3" />
@@ -883,8 +883,8 @@ function BusinessDetailPage() {
               )}
               {business.subCategory && (
                 <Link
-                  to="/businesses"
-                  search={{ category: business.category, subCategory: business.subCategory }}
+                  to="/members"
+                  search={{ tab: "businesses", category: business.category, subCategory: business.subCategory }}
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-primary border border-primary/30 bg-primary/5 hover:bg-primary/10 transition"
                 >
                   <Tag className="w-3 h-3" />
@@ -1096,8 +1096,8 @@ function BusinessDetailPage() {
             {/* Browse more CTA */}
             {business.category && (
               <Link
-                to="/businesses"
-                search={{ category: business.category }}
+                to="/members"
+                search={{ tab: "businesses", category: business.category }}
                 className="flex items-center justify-between w-full p-4 rounded-2xl border border-primary/20 bg-primary/5 hover:bg-primary/10 transition group"
               >
                 <div>

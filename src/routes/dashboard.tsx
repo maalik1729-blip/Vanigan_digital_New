@@ -9,7 +9,7 @@ import {
   TrendingUp, BarChart3, PieChart as PieIcon, ArrowUpDown, MapPin, Globe, HeartPulse, ArrowUpRight, Search
 } from "lucide-react";
 import {
-  growthData, wingMetrics, districtStats, welfareDistribution
+  growthData, wingMetrics, districtStats, loanDistribution
 } from "./analytics";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
@@ -233,10 +233,10 @@ function Dashboard() {
   const [gstQueryText, setGstQueryText] = useState("");
 
   // Business Loans & Credit Portal states
-  const [welfarePortalTab, setWelfarePortalTab] = useState<"apply" | "track">("apply");
-  const [welfareSchemeType, setWelfareSchemeType] = useState<"business" | "retail" | "young" | "micro" | null>(null);
-  const [welfareFormStep, setWelfareFormStep] = useState(1); // 1: Select/Fill, 2: Upload, 3: Success
-  const [welfareFormInputs, setWelfareFormInputs] = useState({
+  const [loanPortalTab, setLoanPortalTab] = useState<"apply" | "track">("apply");
+  const [loanSchemeType, setLoanSchemeType] = useState<"business" | "retail" | "young" | "micro" | null>(null);
+  const [loanFormStep, setLoanFormStep] = useState(1); // 1: Select/Fill, 2: Upload, 3: Success
+  const [loanFormInputs, setLoanFormInputs] = useState({
     shopName: "Senthil Traders",
     proprietorName: "Senthil Kumar N",
     phone: "+91 944 20 •• 44",
@@ -250,7 +250,7 @@ function Dashboard() {
 
   useEffect(() => {
     if (currentMember) {
-      setWelfareFormInputs(prev => ({
+      setLoanFormInputs(prev => ({
         ...prev,
         shopName: currentMember.shop || "Senthil Traders",
         proprietorName: currentMember.name,
@@ -259,9 +259,9 @@ function Dashboard() {
       }));
     }
   }, [currentMember]);
-  const [welfareUploads, setWelfareUploads] = useState<Array<{ name: string; size: string; progress: number; status: "uploading" | "done" }>>([]);
-  const [isWelfareUploading, setIsWelfareUploading] = useState(false);
-  const [welfareClaims, setWelfareClaims] = useState<Array<{
+  const [loanUploads, setLoanUploads] = useState<Array<{ name: string; size: string; progress: number; status: "uploading" | "done" }>>([]);
+  const [isLoanUploading, setIsLoanUploading] = useState(false);
+  const [loanClaims, setLoanClaims] = useState<Array<{
     id: string;
     type: "business" | "retail" | "young" | "micro";
     title: string;
@@ -293,19 +293,19 @@ function Dashboard() {
     }
   ]);
 
-  const startSimulatedWelfareUpload = () => {
-    setIsWelfareUploading(true);
-    const files = welfareSchemeType === "business" 
+  const startSimulatedLoanUpload = () => {
+    setIsLoanUploading(true);
+    const files = loanSchemeType === "business" 
       ? [
           { name: "GSTR_Registration.pdf", size: "2.1 MB", progress: 0, status: "uploading" as const },
           { name: "BankStatement_6M.pdf", size: "5.4 MB", progress: 0, status: "uploading" as const }
         ]
-      : welfareSchemeType === "retail"
+      : loanSchemeType === "retail"
       ? [
           { name: "ShopLicense.pdf", size: "1.8 MB", progress: 0, status: "uploading" as const },
           { name: "BankStatement_3M.pdf", size: "4.1 MB", progress: 0, status: "uploading" as const }
         ]
-      : welfareSchemeType === "young"
+      : loanSchemeType === "young"
       ? [
           { name: "AadharCard.pdf", size: "1.2 MB", progress: 0, status: "uploading" as const },
           { name: "BusinessProjectReport.pdf", size: "3.5 MB", progress: 0, status: "uploading" as const }
@@ -315,7 +315,7 @@ function Dashboard() {
           { name: "ShopPhoto.jpg", size: "2.8 MB", progress: 0, status: "uploading" as const }
         ];
 
-    setWelfareUploads(files);
+    setLoanUploads(files);
 
     let progress1 = 0;
     let progress2 = 0;
@@ -324,7 +324,7 @@ function Dashboard() {
       progress1 = Math.min(progress1 + Math.floor(Math.random() * 25) + 15, 100);
       progress2 = Math.min(progress2 + Math.floor(Math.random() * 20) + 12, 100);
 
-      setWelfareUploads(prev => {
+      setLoanUploads(prev => {
         if (prev.length < 2) return prev;
         const next = [...prev];
         next[0] = { ...next[0], progress: progress1, status: progress1 === 100 ? "done" : "uploading" };
@@ -334,7 +334,7 @@ function Dashboard() {
 
       if (progress1 === 100 && progress2 === 100) {
         clearInterval(timer);
-        setIsWelfareUploading(false);
+        setIsLoanUploading(false);
         toast.success(
           language === "ta"
             ? "ஆவணங்கள் வெற்றிகரமாக பதிவேற்றப்பட்டன! 📄"
@@ -344,29 +344,29 @@ function Dashboard() {
     }, 150);
   };
 
-  const handleWelfarePortalSubmit = (e: React.FormEvent) => {
+  const handleLoanPortalSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!welfareSchemeType) return;
+    if (!loanSchemeType) return;
 
     const newApp = {
       id: `TNVS-LN-${Math.floor(Math.random() * 90000) + 10000}`,
-      type: welfareSchemeType,
-      title: welfareSchemeType === "business"
-        ? t("வட்டியில்லா வணிகக் கடன்", "Interest-Free Business Loan") + ` (₹${Number(welfareFormInputs.amount).toLocaleString()})`
-        : welfareSchemeType === "retail"
-        ? t("சில்லறை வணிகர்கள் கடன்", "Retail Trader Loan") + ` (₹${Number(welfareFormInputs.amount).toLocaleString()})`
-        : welfareSchemeType === "young"
-        ? t("இளைய தொழில்முனைவோர் கடன்", "Young Entrepreneur Loan") + ` (₹${Number(welfareFormInputs.amount).toLocaleString()})`
-        : t("நுண்ணிய & சாலையோர வியாபாரிகள் கடன்", "Micro & Street Vendor Loan") + ` (₹${Number(welfareFormInputs.amount).toLocaleString()})`,
-      description: `${welfareFormInputs.businessStructure} · ${welfareFormInputs.tenure} Months repayment`,
+      type: loanSchemeType,
+      title: loanSchemeType === "business"
+        ? t("வட்டியில்லா வணிகக் கடன்", "Interest-Free Business Loan") + ` (₹${Number(loanFormInputs.amount).toLocaleString()})`
+        : loanSchemeType === "retail"
+        ? t("சில்லறை வணிகர்கள் கடன்", "Retail Trader Loan") + ` (₹${Number(loanFormInputs.amount).toLocaleString()})`
+        : loanSchemeType === "young"
+        ? t("இளைய தொழில்முனைவோர் கடன்", "Young Entrepreneur Loan") + ` (₹${Number(loanFormInputs.amount).toLocaleString()})`
+        : t("நுண்ணிய & சாலையோர வியாபாரிகள் கடன்", "Micro & Street Vendor Loan") + ` (₹${Number(loanFormInputs.amount).toLocaleString()})`,
+      description: `${loanFormInputs.businessStructure} · ${loanFormInputs.tenure} Months repayment`,
       date: new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }),
       status: "pending" as const,
       step: 1, // Submitted
-      docs: welfareUploads.map(f => f.name)
+      docs: loanUploads.map(f => f.name)
     };
 
-    setWelfareClaims(prev => [newApp, ...prev]);
-    setWelfareFormStep(3); // Success Step
+    setLoanClaims(prev => [newApp, ...prev]);
+    setLoanFormStep(3); // Success Step
     toast.success(
       language === "ta"
         ? "விண்ணப்பம் சமர்ப்பிக்கப்பட்டது! டிராக்கிங் ஐடி: " + newApp.id
@@ -481,7 +481,7 @@ function Dashboard() {
 
           <Breadcrumb
             items={[
-              { label: "Services", labelTa: "சேவைகள்", to: "/services" },
+              { label: "Services", labelTa: "சேவைகள்", to: "/members" },
               { label: "Dashboard", labelTa: "டாஷ்போர்டு" },
             ]}
           />
@@ -734,12 +734,12 @@ function Dashboard() {
                                   }
                                 : e.id === "loan-2026"
                                 ? () => {
-                                    setWelfarePortalTab("apply");
-                                    setWelfareSchemeType("retail");
-                                    setWelfareFormStep(1);
+                                    setLoanPortalTab("apply");
+                                    setLoanSchemeType("retail");
+                                    setLoanFormStep(1);
                                     setDashboardTab("loans");
                                     setTimeout(() => {
-                                      const element = document.getElementById("welfare-portal-section");
+                                      const element = document.getElementById("loans-portal-section");
                                       if (element) element.scrollIntoView({ behavior: "smooth" });
                                     }, 100);
                                     toast.success(
@@ -879,10 +879,10 @@ function Dashboard() {
                 </div>
 
                 <div className="grid lg:grid-cols-12 gap-6 items-start">
-                  {/* Left Column: Welfare Apply/Track portal */}
+                  {/* Left Column: Loan Apply/Track portal */}
                   <div className="lg:col-span-7 space-y-6">
                     {/* Business Loans & Credit Portal */}
-                    <div id="welfare-portal-section" className="bg-white rounded-3xl border border-slate-250/70 p-6 shadow-xxs border-l-4 border-l-emerald-600">
+                    <div id="loans-portal-section" className="bg-white rounded-3xl border border-slate-250/70 p-6 shadow-xxs border-l-4 border-l-emerald-600">
                       {/* Card Header */}
                       <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                         <div className="flex items-center gap-2">
@@ -894,9 +894,9 @@ function Dashboard() {
                         <div className="flex bg-slate-100 p-0.5 rounded-lg border border-slate-205/40 text-[10px]">
                           <button
                             type="button"
-                            onClick={() => setWelfarePortalTab("apply")}
+                            onClick={() => setLoanPortalTab("apply")}
                             className={`px-3 py-1 font-bold rounded-md transition ${
-                              welfarePortalTab === "apply"
+                              loanPortalTab === "apply"
                                 ? "bg-white text-emerald-600 shadow-xxs"
                                 : "text-slate-500 hover:text-slate-800"
                             }`}
@@ -905,9 +905,9 @@ function Dashboard() {
                           </button>
                           <button
                             type="button"
-                            onClick={() => setWelfarePortalTab("track")}
+                            onClick={() => setLoanPortalTab("track")}
                             className={`px-3 py-1 font-bold rounded-md transition ${
-                              welfarePortalTab === "track"
+                              loanPortalTab === "track"
                                 ? "bg-white text-emerald-600 shadow-xxs"
                                 : "text-slate-500 hover:text-slate-800"
                             }`}
@@ -918,18 +918,18 @@ function Dashboard() {
                       </div>
 
                       {/* Portal Body */}
-                      {welfarePortalTab === "apply" && (
+                      {loanPortalTab === "apply" && (
                         <div className="pt-4 text-left">
-                          {welfareFormStep === 1 && (
+                          {loanFormStep === 1 && (
                             <div>
-                              {!welfareSchemeType ? (
+                              {!loanSchemeType ? (
                                 <div className="space-y-3">
                                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">{t("கடன் பிரிவைத் தேர்ந்தெடுக்கவும்", "Select a Loan Type")}</span>
                                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     <div 
                                       onClick={() => {
-                                        setWelfareSchemeType("business");
-                                        setWelfareFormInputs(prev => ({ ...prev, amount: "500000", tenure: "24", reason: "" }));
+                                        setLoanSchemeType("business");
+                                        setLoanFormInputs(prev => ({ ...prev, amount: "500000", tenure: "24", reason: "" }));
                                       }}
                                       className="border border-slate-200 rounded-xl p-4 bg-slate-50/50 hover:bg-emerald-50/20 hover:border-emerald-500/30 transition-all cursor-pointer group flex flex-col justify-between min-h-[140px]"
                                     >
@@ -949,8 +949,8 @@ function Dashboard() {
 
                                     <div 
                                       onClick={() => {
-                                        setWelfareSchemeType("retail");
-                                        setWelfareFormInputs(prev => ({ ...prev, amount: "50000", tenure: "12", reason: "" }));
+                                        setLoanSchemeType("retail");
+                                        setLoanFormInputs(prev => ({ ...prev, amount: "50000", tenure: "12", reason: "" }));
                                       }}
                                       className="border border-slate-200 rounded-xl p-4 bg-slate-50/50 hover:bg-emerald-50/20 hover:border-emerald-500/30 transition-all cursor-pointer group flex flex-col justify-between min-h-[140px]"
                                     >
@@ -970,8 +970,8 @@ function Dashboard() {
 
                                     <div 
                                       onClick={() => {
-                                        setWelfareSchemeType("young");
-                                        setWelfareFormInputs(prev => ({ ...prev, amount: "200000", tenure: "18", reason: "" }));
+                                        setLoanSchemeType("young");
+                                        setLoanFormInputs(prev => ({ ...prev, amount: "200000", tenure: "18", reason: "" }));
                                       }}
                                       className="border border-slate-200 rounded-xl p-4 bg-slate-50/50 hover:bg-emerald-50/20 hover:border-emerald-500/30 transition-all cursor-pointer group flex flex-col justify-between min-h-[140px]"
                                     >
@@ -991,8 +991,8 @@ function Dashboard() {
 
                                     <div 
                                       onClick={() => {
-                                        setWelfareSchemeType("micro");
-                                        setWelfareFormInputs(prev => ({ ...prev, amount: "25000", tenure: "6", reason: "" }));
+                                        setLoanSchemeType("micro");
+                                        setLoanFormInputs(prev => ({ ...prev, amount: "25000", tenure: "6", reason: "" }));
                                       }}
                                       className="border border-slate-200 rounded-xl p-4 bg-slate-50/50 hover:bg-emerald-50/20 hover:border-emerald-500/30 transition-all cursor-pointer group flex flex-col justify-between min-h-[140px]"
                                     >
@@ -1012,22 +1012,22 @@ function Dashboard() {
                                   </div>
                                 </div>
                               ) : (
-                                <form onSubmit={(e) => { e.preventDefault(); setWelfareFormStep(2); startSimulatedWelfareUpload(); }} className="space-y-4 font-sans text-xs">
+                                <form onSubmit={(e) => { e.preventDefault(); setLoanFormStep(2); startSimulatedLoanUpload(); }} className="space-y-4 font-sans text-xs">
                                   <div className="flex justify-between items-center bg-slate-50 p-2.5 rounded-lg border border-slate-200/60">
                                     <span className="font-bold text-slate-705 capitalize">
                                       {t("தேர்ந்தெடுக்கப்பட்ட கடன்:", "Selected Loan:")} <span className="text-emerald-705">
-                                        {welfareSchemeType === "business"
+                                        {loanSchemeType === "business"
                                           ? t("வட்டியில்லா வணிகக் கடன்", "Interest-Free Business Loan")
-                                          : welfareSchemeType === "retail"
+                                          : loanSchemeType === "retail"
                                           ? t("சில்லறை வணிகர்கள் கடன்", "Retail Trader Loan")
-                                          : welfareSchemeType === "young"
+                                          : loanSchemeType === "young"
                                           ? t("இளைய தொழில்முனைவோர் கடன்", "Young Entrepreneur Loan")
                                           : t("நுண்ணிய & சாலையோர வியாபாரிகள் கடன்", "Micro & Street Vendor Loan")}
                                       </span>
                                     </span>
                                     <button 
                                       type="button" 
-                                      onClick={() => setWelfareSchemeType(null)}
+                                      onClick={() => setLoanSchemeType(null)}
                                       className="text-[9px] font-bold text-rose-650 hover:underline"
                                     >
                                       {t("மாற்று", "Change Type")}
@@ -1038,24 +1038,24 @@ function Dashboard() {
                                     <div className="space-y-1">
                                       <label className="font-bold text-slate-650 block">{t("தேவைப்படும் கடன் தொகை *", "Loan Amount Needed *")}</label>
                                       <select 
-                                        value={welfareFormInputs.amount} 
-                                        onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, amount: e.target.value })}
+                                        value={loanFormInputs.amount} 
+                                        onChange={(e) => setLoanFormInputs({ ...loanFormInputs, amount: e.target.value })}
                                         className="w-full bg-white border border-slate-200 rounded-lg p-2.5 font-bold text-slate-700"
                                       >
-                                        {welfareSchemeType === "micro" ? (
+                                        {loanSchemeType === "micro" ? (
                                           <>
                                             <option value="10000">₹10,000</option>
                                             <option value="25000">₹25,000</option>
                                             <option value="50000">₹50,000</option>
                                           </>
-                                        ) : welfareSchemeType === "retail" ? (
+                                        ) : loanSchemeType === "retail" ? (
                                           <>
                                             <option value="50000">₹50,000</option>
                                             <option value="100000">₹1,00,000</option>
                                             <option value="200000">₹2,00,000</option>
                                             <option value="500000">₹5,00,000</option>
                                           </>
-                                        ) : welfareSchemeType === "young" ? (
+                                        ) : loanSchemeType === "young" ? (
                                           <>
                                             <option value="100000">₹1,00,000</option>
                                             <option value="250000">₹2,50,000</option>
@@ -1075,11 +1075,11 @@ function Dashboard() {
                                     <div className="space-y-1">
                                       <label className="font-bold text-slate-650 block">{t("திருப்பிக் செலுத்தும் காலம் *", "Repayment Tenure *")}</label>
                                       <select 
-                                        value={welfareFormInputs.tenure} 
-                                        onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, tenure: e.target.value })}
+                                        value={loanFormInputs.tenure} 
+                                        onChange={(e) => setLoanFormInputs({ ...loanFormInputs, tenure: e.target.value })}
                                         className="w-full bg-white border border-slate-200 rounded-lg p-2.5 text-slate-700 font-bold"
                                       >
-                                        {welfareSchemeType === "micro" ? (
+                                        {loanSchemeType === "micro" ? (
                                           <>
                                             <option value="6">6 Months</option>
                                             <option value="12">12 Months</option>
@@ -1098,8 +1098,8 @@ function Dashboard() {
                                     <div className="space-y-1">
                                       <label className="font-bold text-slate-650 block">{t("வணிக அமைப்பு முறை *", "Business Structure *")}</label>
                                       <select 
-                                        value={welfareFormInputs.businessStructure} 
-                                        onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, businessStructure: e.target.value })}
+                                        value={loanFormInputs.businessStructure} 
+                                        onChange={(e) => setLoanFormInputs({ ...loanFormInputs, businessStructure: e.target.value })}
                                         className="w-full bg-white border border-slate-200 rounded-lg p-2.5 text-slate-700 font-bold"
                                       >
                                         <option value="Proprietorship">{t("தனியுரிமை", "Proprietorship")}</option>
@@ -1115,13 +1115,13 @@ function Dashboard() {
                                         type="text" 
                                         required 
                                         placeholder="12 Digit UID Number"
-                                        value={welfareFormInputs.aadhaar}
-                                        onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, aadhaar: e.target.value.replace(/\D/g, "").slice(0,12) })}
+                                        value={loanFormInputs.aadhaar}
+                                        onChange={(e) => setLoanFormInputs({ ...loanFormInputs, aadhaar: e.target.value.replace(/\D/g, "").slice(0,12) })}
                                         className="w-full bg-white border border-slate-200 rounded-lg p-2.5 font-bold" 
                                       />
                                     </div>
 
-                                    {welfareSchemeType === "young" && (
+                                    {loanSchemeType === "young" && (
                                       <div className="space-y-1">
                                         <label className="font-bold text-slate-650 block">{t("வயது *", "Age *")}</label>
                                         <input 
@@ -1129,8 +1129,8 @@ function Dashboard() {
                                           required 
                                           min="18"
                                           max="40"
-                                          value={welfareFormInputs.age}
-                                          onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, age: e.target.value })}
+                                          value={loanFormInputs.age}
+                                          onChange={(e) => setLoanFormInputs({ ...loanFormInputs, age: e.target.value })}
                                           className="w-full bg-white border border-slate-200 rounded-lg p-2.5 font-bold" 
                                         />
                                       </div>
@@ -1142,8 +1142,8 @@ function Dashboard() {
                                         type="text" 
                                         required 
                                         placeholder={t("எ.கா. சரக்கு கொள்முதல், கடை புதுப்பித்தல்", "e.g. Purchase of stock, shop renovation")}
-                                        value={welfareFormInputs.reason}
-                                        onChange={(e) => setWelfareFormInputs({ ...welfareFormInputs, reason: e.target.value })}
+                                        value={loanFormInputs.reason}
+                                        onChange={(e) => setLoanFormInputs({ ...loanFormInputs, reason: e.target.value })}
                                         className="w-full bg-white border border-slate-200 rounded-lg p-2.5" 
                                       />
                                     </div>
@@ -1161,12 +1161,12 @@ function Dashboard() {
                           )}
 
                           {/* Step 2: Upload Documents & Verify */}
-                          {welfareFormStep === 2 && (
+                          {loanFormStep === 2 && (
                             <div className="space-y-4 font-sans text-xs">
                               <div className="bg-slate-50 border border-slate-200/60 p-3.5 rounded-xl space-y-2">
                                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Simulated Document Verification</span>
                                 <div className="space-y-2.5">
-                                  {welfareUploads.map((file, idx) => (
+                                  {loanUploads.map((file, idx) => (
                                     <div key={idx} className="flex flex-col bg-white border border-slate-150 p-3 rounded-lg shadow-xxs">
                                       <div className="flex justify-between items-center text-xs">
                                         <span className="font-bold text-slate-700">{file.name}</span>
@@ -1188,21 +1188,21 @@ function Dashboard() {
 
                               <button
                                 type="button"
-                                disabled={isWelfareUploading}
-                                onClick={handleWelfarePortalSubmit}
+                                disabled={isLoanUploading}
+                                onClick={handleLoanPortalSubmit}
                                 className={`w-full font-bold py-2.5 rounded-xl transition ${
-                                  isWelfareUploading 
+                                  isLoanUploading 
                                     ? "bg-slate-100 text-slate-400 cursor-not-allowed" 
                                     : "bg-emerald-600 hover:bg-emerald-500 text-white cursor-pointer shadow-xs"
                                 }`}
                               >
-                                {isWelfareUploading ? t("ஆவணங்கள் பதிவேற்றப்படுகின்றன...", "Uploading verified files...") : t("கடன் விண்ணப்பத்தை சமர்ப்பி", "Submit Loan Application")}
+                                {isLoanUploading ? t("ஆவணங்கள் பதிவேற்றப்படுகின்றன...", "Uploading verified files...") : t("கடன் விண்ணப்பத்தை சமர்ப்பி", "Submit Loan Application")}
                               </button>
                             </div>
                           )}
 
                           {/* Step 3: Success Screen */}
-                          {welfareFormStep === 3 && (
+                          {loanFormStep === 3 && (
                             <div className="text-center py-6 space-y-4 animate-fade-in font-sans text-xs">
                               <div className="w-14 h-14 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center mx-auto shadow-sm">
                                 <CheckCircle2 className="w-8 h-8 animate-pulse" />
@@ -1219,7 +1219,7 @@ function Dashboard() {
                               <div className="flex gap-2 justify-center">
                                 <button
                                   type="button"
-                                  onClick={() => setWelfarePortalTab("track")}
+                                  onClick={() => setLoanPortalTab("track")}
                                   className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-2 px-4 rounded-lg cursor-pointer"
                                 >
                                   {t("விண்ணப்பங்களை டிராக் செய்க", "Track Application Status")}
@@ -1227,8 +1227,8 @@ function Dashboard() {
                                 <button
                                   type="button"
                                   onClick={() => {
-                                    setWelfareSchemeType(null);
-                                    setWelfareFormStep(1);
+                                    setLoanSchemeType(null);
+                                    setLoanFormStep(1);
                                   }}
                                   className="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2 px-4 rounded-lg cursor-pointer border border-slate-200/60"
                                 >
@@ -1241,11 +1241,11 @@ function Dashboard() {
                       )}
 
                       {/* TAB 2: TRACK APPLICATIONS */}
-                      {welfarePortalTab === "track" && (
+                      {loanPortalTab === "track" && (
                         <div className="space-y-4 pt-4 animate-fade-in font-sans text-xs">
-                          {welfareClaims.length > 0 ? (
+                          {loanClaims.length > 0 ? (
                             <div className="space-y-4">
-                              {welfareClaims.map((claim) => (
+                              {loanClaims.map((claim) => (
                                 <div key={claim.id} className="border border-slate-200/80 rounded-2xl bg-white p-4 shadow-xxs space-y-4">
                                   <div className="flex justify-between items-start gap-4">
                                     <div className="text-left space-y-0.5">
@@ -1870,7 +1870,7 @@ function Dashboard() {
                     <p className="text-xs text-slate-500 leading-relaxed font-tamil">
                       {t(
                         "எங்கள் அதிகாரப்பூர்வ மொபைல் ஆப் மூலம் உங்கள் கடை விவரங்களை நிர்வகிக்கலாம், உடனடி ஜிஎஸ்டி விழிப்பூட்டல்களைப் பெறலாம் மற்றும் பிற வணிகர்களுடன் இணைந்திருக்கலாம்.",
-                        "Access the complete GST desk, chat with auditor support, track your local welfare benefits, and verify referrals instantly with the Vanigan AI android app."
+                        "Access the complete GST desk, chat with auditor support, track your local loan benefits, and verify referrals instantly with the Vanigan AI android app."
                       )}
                     </p>
                     <a
@@ -2206,7 +2206,7 @@ function Dashboard() {
 
 
 function AdminAnalyticsPanel({ t, language }: { t: any; language: string }) {
-  const [activeTab, setActiveTab] = useState<"overview" | "regional" | "welfare">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "regional" | "loan">("overview");
   
   // Sort State for Districts Leaderboard
   const [sortField, setSortField] = useState<"count" | "claims">("count");
@@ -2288,7 +2288,7 @@ function AdminAnalyticsPanel({ t, language }: { t: any; language: string }) {
           {[
             { id: "overview", ta: "வளர்ச்சி", en: "Overview" },
             { id: "regional", ta: "வட்டாரம்", en: "Regional Layout" },
-            { id: "welfare", ta: "நிதியுதவி", en: "Loans & Credit" },
+            { id: "loan", ta: "நிதியுதவி", en: "Loans & Credit" },
           ].map((tab) => {
             const active = activeTab === tab.id;
             return (
@@ -2581,10 +2581,10 @@ function AdminAnalyticsPanel({ t, language }: { t: any; language: string }) {
           </motion.div>
         )}
 
-        {/* TAB 3: WELFARE & CREDIT */}
-        {activeTab === "welfare" && (
+        {/* TAB 3: LOAN & CREDIT */}
+        {activeTab === "loan" && (
           <motion.div
-            key="welfare-panel"
+            key="loan-panel"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
@@ -2604,7 +2604,7 @@ function AdminAnalyticsPanel({ t, language }: { t: any; language: string }) {
                 <div className="relative w-28 h-28">
                   <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90">
                     <circle cx="50" cy="50" r="45" fill="none" stroke="#e2e8f0" strokeWidth="10" />
-                    {welfareDistribution.map((seg, idx) => (
+                    {loanDistribution.map((seg, idx) => (
                       <circle
                         key={idx}
                         cx="50"
@@ -2626,7 +2626,7 @@ function AdminAnalyticsPanel({ t, language }: { t: any; language: string }) {
                 </div>
 
                 <div className="w-full space-y-1.5 text-xxs">
-                  {welfareDistribution.map((seg, idx) => (
+                  {loanDistribution.map((seg, idx) => (
                     <div key={idx} className="flex justify-between items-center bg-slate-50 border border-slate-100/50 px-2 py-1.5 rounded-lg">
                       <div className="flex items-center gap-1.5">
                         <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: seg.color }} />

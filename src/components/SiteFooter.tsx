@@ -36,7 +36,7 @@ export function SiteFooter() {
               </Link>
             </li>
             <li>
-              <Link to="/services" className="hover:underline hover:text-white transition duration-200">
+              <Link to="/members" className="hover:underline hover:text-white transition duration-200">
                 {t("சான்றிதழ் பதிவிறக்கம்", "Certificate Download")}
               </Link>
             </li>

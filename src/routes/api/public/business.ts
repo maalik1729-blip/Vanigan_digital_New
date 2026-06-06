@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { getDbPool } from "@/lib/db";
+import { getDbPool, upsertBusinesses } from "@/lib/db";
 
-export const Route = createFileRoute("/api/public/businesses")({
+export const Route = createFileRoute("/api/public/business")({
   server: {
     handlers: {
       GET: async ({ request }: { request: Request }) => {

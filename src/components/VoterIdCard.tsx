@@ -133,9 +133,9 @@ export function VoterIdCard({ voter, template }: { voter: Voter; template: Templ
         #page1-div {
           background-image: url(https://res.cloudinary.com/dqndhcmu2/image/upload/v1773232516/vanigan/templates/ID_Front.png);
           background-repeat: no-repeat;
-          background-size: 421px 573px;
+          background-size: 421px 590px;
           background-position: center;
-          height: 573px;
+          height: 590px;
         }
 
         #page2-div {

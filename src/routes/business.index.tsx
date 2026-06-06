@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, redirect } from "@tanstack/react-router";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { z } from "zod";
 import {
@@ -10,7 +10,7 @@ import {
 import { useLanguage } from "@/hooks/useLanguage";
 
 // ─── Live API base ────────────────────────────────────────────────────────────
-const API = import.meta.env.VITE_API_BASE_URL ?? "https://vanigan-app-automation-5il0.onrender.com";
+const API = import.meta.env.VITE_API_BASE_URL ?? "";
 
 // ─── Route schema ─────────────────────────────────────────────────────────────
 const SUBCATEGORY_MAPPING: Record<string, string[]> = {
@@ -335,14 +335,21 @@ const searchSchema = z.object({
   page:        z.coerce.number().optional(),
 });
 
-export const Route = createFileRoute("/businesses/")({
+export const Route = createFileRoute("/business/")({
   validateSearch: searchSchema,
-  head: () => ({
-    meta: [
-      { title: "வணிகர் பட்டியல் — Business Directory · TNVS" },
-      { name: "description", content: "Explore 18,000+ verified businesses across Tamil Nadu — by category, subcategory and district." },
-    ],
-  }),
+  beforeLoad: ({ search }) => {
+    throw redirect({
+      to: "/members",
+      search: {
+        tab: "businesses",
+        category: search.category,
+        subCategory: search.subCategory,
+        search: search.search,
+        district: search.district,
+        page: search.page,
+      },
+    });
+  },
   component: BusinessesPage,
 });
 
@@ -1074,30 +1081,45 @@ const TN_DISTRICTS = [
 const LIMIT = 12;
 
 // ─── API fetchers ─────────────────────────────────────────────────────────────
-async function fetchCategories(): Promise<{ category: string; count: number }[]> {
+async function fetchCategories(): Promise<{
+  categories: { category: string; count: number }[];
+  stats?: {
+    totalBusinesses: number;
+    totalCategories: number;
+    totalSubCategories: number;
+  };
+}> {
   try {
     const res = await fetch(`${API}/api/categories`);
     if (!res.ok) throw new Error("Failed");
     const data = await res.json();
-    // Normalize: could be array of strings or array of objects
+    
+    let categories: { category: string; count: number }[] = [];
     if (Array.isArray(data)) {
-      return data.map((item: any) =>
+      categories = data.map((item: any) =>
         typeof item === "string"
           ? { category: item, count: 0 }
           : { category: item.category || item.name || String(item), count: item.count || 0 }
       ).filter(d => d.category);
+      return { categories };
     }
+    
     if (data.categories) {
-      return data.categories.map((item: any) =>
+      categories = data.categories.map((item: any) =>
         typeof item === "string"
           ? { category: item, count: 0 }
           : { category: item.category || item.name || String(item), count: item.count || 0 }
       ).filter((d: any) => d.category);
     }
-    return [];
+    
+    return {
+      categories,
+      stats: data.stats,
+    };
   } catch {
     // Fallback: return static category list
-    return Object.keys(CATEGORY_META).map(c => ({ category: c, count: 0 }));
+    const categories = Object.keys(CATEGORY_META).map(c => ({ category: c, count: 0 }));
+    return { categories };
   }
 }
 
@@ -1133,14 +1155,14 @@ async function fetchBusinesses(params: {
   query.set("page", String(params.page || 1));
   query.set("limit", String(LIMIT));
 
-  const res = await fetch(`${API}/api/public/businesses?${query.toString()}`);
+  const res = await fetch(`${API}/api/public/business?${query.toString()}`);
   if (!res.ok) throw new Error(`API error: ${res.status}`);
   return res.json();
 }
 
 // ─── Main Page Component ──────────────────────────────────────────────────────
 function BusinessesPage() {
-  const navigate = useNavigate({ from: "/businesses" });
+  const navigate = useNavigate({ from: "/business" });
   const search = Route.useSearch();
   const { language } = useLanguage();
 
@@ -1163,12 +1185,20 @@ function BusinessesPage() {
   const [showFilters, setShowFilters] = useState(false);
   const [localSearch, setLocalSearch] = useState(searchText);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [stats, setStats] = useState<{
+    totalBusinesses: number;
+    totalCategories: number;
+    totalSubCategories: number;
+  } | null>(null);
 
   // Load categories on mount
   useEffect(() => {
     setCatLoading(true);
     fetchCategories().then(data => {
-      setCategories(data);
+      setCategories(data.categories);
+      if (data.stats) {
+        setStats(data.stats);
+      }
       setCatLoading(false);
     });
   }, []);
@@ -1265,15 +1295,42 @@ function BusinessesPage() {
 
   const t = (ta: string, en: string) => language === "ta" ? ta : en;
 
+  const matchingCats = searchText
+    ? categories.filter(c => c.category.toLowerCase().includes(searchText.toLowerCase()))
+    : [];
+
+  const matchingSubs: { subCategory: string; category: string }[] = [];
+  if (searchText) {
+    Object.entries(SUBCATEGORY_MAPPING).forEach(([cat, subs]) => {
+      subs.forEach(sub => {
+        if (sub.toLowerCase().includes(searchText.toLowerCase())) {
+          matchingSubs.push({ subCategory: sub, category: cat });
+        }
+      });
+    });
+  }
+
   return (
     <div className="min-h-screen bg-background">
       {/* ── Hero / Search Header ─────────────────────────────────────────────── */}
       <section
-        className="relative overflow-hidden border-b border-border"
+        className="relative overflow-hidden border-b border-gold/20"
         style={{
-          background: "linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 40%, #0ea5e9 100%)",
+          background: "var(--gradient-hero)",
         }}
       >
+        {/* Ambient background orbs — give the hero depth & warmth */}
+        <div aria-hidden="true" className="pointer-events-none">
+          {/* Gold accent orb — bottom-left */}
+          <div className="absolute -bottom-24 -left-24 w-[360px] h-[360px] rounded-full opacity-[0.07]"
+            style={{ background: "radial-gradient(circle, var(--gold) 0%, transparent 70%)" }}
+          />
+          {/* Secondary gold accent orb — top-right */}
+          <div className="absolute -top-20 -right-20 w-[300px] h-[300px] rounded-full opacity-[0.05]"
+            style={{ background: "radial-gradient(circle, var(--gold) 0%, transparent 70%)" }}
+          />
+        </div>
+
         <div className="absolute inset-0 opacity-20 pointer-events-none"
           style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")" }}
         />
@@ -1325,7 +1382,7 @@ function BusinessesPage() {
                 value={localSearch}
                 onChange={e => setLocalSearch(e.target.value)}
                 placeholder={t("வணிகர் பெயர், விளக்கம், நகரம்...", "Business name, description, city...")}
-                className="w-full pl-10 pr-4 py-3 rounded-xl bg-white text-slate-800 placeholder:text-slate-400 text-sm font-sans focus:outline-none focus:ring-2 focus:ring-white/50 shadow-lg"
+                className="w-full pl-10 pr-4 py-3 rounded-xl bg-white text-slate-800 placeholder:text-slate-400 text-sm font-sans focus:outline-none focus:ring-2 focus:ring-gold/50 shadow-lg"
               />
               {localSearch && (
                 <button
@@ -1338,7 +1395,7 @@ function BusinessesPage() {
             </div>
             <button
               onClick={() => setShowFilters(f => !f)}
-              className={`flex items-center gap-2 px-4 py-3 rounded-xl font-semibold text-sm transition shadow-lg ${showFilters ? "bg-white text-primary" : "bg-white/20 text-white hover:bg-white/30"}`}
+              className={`flex items-center gap-2 px-4 py-3 rounded-xl font-semibold text-sm transition shadow-lg border ${showFilters ? "bg-gold text-gold-foreground border-gold" : "bg-white/10 text-white hover:bg-white/20 border-white/10"}`}
             >
               <Filter className="w-4 h-4" />
               {t("வடிகட்டு", "Filter")}
@@ -1354,7 +1411,7 @@ function BusinessesPage() {
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => navigate({ search: (p) => ({ ...p, district: undefined, page: 1 }) })}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${!selectedDistrict ? "bg-white text-primary" : "bg-white/20 text-white hover:bg-white/30"}`}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition border ${!selectedDistrict ? "bg-gold text-gold-foreground border-gold" : "bg-white/10 text-white hover:bg-white/20 border-white/10"}`}
                 >
                   {t("அனைத்தும்", "All Districts")}
                 </button>
@@ -1362,11 +1419,41 @@ function BusinessesPage() {
                   <button
                     key={d}
                     onClick={() => navigate({ search: (p) => ({ ...p, district: d === selectedDistrict ? undefined : d, page: 1 }) })}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${selectedDistrict === d ? "bg-white text-primary" : "bg-white/20 text-white hover:bg-white/30"}`}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition border ${selectedDistrict === d ? "bg-gold text-gold-foreground border-gold" : "bg-white/10 text-white hover:bg-white/20 border-white/10"}`}
                   >
                     {d}
                   </button>
                 ))}
+              </div>
+            </div>
+          )}
+
+          {/* Stats Cards Dashboard Component */}
+          {stats && (
+            <div className="grid grid-cols-3 gap-3 sm:gap-6 mt-8 max-w-2xl bg-white/5 backdrop-blur-md border border-gold/15 hover:border-gold/30 rounded-2xl p-4 transition-all duration-300">
+              <div className="text-center sm:text-left">
+                <p className="text-xs text-white/60 font-semibold uppercase tracking-wider mb-1 font-Tamil">
+                  {t("மொத்த வணிகங்கள்", "Total Businesses")}
+                </p>
+                <p className="text-xl sm:text-2xl font-bold text-gold font-sans tracking-tight">
+                  {stats.totalBusinesses.toLocaleString()}
+                </p>
+              </div>
+              <div className="text-center sm:text-left border-l border-white/10 pl-3 sm:pl-6">
+                <p className="text-xs text-white/60 font-semibold uppercase tracking-wider mb-1 font-Tamil">
+                  {t("பிரிவுகள்", "Categories")}
+                </p>
+                <p className="text-xl sm:text-2xl font-bold text-gold font-sans tracking-tight">
+                  {stats.totalCategories}
+                </p>
+              </div>
+              <div className="text-center sm:text-left border-l border-white/10 pl-3 sm:pl-6">
+                <p className="text-xs text-white/60 font-semibold uppercase tracking-wider mb-1 font-Tamil">
+                  {t("துணைப்பிரிவுகள்", "Sub-categories")}
+                </p>
+                <p className="text-xl sm:text-2xl font-bold text-gold font-sans tracking-tight">
+                  {stats.totalSubCategories}
+                </p>
               </div>
             </div>
           )}
@@ -1549,6 +1636,58 @@ function BusinessesPage() {
       {/* ── Search results (no category selected but search active) ───────────── */}
       {!selectedCategory && searchText && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+          
+          {/* Matching categories & subcategories section */}
+          {(matchingCats.length > 0 || matchingSubs.length > 0) && (
+            <div className="mb-8 p-5 bg-[#F3F6FC]/60 border border-slate-200/80 rounded-2xl shadow-xxs">
+              <h3 className="text-xs font-bold text-[#002B7F] uppercase tracking-wider mb-3">
+                {t("பொருந்தும் பிரிவுகள் & துணைப்பிரிவுகள்", "Matching Categories & Subcategories")}
+              </h3>
+              <div className="flex flex-wrap gap-2.5">
+                {matchingCats.map(c => (
+                  <button
+                    key={c.category}
+                    onClick={() => {
+                      navigate({
+                        search: {
+                          category: c.category,
+                          page: 1,
+                          district: selectedDistrict || undefined,
+                        },
+                      });
+                      setLocalSearch("");
+                    }}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary/10 border border-primary/20 text-primary text-xs font-bold hover:bg-primary/20 transition cursor-pointer"
+                  >
+                    <span>🏪</span>
+                    <span>{c.category}</span>
+                  </button>
+                ))}
+                {matchingSubs.map(s => (
+                  <button
+                    key={`${s.category}-${s.subCategory}`}
+                    onClick={() => {
+                      navigate({
+                        search: {
+                          category: s.category,
+                          subCategory: s.subCategory,
+                          page: 1,
+                          district: selectedDistrict || undefined,
+                        },
+                      });
+                      setLocalSearch("");
+                    }}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold hover:bg-emerald-100 transition cursor-pointer"
+                  >
+                    <span>🏷️</span>
+                    <span>{s.subCategory}</span>
+                    <span className="text-[10px] text-slate-455 font-normal">({s.category})</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="font-display font-bold text-xl text-ink">
@@ -1673,7 +1812,7 @@ function BusinessGridCard({ business: b, t }: { business: Business; t: (ta: stri
 
   return (
     <Link
-      to="/businesses/$id"
+      to="/business/$id"
       params={{ id: b._id }}
       id={`business-card-${b._id}`}
       className="group block bg-white rounded-2xl border border-slate-200 overflow-hidden hover:border-primary/30 hover:shadow-xl transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
@@ -1756,7 +1895,7 @@ function BusinessListCard({ business: b, t }: { business: Business; t: (ta: stri
 
   return (
     <Link
-      to="/businesses/$id"
+      to="/business/$id"
       params={{ id: b._id }}
       id={`business-list-${b._id}`}
       className="group flex gap-4 bg-white rounded-2xl border border-slate-200 p-4 hover:border-primary/30 hover:shadow-lg transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"

@@ -372,7 +372,7 @@ function Wings() {
       <section className="border-b border-slate-200/60 bg-white">
         <div className="max-w-7xl mx-auto px-5 sm:px-6 py-10 md:py-12 w-full">
           <div className="mb-4">
-            <Link to="/services" className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline transition-all">
+            <Link to="/members" className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline transition-all">
               <ArrowLeft className="w-3.5 h-3.5" /> {t("சேவைகளுக்குத் திரும்பு", "Back to Services")}
             </Link>
           </div>
