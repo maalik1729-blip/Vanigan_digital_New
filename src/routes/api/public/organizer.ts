@@ -41,6 +41,50 @@ export const Route = createFileRoute("/api/public/organizer")({
           return Response.json({ error: error.message }, { status: 500 });
         }
       },
+      POST: async ({ request }: { request: Request }) => {
+        try {
+          const body = await request.json();
+          const { name, mobile, email, role, district, assembly } = body;
+
+          if (!name || !mobile || !role || !district) {
+            return Response.json(
+              { error: "Missing required fields: name, mobile, role, district" },
+              { status: 400 }
+            );
+          }
+
+          const pool = getDbPool();
+          const timestamp = Date.now();
+          const organizer_code = `ORG${timestamp.toString().slice(-8)}`;
+
+          const query = `
+            INSERT INTO organizer_list (
+              organizer_code, name, mobile, email, role, district, assembly, status, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, 'active', NOW())
+          `;
+
+          const values = [
+            organizer_code,
+            name,
+            mobile,
+            email || null,
+            role,
+            district,
+            assembly || null,
+          ];
+
+          await pool.execute(query, values);
+
+          return Response.json({
+            success: true,
+            message: "Organizer added successfully",
+            organizerCode: organizer_code,
+          });
+        } catch (error: any) {
+          console.error("Local database error adding organizer:", error);
+          return Response.json({ error: error.message }, { status: 500 });
+        }
+      },
     },
   },
 });

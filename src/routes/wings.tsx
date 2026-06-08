@@ -93,11 +93,11 @@ const TAMIL_LAST_NAMES_TA = [
 
 const AVATAR_COLORS = [
   "bg-blue-500 text-white border-blue-600",
-  "bg-emerald-500 text-white border-emerald-600",
+  "bg-primary text-white border-emerald-600",
   "bg-violet-500 text-white border-violet-600",
-  "bg-amber-500 text-white border-amber-600",
+  "bg-primary text-white border-amber-600",
   "bg-rose-500 text-white border-rose-600",
-  "bg-indigo-500 text-white border-indigo-600",
+  "bg-primary text-white border-indigo-600",
   "bg-teal-500 text-white border-teal-600",
   "bg-cyan-500 text-white border-cyan-600",
   "bg-purple-500 text-white border-purple-600"
@@ -369,7 +369,7 @@ function Wings() {
     <div className="relative min-h-screen overflow-x-hidden">
       <h1 className="sr-only">{t("சங்கமப் பிரிவுகள் மற்றும் மண்டலங்கள்", "Wings & Regional Zones")}</h1>
       {/* Header section with tab switcher */}
-      <section className="border-b border-slate-200/60 bg-white">
+      <section className="border-b border-border bg-card">
         <div className="max-w-7xl mx-auto px-5 sm:px-6 py-10 md:py-12 w-full">
           <div className="mb-4">
             <Link to="/members" className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline transition-all">
@@ -377,7 +377,7 @@ function Wings() {
             </Link>
           </div>
 
-          <div className="flex border-b border-slate-200 mb-8" role="tablist" aria-label="Wings and Zones Navigation">
+          <div className="flex border-b border-border mb-8" role="tablist" aria-label="Wings and Zones Navigation">
             <button
               role="tab"
               aria-selected={activeTab === "wings"}
@@ -385,7 +385,7 @@ function Wings() {
               id="wings-tab"
               onClick={() => setActiveTab("wings")}
               className={`pb-4 px-6 font-display text-sm md:text-base font-bold transition-all relative cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 group ${
-                activeTab === "wings" ? "text-primary" : "text-slate-400 hover:text-slate-600"
+                activeTab === "wings" ? "text-primary" : "text-muted-foreground hover:text-muted-foreground"
               }`}
             >
               <span className="relative z-10">{t("34 வணிகப் பிரிவுகள்", "34 Specialized Wings")}</span>
@@ -415,7 +415,7 @@ function Wings() {
               id="zones-tab"
               onClick={() => setActiveTab("zones")}
               className={`pb-4 px-6 font-display text-sm md:text-base font-bold transition-all relative cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 group ${
-                activeTab === "zones" ? "text-primary" : "text-slate-400 hover:text-slate-600"
+                activeTab === "zones" ? "text-primary" : "text-muted-foreground hover:text-muted-foreground"
               }`}
             >
               <span className="relative z-10">{t("மண்டல வாரியான தொகுதிகள்", "Regional Zone Breakdown")}</span>
@@ -447,11 +447,11 @@ function Wings() {
                 <span>{t("துணைப் பிரிவுகள்", "Specialized Wings")}</span>
               </div>
               
-              <h2 className="mt-3 font-display text-2xl md:text-4xl font-bold text-slate-800 leading-tight max-w-3xl">
+              <h2 className="mt-3 font-display text-2xl md:text-4xl font-bold text-foreground leading-tight max-w-3xl">
                 {t("வணிகர்களின் சங்கமத்தின் 34 பிரிவுகள்", "34 Organizational Wings")}
               </h2>
               
-              <p className="mt-4 text-xs md:text-sm text-slate-500 max-w-2xl font-tamil leading-relaxed">
+              <p className="mt-4 text-xs md:text-sm text-muted-foreground max-w-2xl font-tamil leading-relaxed">
                 {t(
                   "உங்கள் வணிகத்தின் தன்மைக்கு ஏற்ற பிரிவைத் தேர்ந்தெடுத்து, அதற்கான சிறப்புச் சலுகைகள், சட்ட ஆலோசனைகள் மற்றும் தொழில் கூட்டுறவு வாய்ப்புகளைப் பெறுங்கள்.",
                   "Choose the wing that fits your business type to access specialized support, trade benefits, advisory services, and specific networking channels."
@@ -461,14 +461,14 @@ function Wings() {
               {/* Search bar */}
               <div className="mt-8 max-w-xl relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                  <Search className="h-4 w-4 text-slate-400" />
+                  <Search className="h-4 w-4 text-muted-foreground" />
                 </div>
                 <input
                   type="text"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder={t("பிரிவைத் தேடுக... (எ.கா: மகளிர், IT, உணவகம்)", "Search wings... (e.g. Women, IT, Restaurant)")}
-                  className="block w-full pl-10 pr-3 py-3 border border-slate-200 rounded-xl bg-white shadow-xs focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary text-xs md:text-sm transition duration-300 min-h-[44px]"
+                  className="block w-full pl-10 pr-3 py-3 border border-border rounded-md bg-card shadow-xs focus:outline-none focus:ring-4 focus:ring-primary/20 focus:border-primary text-xs md:text-sm transition duration-300 min-h-[44px]"
                 />
               </div>
 
@@ -477,10 +477,10 @@ function Wings() {
                 <div className="flex gap-2 min-w-max md:min-w-0 md:flex-wrap">
                 <button
                   onClick={() => setSelectedDept("all")}
-                  className={`px-4 py-2 rounded-xl text-xs font-semibold transition cursor-pointer min-h-[44px] border ${
+                  className={`px-4 py-2 rounded-md text-xs font-semibold transition cursor-pointer min-h-[44px] border ${
                     selectedDept === "all" 
                       ? "bg-primary text-white border-primary shadow-xs" 
-                      : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
+                      : "bg-card border-border text-muted-foreground hover:bg-muted"
                   }`}
                 >
                   {t("அனைத்துப் பிரிவுகளும்", "All Departments")}
@@ -489,10 +489,10 @@ function Wings() {
                   <button
                     key={dept.id}
                     onClick={() => setSelectedDept(dept.id)}
-                    className={`px-4 py-2 rounded-xl text-xs font-semibold transition cursor-pointer min-h-[44px] border ${
+                    className={`px-4 py-2 rounded-md text-xs font-semibold transition cursor-pointer min-h-[44px] border ${
                       selectedDept === dept.id 
                         ? "bg-primary text-white border-primary shadow-xs" 
-                        : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
+                        : "bg-card border-border text-muted-foreground hover:bg-muted"
                     }`}
                   >
                     {language === "ta" ? dept.nameTa : dept.nameEn}
@@ -508,11 +508,11 @@ function Wings() {
                 <span>{t("புவியியல் கவரேஜ்", "Geographical Coverage")}</span>
               </div>
               
-              <h2 className="mt-3 font-display text-2xl md:text-4xl font-bold text-slate-800 leading-tight max-w-3xl">
+              <h2 className="mt-3 font-display text-2xl md:text-4xl font-bold text-foreground leading-tight max-w-3xl">
                 {t("தமிழக மண்டல மற்றும் தொகுதி வாரியான பகுப்பாய்வு", "Tamil Nadu Zone & Constituency Breakdown")}
               </h2>
               
-              <p className="mt-4 text-xs md:text-sm text-slate-500 max-w-2xl font-tamil leading-relaxed">
+              <p className="mt-4 text-xs md:text-sm text-muted-foreground max-w-2xl font-tamil leading-relaxed">
                 {t(
                   "தமிழ்நாடு வணிகர்களின் சங்கமம் அமைப்பின் கீழ் செயல்படும் அதிகாரப்பூர்வ மண்டலங்கள், மாவட்டங்கள் மற்றும் சட்டமன்ற தொகுதிகளின் முழு விவரங்கள்.",
                   "Explore the full regional coverage of our association, mapped strictly by regional zones, covered districts, and corresponding legislative assembly constituencies."
@@ -523,7 +523,7 @@ function Wings() {
               <div className="mt-8 stats-grid max-w-md">
                 <button
                   onClick={handleStatsZoneClick}
-                  className="group relative overflow-hidden bg-linear-to-br from-white to-blue-50/30 border border-blue-100/80 rounded-2xl stats-card-padding shadow-xs hover:shadow-md hover:shadow-blue-500/5 hover:border-blue-500/40 hover:-translate-y-0.5 cursor-pointer transition-all duration-300 text-left block w-full focus:outline-none min-h-[100px]"
+                  className="group relative overflow-hidden bg-linear-to-br from-white to-blue-50/30 border border-blue-100/80 rounded-md stats-card-padding shadow-xs hover:shadow-xs hover:shadow-blue-500/5 hover:border-blue-500/40 hover:-translate-y-0.5 cursor-pointer transition-all duration-300 text-left block w-full focus:outline-none min-h-[100px]"
                 >
                   <div className="absolute top-0 right-0 w-20 h-20 bg-blue-500/5 rounded-full blur-xl -mr-4 -mt-4 transition-all duration-500 group-hover:bg-blue-500/10 group-hover:scale-110 pointer-events-none" />
                   <div className="flex justify-between items-start">
@@ -531,30 +531,30 @@ function Wings() {
                       <div className="text-2xl md:text-3xl font-extrabold text-blue-600 tracking-tight tabular-nums group-hover:scale-105 origin-left transition-transform duration-300">
                         {statsZonesCount}
                       </div>
-                      <div className="text-[10px] md:text-xs font-bold uppercase tracking-wider text-slate-500 mt-2 font-display leading-tight">
+                      <div className="text-[10px] md:text-xs font-bold uppercase tracking-wider text-muted-foreground mt-2 font-display leading-tight">
                         {t("அதிகாரப்பூர்வ மண்டலங்கள்", "Regional Zones")}
                       </div>
                     </div>
-                    <div className="p-2 rounded-xl bg-blue-500/10 text-blue-600 group-hover:bg-blue-500 group-hover:text-white transition-all duration-300 shrink-0">
+                    <div className="p-2 rounded-md bg-blue-500/10 text-blue-600 group-hover:bg-blue-500 group-hover:text-white transition-all duration-300 shrink-0">
                       <Globe className="w-4 h-4" />
                     </div>
                   </div>
                 </button>
                 <button
                   onClick={handleStatsDistrictClick}
-                  className="group relative overflow-hidden bg-linear-to-br from-white to-amber-50/30 border border-amber-100/80 rounded-2xl stats-card-padding shadow-xs hover:shadow-md hover:shadow-amber-500/5 hover:border-amber-500/40 hover:-translate-y-0.5 cursor-pointer transition-all duration-300 text-left block w-full focus:outline-none min-h-[100px]"
+                  className="group relative overflow-hidden bg-linear-to-br from-white to-amber-50/30 border border-amber-100/80 rounded-md stats-card-padding shadow-xs hover:shadow-xs hover:shadow-amber-500/5 hover:border-amber-500/40 hover:-translate-y-0.5 cursor-pointer transition-all duration-300 text-left block w-full focus:outline-none min-h-[100px]"
                 >
-                  <div className="absolute top-0 right-0 w-20 h-20 bg-amber-500/5 rounded-full blur-xl -mr-4 -mt-4 transition-all duration-500 group-hover:bg-amber-500/10 group-hover:scale-110 pointer-events-none" />
+                  <div className="absolute top-0 right-0 w-20 h-20 bg-primary/5 rounded-full blur-xl -mr-4 -mt-4 transition-all duration-500 group-hover:bg-primary/10 group-hover:scale-110 pointer-events-none" />
                   <div className="flex justify-between items-start">
                     <div>
                       <div className="text-2xl md:text-3xl font-extrabold text-amber-600 tracking-tight tabular-nums group-hover:scale-105 origin-left transition-transform duration-300">
                         {statsDistrictsCount}
                       </div>
-                      <div className="text-[10px] md:text-xs font-bold uppercase tracking-wider text-slate-500 mt-2 font-display leading-tight">
+                      <div className="text-[10px] md:text-xs font-bold uppercase tracking-wider text-muted-foreground mt-2 font-display leading-tight">
                         {t("உள்ளடக்கிய மாவட்டங்கள்", "Districts Covered")}
                       </div>
                     </div>
-                    <div className="p-2 rounded-xl bg-amber-500/10 text-amber-600 group-hover:bg-amber-500 group-hover:text-white transition-all duration-300 shrink-0">
+                    <div className="p-2 rounded-md bg-primary/10 text-amber-600 group-hover:bg-primary group-hover:text-white transition-all duration-300 shrink-0">
                       <MapPin className="w-4 h-4" />
                     </div>
                   </div>
@@ -569,8 +569,8 @@ function Wings() {
         {activeTab === "wings" ? (
           <div>
             {filteredWings.length === 0 ? (
-              <div className="text-center py-16 bg-white border border-slate-250/60 rounded-2xl p-6 shadow-xs max-w-md mx-auto">
-                <div className="text-slate-400 text-sm font-semibold">{t("பிரிவுகள் எதுவும் காணப்படவில்லை.", "No matching wings found.")}</div>
+              <div className="text-center py-16 bg-card border border-border rounded-md p-6 shadow-xs max-w-md mx-auto">
+                <div className="text-muted-foreground text-sm font-semibold">{t("பிரிவுகள் எதுவும் காணப்படவில்லை.", "No matching wings found.")}</div>
                 <button onClick={() => setQuery("")} className="mt-3 text-xs text-primary font-bold hover:underline">
                   {t("அனைத்தையும் காட்டு", "Clear Search & View All")}
                 </button>
@@ -583,11 +583,11 @@ function Wings() {
 
                   return (
                     <div key={dept.id} className="space-y-6">
-                      <div className="border-b border-slate-200/80 pb-3">
-                        <h2 className="font-display text-lg md:text-xl font-bold text-slate-800 leading-snug">
+                      <div className="border-b border-border pb-3">
+                        <h2 className="font-display text-lg md:text-xl font-bold text-foreground leading-snug">
                           {language === "ta" ? dept.nameTa : dept.nameEn}
                         </h2>
-                        <p className="text-xs text-slate-400 mt-0.5 leading-relaxed font-tamil">
+                        <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed font-tamil">
                           {language === "ta" ? dept.descTa : dept.descEn}
                         </p>
                       </div>
@@ -610,18 +610,18 @@ function Wings() {
                                   className="card-base card-interactive group p-5 md:p-6 flex flex-col justify-between min-h-[190px] h-full"
                                 >
                                   <div className="space-y-3">
-                                    <div className="w-10 h-10 rounded-xl bg-primary/5 text-primary grid place-items-center transition duration-300 group-hover:bg-primary group-hover:text-white">
+                                    <div className="w-10 h-10 rounded-md bg-primary/5 text-primary grid place-items-center transition duration-300 group-hover:bg-primary group-hover:text-white">
                                       <Icon className="w-4 h-4" />
                                     </div>
-                                    <h3 className="font-display font-bold text-sm md:text-base text-slate-800 leading-snug">
+                                    <h3 className="font-display font-bold text-sm md:text-base text-foreground leading-snug">
                                       {language === "ta" ? w.nameTa : w.nameEn}
                                     </h3>
-                                    <p className="text-xs text-slate-500 leading-relaxed font-tamil">
+                                    <p className="text-xs text-muted-foreground leading-relaxed font-tamil">
                                       {language === "ta" ? w.descriptionTa : w.descriptionEn}
                                     </p>
                                   </div>
                                   
-                                  <div className="mt-4 pt-3.5 border-t border-slate-100 flex items-center justify-between">
+                                  <div className="mt-4 pt-3.5 border-t border-border flex items-center justify-between">
                                     <span className="inline-flex items-center gap-1.5 text-xs font-bold text-primary group-hover:underline transition-all">
                                       {t("சேர / Join", "Join Wing")} <ArrowRight className="w-3.5 h-3.5" />
                                     </span>
@@ -641,13 +641,13 @@ function Wings() {
         ) : (
           <div ref={explorerRef} className="space-y-6 scroll-mt-20">
             {/* Contextual Controller: Back Button, Title Info, Search Input */}
-            <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 md:p-6 shadow-xxs flex flex-col gap-4">
+            <div className="bg-muted border border-border rounded-md p-4 md:p-6 shadow-xs flex flex-col gap-4">
               
               {/* Visual Breadcrumb Progress Path */}
-              <div className="flex items-center gap-2 flex-wrap text-xxs md:text-xs font-bold text-slate-500 overflow-x-auto pb-1.5">
+              <div className="flex items-center gap-2 flex-wrap text-xxs md:text-xs font-bold text-muted-foreground overflow-x-auto pb-1.5">
                 <button
                   onClick={() => handleBreadcrumbClick(1)}
-                  className={`hover:text-primary transition shrink-0 cursor-pointer min-h-[44px] px-3 py-2 rounded-xl flex items-center border border-transparent ${currentStep === 1 ? "text-primary bg-primary/5 border-primary/10" : ""}`}
+                  className={`hover:text-primary transition shrink-0 cursor-pointer min-h-[44px] px-3 py-2 rounded-md flex items-center border border-transparent ${currentStep === 1 ? "text-primary bg-primary/5 border-primary/10" : ""}`}
                 >
                   <Globe className="w-3.5 h-3.5 mr-1.5 shrink-0" />
                   {t("மண்டலங்கள்", "Zones")}
@@ -655,10 +655,10 @@ function Wings() {
                 
                 {selectedZone !== "all" && (
                   <>
-                    <ChevronRight className="w-3.5 h-3.5 text-slate-350 shrink-0" />
+                    <ChevronRight className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
                     <button
                       onClick={() => handleBreadcrumbClick(2)}
-                      className={`hover:text-primary transition shrink-0 cursor-pointer min-h-[44px] px-3 py-2 rounded-xl flex items-center border border-transparent ${currentStep === 2 ? "text-primary bg-primary/5 border-primary/10" : ""}`}
+                      className={`hover:text-primary transition shrink-0 cursor-pointer min-h-[44px] px-3 py-2 rounded-md flex items-center border border-transparent ${currentStep === 2 ? "text-primary bg-primary/5 border-primary/10" : ""}`}
                     >
                       <MapPin className="w-3.5 h-3.5 mr-1.5 shrink-0" />
                       <span className="truncate max-w-[120px]">{selectedZone}</span>
@@ -668,10 +668,10 @@ function Wings() {
 
                 {selectedDistrict !== "all" && (
                   <>
-                    <ChevronRight className="w-3.5 h-3.5 text-slate-350 shrink-0" />
+                    <ChevronRight className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
                     <button
                       onClick={() => handleBreadcrumbClick(3)}
-                      className={`hover:text-primary transition shrink-0 cursor-pointer min-h-[44px] px-3 py-2 rounded-xl flex items-center border border-transparent ${currentStep === 3 ? "text-primary bg-primary/5 border-primary/10" : ""}`}
+                      className={`hover:text-primary transition shrink-0 cursor-pointer min-h-[44px] px-3 py-2 rounded-md flex items-center border border-transparent ${currentStep === 3 ? "text-primary bg-primary/5 border-primary/10" : ""}`}
                     >
                       <Users className="w-3.5 h-3.5 mr-1.5 shrink-0" />
                       <span className="truncate max-w-[120px]">{selectedDistrict}</span>
@@ -681,10 +681,10 @@ function Wings() {
 
                 {selectedDeptZone !== "all" && activeDept && (
                   <>
-                    <ChevronRight className="w-3.5 h-3.5 text-slate-350 shrink-0" />
+                    <ChevronRight className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
                     <button
                       onClick={() => handleBreadcrumbClick(4)}
-                      className={`hover:text-primary transition shrink-0 cursor-pointer min-h-[44px] px-3 py-2 rounded-xl flex items-center border border-transparent ${currentStep === 4 ? "text-primary bg-primary/5 border-primary/10" : ""}`}
+                      className={`hover:text-primary transition shrink-0 cursor-pointer min-h-[44px] px-3 py-2 rounded-md flex items-center border border-transparent ${currentStep === 4 ? "text-primary bg-primary/5 border-primary/10" : ""}`}
                     >
                       <Award className="w-3.5 h-3.5 mr-1.5 shrink-0" />
                       <span className="truncate max-w-[120px]">{language === "ta" ? activeDept.nameTa : activeDept.nameEn}</span>
@@ -694,8 +694,8 @@ function Wings() {
 
                 {selectedWingZone !== "all" && activeWing && (
                   <>
-                    <ChevronRight className="w-3.5 h-3.5 text-slate-350 shrink-0" />
-                    <span className="text-primary bg-primary/5 px-3 py-2 rounded-xl border border-primary/10 shrink-0 flex items-center min-h-[44px]">
+                    <ChevronRight className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                    <span className="text-primary bg-primary/5 px-3 py-2 rounded-md border border-primary/10 shrink-0 flex items-center min-h-[44px]">
                       <Sparkles className="w-3.5 h-3.5 mr-1.5 shrink-0 text-primary animate-pulse" />
                       <span className="truncate max-w-[120px]">{language === "ta" ? activeWing.nameTa : activeWing.nameEn}</span>
                     </span>
@@ -703,7 +703,7 @@ function Wings() {
                 )}
               </div>
 
-              <div className="h-px bg-slate-200/60 w-full" />
+              <div className="h-px bg-muted w-full" />
 
               {/* Back Button & Search Filter Coordination */}
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -711,17 +711,17 @@ function Wings() {
                   {currentStep > 1 && (
                     <button
                       onClick={() => handleBreadcrumbClick(currentStep - 1)}
-                      className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-600 hover:text-primary bg-white border border-slate-200 shadow-xxs px-3 py-2 rounded-xl transition cursor-pointer min-h-[44px] focus:outline-none"
+                      className="inline-flex items-center gap-1.5 text-xs font-bold text-muted-foreground hover:text-primary bg-card border border-border shadow-xs px-3 py-2 rounded-md transition cursor-pointer min-h-[44px] focus:outline-none"
                     >
                       <ArrowLeft className="w-3.5 h-3.5" />
                       <span>{t("பின்னால்", "Back")}</span>
                     </button>
                   )}
                   <div>
-                    <div className="text-xxs uppercase tracking-wider text-slate-400 font-bold">
+                    <div className="text-xxs uppercase tracking-wider text-muted-foreground font-bold">
                       {t(`படி ${currentStep} இல் 5`, `Step ${currentStep} of 5`)}
                     </div>
-                    <h2 className="font-display font-extrabold text-sm md:text-base text-slate-800 mt-0.5 leading-none">
+                    <h2 className="font-display font-extrabold text-sm md:text-base text-foreground mt-0.5 leading-none">
                       {currentStep === 1 && t("மண்டலத்தைத் தேர்ந்தெடுக்கவும்", "Select Regional Zone")}
                       {currentStep === 2 && t("மாவட்டத்தைத் தேர்ந்தெடுக்கவும்", "Select Covered District")}
                       {currentStep === 3 && t("சேவைப் பிரிவைத் தேர்ந்தெடுக்கவும்", "Select Department Service")}
@@ -734,14 +734,14 @@ function Wings() {
                 {/* Context-sensitive Search Input */}
                 <div className="relative w-full sm:max-w-xs shrink-0">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Search className="h-3.5 w-3.5 text-slate-400" />
+                    <Search className="h-3.5 w-3.5 text-muted-foreground" />
                   </div>
                   <input
                     type="text"
                     value={zoneQuery}
                     onChange={(e) => setZoneQuery(e.target.value)}
                     placeholder={searchPlaceholder}
-                    className="block w-full pl-9 pr-3 py-2 border border-slate-200 rounded-xl bg-white shadow-xxs focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary text-xs transition duration-300 min-h-[44px]"
+                    className="block w-full pl-9 pr-3 py-2 border border-border rounded-md bg-card shadow-xs focus:outline-none focus:ring-4 focus:ring-primary/20 focus:border-primary text-xs transition duration-300 min-h-[44px]"
                   />
                 </div>
               </div>
@@ -763,8 +763,8 @@ function Wings() {
                     className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
                   >
                     {filteredZonesList.length === 0 ? (
-                      <div className="col-span-full text-center py-12 bg-white border border-slate-200 rounded-2xl shadow-xxs">
-                        <p className="text-slate-400 text-xs font-semibold">{t("மண்டலங்கள் எதுவும் காணப்படவில்லை.", "No matching zones found.")}</p>
+                      <div className="col-span-full text-center py-12 bg-card border border-border rounded-md shadow-xs">
+                        <p className="text-muted-foreground text-xs font-semibold">{t("மண்டலங்கள் எதுவும் காணப்படவில்லை.", "No matching zones found.")}</p>
                         <button onClick={() => setZoneQuery("")} className="mt-2 text-xxs text-primary font-bold hover:underline">
                           {t("தேடலை நீக்கு", "Clear Search")}
                         </button>
@@ -779,22 +779,22 @@ function Wings() {
                               setSelectedZone(zone);
                               setZoneQuery("");
                             }}
-                            className="card-base card-interactive p-4 flex items-center justify-between group text-left cursor-pointer focus:outline-none w-full bg-white border border-slate-200 shadow-xxs min-h-[44px]"
+                            className="card-base card-interactive p-4 flex items-center justify-between group text-left cursor-pointer focus:outline-none w-full bg-card border border-border shadow-xs min-h-[44px]"
                           >
                             <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-xl bg-primary/5 text-primary grid place-items-center transition duration-300 group-hover:bg-primary group-hover:text-white shrink-0">
+                              <div className="w-10 h-10 rounded-md bg-primary/5 text-primary grid place-items-center transition duration-300 group-hover:bg-primary group-hover:text-white shrink-0">
                                   <Globe className="w-4 h-4" />
                               </div>
                               <div className="min-w-0">
-                                <h3 className="font-display font-extrabold text-xs md:text-sm text-slate-800 group-hover:text-primary transition truncate">
+                                <h3 className="font-display font-extrabold text-xs md:text-sm text-foreground group-hover:text-primary transition truncate">
                                   {zone}
                                 </h3>
-                                <span className="text-[10px] font-bold text-slate-400 block mt-0.5 uppercase tracking-wider">
+                                <span className="text-[10px] font-bold text-muted-foreground block mt-0.5 uppercase tracking-wider">
                                   {t(`${distCount} மாவட்டங்கள்`, `${distCount} Districts Covered`)}
                                 </span>
                               </div>
                             </div>
-                            <ChevronRight className="w-4 h-4 text-slate-350 transition duration-300 group-hover:translate-x-1" />
+                            <ChevronRight className="w-4 h-4 text-muted-foreground" />
                           </button>
                         );
                       })
@@ -813,8 +813,8 @@ function Wings() {
                     className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
                   >
                     {filteredDistrictsList.length === 0 ? (
-                      <div className="col-span-full text-center py-12 bg-white border border-slate-200 rounded-2xl shadow-xxs">
-                        <p className="text-slate-400 text-xs font-semibold">{t("மாவட்டங்கள் எதுவும் காணப்படவில்லை.", "No matching districts found.")}</p>
+                      <div className="col-span-full text-center py-12 bg-card border border-border rounded-md shadow-xs">
+                        <p className="text-muted-foreground text-xs font-semibold">{t("மாவட்டங்கள் எதுவும் காணப்படவில்லை.", "No matching districts found.")}</p>
                         <button onClick={() => setZoneQuery("")} className="mt-2 text-xxs text-primary font-bold hover:underline">
                           {t("தேடலை நீக்கு", "Clear Search")}
                         </button>
@@ -829,22 +829,22 @@ function Wings() {
                               setSelectedDistrict(district);
                               setZoneQuery("");
                             }}
-                            className="card-base card-interactive p-4 flex items-center justify-between group text-left cursor-pointer focus:outline-none w-full bg-white border border-slate-200 shadow-xxs min-h-[44px]"
+                            className="card-base card-interactive p-4 flex items-center justify-between group text-left cursor-pointer focus:outline-none w-full bg-card border border-border shadow-xs min-h-[44px]"
                           >
                             <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-xl bg-primary/5 text-primary grid place-items-center transition duration-300 group-hover:bg-primary group-hover:text-white shrink-0">
+                              <div className="w-10 h-10 rounded-md bg-primary/5 text-primary grid place-items-center transition duration-300 group-hover:bg-primary group-hover:text-white shrink-0">
                                   <MapPin className="w-4 h-4" />
                               </div>
                               <div className="min-w-0">
-                                <h3 className="font-display font-extrabold text-xs md:text-sm text-slate-800 group-hover:text-primary transition truncate uppercase">
+                                <h3 className="font-display font-extrabold text-xs md:text-sm text-foreground group-hover:text-primary transition truncate uppercase">
                                   {district}
                                 </h3>
-                                <span className="text-[10px] font-bold text-slate-400 block mt-0.5 uppercase tracking-wider">
+                                <span className="text-[10px] font-bold text-muted-foreground block mt-0.5 uppercase tracking-wider">
                                   {t(`${constituencyCount} தொகுதிகள்`, `${constituencyCount} Constituencies`)}
                                 </span>
                               </div>
                             </div>
-                            <ChevronRight className="w-4 h-4 text-slate-350 transition duration-300 group-hover:translate-x-1" />
+                            <ChevronRight className="w-4 h-4 text-muted-foreground" />
                           </button>
                         );
                       })
@@ -865,11 +865,11 @@ function Wings() {
                     {DEPARTMENTS.map((dept) => {
                       const deptColors: Record<string, { bg: string, text: string, accent: string, border: string, hover: string }> = {
                         professional: { bg: "bg-violet-50/70", text: "text-violet-750", accent: "bg-violet-600", border: "border-violet-100/80", hover: "hover:border-violet-300 hover:ring-violet-500/5" },
-                        agricultural: { bg: "bg-emerald-50/70", text: "text-emerald-750", accent: "bg-emerald-600", border: "border-emerald-100/80", hover: "hover:border-emerald-300 hover:ring-emerald-500/5" },
-                        industrial: { bg: "bg-amber-50/70", text: "text-amber-750", accent: "bg-amber-600", border: "border-amber-100/80", hover: "hover:border-amber-300 hover:ring-amber-500/5" },
+                        agricultural: { bg: "bg-primary/10/70", text: "text-emerald-750", accent: "bg-emerald-600", border: "border-emerald-100/80", hover: "hover:border-emerald-300 hover:ring-emerald-500/5" },
+                        industrial: { bg: "bg-primary/10/70", text: "text-amber-750", accent: "bg-amber-600", border: "border-amber-100/80", hover: "hover:border-amber-300 hover:ring-amber-500/5" },
                         public: { bg: "bg-blue-50/70", text: "text-blue-750", accent: "bg-blue-600", border: "border-blue-100/80", hover: "hover:border-blue-300 hover:ring-blue-500/5" }
                       };
-                      const colors = deptColors[dept.id] || { bg: "bg-slate-50", text: "text-slate-750", accent: "bg-slate-650", border: "border-slate-100", hover: "hover:border-slate-300" };
+                      const colors = deptColors[dept.id] || { bg: "bg-muted", text: "text-foreground", accent: "bg-slate-650", border: "border-border", hover: "hover:border-slate-300" };
 
                       return (
                         <button
@@ -878,7 +878,7 @@ function Wings() {
                             setSelectedDeptZone(dept.id);
                             setZoneQuery("");
                           }}
-                          className={`p-5 md:p-6 border rounded-2xl flex flex-col justify-between text-left transition duration-300 group cursor-pointer focus:outline-none shadow-xxs hover:shadow-md hover:ring-8 bg-white min-h-[44px] ${colors.border} ${colors.hover}`}
+                          className={`p-5 md:p-6 border rounded-md flex flex-col justify-between text-left transition duration-300 group cursor-pointer focus:outline-none shadow-xs hover:shadow-xs hover:ring-8 bg-card min-h-[44px] ${colors.border} ${colors.hover}`}
                         >
                           <div className="space-y-3">
                             <div className="flex items-center gap-2">
@@ -887,17 +887,17 @@ function Wings() {
                                 {language === "ta" ? dept.nameTa : dept.nameEn}
                               </h3>
                             </div>
-                            <p className="text-xs text-slate-500 leading-relaxed font-tamil">
+                            <p className="text-xs text-muted-foreground leading-relaxed font-tamil">
                               {language === "ta" ? dept.descTa : dept.descEn}
                             </p>
                           </div>
                           
-                          <div className="mt-6 pt-3.5 border-t border-slate-100 flex items-center justify-between w-full">
-                            <span className="text-[10px] font-bold px-2 py-0.5 bg-slate-100 text-slate-500 rounded-md">
+                          <div className="mt-6 pt-3.5 border-t border-border flex items-center justify-between w-full">
+                            <span className="text-[10px] font-bold px-2 py-0.5 bg-muted text-muted-foreground rounded-md">
                               {t(`${dept.wings.length} சிறப்புப் பிரிவுகள்`, `${dept.wings.length} Specialized Wings`)}
                             </span>
                             <span className="inline-flex items-center gap-1 text-xs font-bold text-primary group-hover:underline">
-                              {t("அடுத்து", "Next")} <ArrowRight className="w-3.5 h-3.5 transition duration-300 group-hover:translate-x-1" />
+                              {t("அடுத்து", "Next")} <ArrowRight className="w-3.5 h-3.5" />
                             </span>
                           </div>
                         </button>
@@ -917,8 +917,8 @@ function Wings() {
                     className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
                   >
                     {filteredWingsList.length === 0 ? (
-                      <div className="col-span-full text-center py-12 bg-white border border-slate-200 rounded-2xl shadow-xxs">
-                        <p className="text-slate-400 text-xs font-semibold">{t("பிரிவுகள் எதுவும் காணப்படவில்லை.", "No matching wings found.")}</p>
+                      <div className="col-span-full text-center py-12 bg-card border border-border rounded-md shadow-xs">
+                        <p className="text-muted-foreground text-xs font-semibold">{t("பிரிவுகள் எதுவும் காணப்படவில்லை.", "No matching wings found.")}</p>
                         <button onClick={() => setZoneQuery("")} className="mt-2 text-xxs text-primary font-bold hover:underline">
                           {t("தேடலை நீக்கு", "Clear Search")}
                         </button>
@@ -933,27 +933,27 @@ function Wings() {
                               setSelectedWingZone(wing.id);
                               setZoneQuery("");
                             }}
-                            className="card-base card-interactive p-4 md:p-5 flex flex-col justify-between group text-left cursor-pointer focus:outline-none w-full bg-white border border-slate-200 shadow-xxs min-h-[170px]"
+                            className="card-base card-interactive p-4 md:p-5 flex flex-col justify-between group text-left cursor-pointer focus:outline-none w-full bg-card border border-border shadow-xs min-h-[170px]"
                           >
                             <div className="space-y-3">
-                              <div className="w-9 h-9 rounded-xl bg-primary/5 text-primary grid place-items-center transition duration-300 group-hover:bg-primary group-hover:text-white shrink-0">
+                              <div className="w-9 h-9 rounded-md bg-primary/5 text-primary grid place-items-center transition duration-300 group-hover:bg-primary group-hover:text-white shrink-0">
                                 <WingIcon className="w-4 h-4" />
                               </div>
                               <div className="min-w-0">
-                                <h3 className="font-display font-extrabold text-xs md:text-sm text-slate-800 leading-snug truncate">
+                                <h3 className="font-display font-extrabold text-xs md:text-sm text-foreground leading-snug truncate">
                                   {language === "ta" ? wing.nameTa : wing.nameEn}
                                 </h3>
-                                <p className="text-[11px] text-slate-400 line-clamp-2 mt-1 leading-relaxed font-tamil">
+                                <p className="text-[11px] text-muted-foreground line-clamp-2 mt-1 leading-relaxed font-tamil">
                                   {language === "ta" ? wing.descriptionTa : wing.descriptionEn}
                                 </p>
                               </div>
                             </div>
-                            <div className="mt-4 pt-3.5 border-t border-slate-100 flex items-center justify-between w-full">
-                              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                            <div className="mt-4 pt-3.5 border-t border-border flex items-center justify-between w-full">
+                              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
                                 {t("3 அதிகாரிகள்", "3 Active Officers")}
                               </span>
                               <span className="text-xs font-bold text-primary group-hover:underline inline-flex items-center gap-1">
-                                {t("நிர்வாகிகள்", "Officers")} <ChevronRight className="w-3.5 h-3.5 transition duration-300 group-hover:translate-x-1" />
+                                {t("நிர்வாகிகள்", "Officers")} <ChevronRight className="w-3.5 h-3.5" />
                               </span>
                             </div>
                           </button>
@@ -974,8 +974,8 @@ function Wings() {
                     className="space-y-6"
                   >
                     {filteredOfficersList.length === 0 ? (
-                      <div className="text-center py-12 bg-white border border-slate-200 rounded-2xl shadow-xxs max-w-md mx-auto">
-                        <p className="text-slate-400 text-xs font-semibold">{t("நிர்வாகிகள் எதுவும் காணப்படவில்லை.", "No matching officers found.")}</p>
+                      <div className="text-center py-12 bg-card border border-border rounded-md shadow-xs max-w-md mx-auto">
+                        <p className="text-muted-foreground text-xs font-semibold">{t("நிர்வாகிகள் எதுவும் காணப்படவில்லை.", "No matching officers found.")}</p>
                         <button onClick={() => setZoneQuery("")} className="mt-2 text-xxs text-primary font-bold hover:underline">
                           {t("தேடலை நீக்கு", "Clear Search")}
                         </button>
@@ -985,15 +985,15 @@ function Wings() {
                         {filteredOfficersList.map((officer, oIdx) => (
                           <div
                             key={`officer-${oIdx}`}
-                            className="flex flex-col justify-between p-5 md:p-6 border border-slate-200/80 rounded-2xl bg-white hover:border-slate-300 transition duration-300 hover:shadow-md relative overflow-hidden"
+                            className="flex flex-col justify-between p-5 md:p-6 border border-border rounded-md bg-card hover:border-slate-300 transition duration-300 hover:shadow-xs relative overflow-hidden"
                           >
                             {/* Top Role Accent Strip */}
                             <div className={`absolute top-0 left-0 right-0 h-1.5 ${
-                              oIdx === 0 ? "bg-blue-500" : oIdx === 1 ? "bg-emerald-500" : "bg-amber-500"
+                              oIdx === 0 ? "bg-blue-500" : oIdx === 1 ? "bg-primary" : "bg-primary"
                             }`} />
 
                             <div className="flex items-start gap-3.5 mt-2">
-                              <div className={`w-11 h-11 rounded-full flex items-center justify-center font-display font-extrabold text-[12px] tracking-wide shrink-0 border shadow-xxs ${officer.avatarColor}`}>
+                              <div className={`w-11 h-11 rounded-full flex items-center justify-center font-display font-extrabold text-[12px] tracking-wide shrink-0 border shadow-xs ${officer.avatarColor}`}>
                                 {officer.initials}
                               </div>
                               <div className="min-w-0 flex-1">
@@ -1002,33 +1002,33 @@ function Wings() {
                                     oIdx === 0 
                                       ? "bg-blue-50 text-blue-600 border-blue-100" 
                                       : oIdx === 1 
-                                        ? "bg-emerald-50 text-emerald-600 border-emerald-100" 
-                                        : "bg-amber-50 text-amber-600 border-amber-100"
+                                        ? "bg-primary/10 text-emerald-600 border-emerald-100" 
+                                        : "bg-primary/10 text-amber-600 border-amber-100"
                                   }`}>
                                     {language === "ta" ? officer.roleTa : officer.roleEn}
                                   </span>
                                   <ShieldCheck className="w-4 h-4 text-blue-500 fill-blue-50 shrink-0" />
                                 </div>
-                                <h5 className="font-display font-bold text-xs md:text-sm text-slate-800 mt-1.5 truncate" title={language === "ta" ? officer.nameTa : officer.nameEn}>
+                                <h5 className="font-display font-bold text-xs md:text-sm text-foreground mt-1.5 truncate" title={language === "ta" ? officer.nameTa : officer.nameEn}>
                                   {language === "ta" ? officer.nameTa : officer.nameEn}
                                 </h5>
                               </div>
                             </div>
 
                             {/* Contact buttons with min 44px tap target size to align with best practices */}
-                            <div className="mt-5 pt-3.5 border-t border-slate-100 flex flex-col gap-2.5">
+                            <div className="mt-5 pt-3.5 border-t border-border flex flex-col gap-2.5">
                               <a
                                 href={`tel:${officer.phone.replace(/\s+/g, "")}`}
-                                className="flex items-center gap-2.5 text-xs text-slate-600 hover:text-primary transition font-semibold min-h-[44px] px-3.5 bg-slate-50 hover:bg-primary/5 rounded-xl border border-slate-200/50"
+                                className="flex items-center gap-2.5 text-xs text-muted-foreground hover:text-primary transition font-semibold min-h-[44px] px-3.5 bg-muted hover:bg-primary/5 rounded-md border border-border"
                               >
-                                <Phone className="w-4 h-4 text-slate-400 shrink-0" />
+                                <Phone className="w-4 h-4 text-muted-foreground shrink-0" />
                                 <span className="tabular-nums truncate shrink-0">{officer.phone}</span>
                               </a>
                               <a
                                 href={`mailto:${officer.email}`}
-                                className="flex items-center gap-2.5 text-xs text-slate-600 hover:text-primary transition font-semibold min-h-[44px] px-3.5 bg-slate-50 hover:bg-primary/5 rounded-xl border border-slate-200/50"
+                                className="flex items-center gap-2.5 text-xs text-muted-foreground hover:text-primary transition font-semibold min-h-[44px] px-3.5 bg-muted hover:bg-primary/5 rounded-md border border-border"
                               >
-                                <Mail className="w-4 h-4 text-slate-400 shrink-0" />
+                                <Mail className="w-4 h-4 text-muted-foreground shrink-0" />
                                 <span className="truncate" title={officer.email}>{officer.email}</span>
                               </a>
                             </div>
@@ -1047,16 +1047,16 @@ function Wings() {
       </Section>
 
       {/* Coordinator CTA section */}
-      <Section className="py-12 border-t border-slate-200/80 bg-white">
-        <div className="bg-slate-950 text-white rounded-2xl p-6 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6 shadow-md border border-slate-800">
+      <Section className="py-12 border-t border-border bg-card">
+        <div className="bg-muted text-foreground rounded-md p-6 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xs border border-border">
           <div className="space-y-2 text-center md:text-left">
-            <span className="bg-gold/25 border border-gold/15 text-gold text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+            <span className="bg-primary/10 border border-primary/20 text-primary text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
               {t("நிர்வாகியாக இணைய", "Join as Officer")}
             </span>
-            <h2 className="font-display text-2xl font-bold leading-tight">
+            <h2 className="font-display text-2xl font-bold leading-tight text-ink">
               {t("தலைமை ஏற்கத் தயாரா?", "Ready to Lead?")}
             </h2>
-            <p className="text-xs md:text-sm text-slate-350 max-w-xl font-tamil leading-relaxed">
+            <p className="text-xs md:text-sm text-muted-foreground max-w-xl font-tamil leading-relaxed">
               {t(
                 "உங்கள் பரிந்துரை லிங்க் மூலம் 25 வணிகர்களை ஒன்றிணைத்து, தமிழ்நாடு வணிகர்களின் சங்கமத்தில் 'ஒருங்கிணைப்பாளர்' பொறுப்பை பெற்றிடுங்கள்!",
                 "Unite 25 traders through your referral link and earn the 'Coordinator' role in the Tamil Nadu Traders Association!"
@@ -1065,9 +1065,9 @@ function Wings() {
           </div>
           <Link
             to="/dashboard"
-            className="bg-white hover:bg-slate-100 text-slate-900 px-6 py-3.5 rounded-xl font-bold text-xs transition shadow-md shrink-0 inline-flex items-center gap-1.5 min-h-[44px]"
+            className="btn-primary shrink-0"
           >
-            {t("டாஷ்போர்டுக்கு செல்க", "Go to Dashboard")} <ArrowRight className="w-4 h-4 text-slate-900" />
+            {t("டாஷ்போர்டுக்கு செல்க", "Go to Dashboard")} <ArrowRight className="w-4 h-4 text-primary-foreground" />
           </Link>
         </div>
       </Section>

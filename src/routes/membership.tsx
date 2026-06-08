@@ -34,9 +34,9 @@ import {
 import { toast } from "sonner";
 import { useLanguage } from "@/hooks/useLanguage";
 import { Breadcrumb } from "@/components/Breadcrumb";
-import ownerPhoto from "@/assets/349b584e-1b60-469e-9e5d-8d124cb057cb.png";
-import orgLogo from "@/assets/ChatGPT Image Mar 25, 2026, 05_31_25 PM (1).png";
-import signImg from "@/assets/8bb61dfb-f349-4e0b-8501-560feae9f000.png";
+import ownerPhoto from "@/assets/round-logo.png";
+import orgLogo from "@/assets/association-logo.png";
+import signImg from "@/assets/president-signature.png";
 import kittenTeacup from "@/assets/kitten_teacup.png";
 import unityHands from "@/assets/unity-hands.png";
 import { VoterIdCard, type Voter, membershipNo, getZoneName, formatDob } from "@/components/VoterIdCard";
@@ -1052,7 +1052,7 @@ function Membership() {
 
         // Draw green border (thinner 3px outer stroke)
         ctx.save();
-        ctx.strokeStyle = "#009245";
+        ctx.strokeStyle = "var(--primary)";
         ctx.lineWidth = 3;
         ctx.beginPath();
         ctx.moveTo(photoX + radius, photoY);
@@ -1073,7 +1073,7 @@ function Membership() {
         
         // Name
         ctx.font = "bold 23px Arial, sans-serif";
-        ctx.fillStyle = "#009245";
+        ctx.fillStyle = "var(--primary)";
         ctx.fillText(name.toUpperCase(), W / 2, 350);
 
         // Assembly : Value
@@ -1485,15 +1485,15 @@ function Membership() {
 
   const generatedMno = `TNVS-${form.epic.replace(/[^A-Z0-9]/gi, "").toUpperCase().slice(-6)}12`;
 
-  const customInputClass = "w-full border border-slate-200 bg-white text-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-4 focus:ring-[#002B7F]/10 focus:border-[#002B7F] min-h-[46px] transition-all duration-200 placeholder-slate-400";
+  const customInputClass = "w-full border border-border bg-card text-foreground rounded-md px-3.5 py-2.5 text-sm focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary min-h-[46px] transition-all duration-200 placeholder-slate-400";
 
   const cardMaxWidth = step === 4 ? "max-w-4xl" : "max-w-6xl";
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-slate-50/50 pb-12">
+    <div className="min-h-screen overflow-x-hidden bg-background pb-12">
       {/* ── Page Header ── */}
-      <header className="bg-slate-900 text-white border-b border-slate-800 shadow-xs relative overflow-hidden">
-        <div className="absolute inset-0 bg-radial-at-t from-primary/30 to-transparent pointer-events-none" />
+      <header className="bg-card text-foreground border-b border-border shadow-xs relative overflow-hidden">
+        <div className="absolute inset-0 bg-linear-to-b from-primary/5 to-transparent pointer-events-none" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
           <div className="flex-1">
             <Breadcrumb
@@ -1503,21 +1503,21 @@ function Membership() {
               ]}
             />
             <div className="flex">
-              <div className="inline-flex items-center gap-1.5 bg-primary/25 text-blue-300 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider mb-1.5 border border-primary/30">
+              <div className="inline-flex items-center gap-1.5 bg-primary/10 text-primary px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider mb-1.5 border border-primary/20">
                 Apply · இணைய
               </div>
             </div>
-            <h1 className="font-display text-2xl md:text-3xl font-extrabold tracking-tight leading-tight">
+            <h1 className="font-display text-2xl md:text-3xl font-extrabold tracking-tight leading-tight text-ink">
               Member Registration
             </h1>
-            <p className="font-tamil text-xs text-slate-400 mt-1">5 நிமிடங்களில் உறுப்பினராகப் பதிவு செய்யுங்கள்.</p>
+            <p className="font-tamil text-xs text-muted-foreground mt-1">5 நிமிடங்களில் உறுப்பினராகப் பதிவு செய்யுங்கள்.</p>
           </div>
           {step < 4 && (
             <button
               onClick={clearDraft}
-              className="inline-flex items-center gap-1.5 border border-slate-700 bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:text-white px-3.5 py-2 rounded-xl text-xs font-semibold transition cursor-pointer self-start sm:self-center backdrop-blur-xs shadow-sm hover:scale-[1.02] active:scale-98"
+              className="inline-flex items-center gap-1.5 border border-border bg-muted hover:bg-muted/80 text-foreground hover:text-ink px-3.5 py-2 rounded-md text-xs font-semibold transition cursor-pointer self-start sm:self-center shadow-xs active:scale-98"
             >
-              <RefreshCw className="w-3.5 h-3.5 text-slate-550" />
+              <RefreshCw className="w-3.5 h-3.5 text-muted-foreground" />
               {language === "ta" ? "படிவத்தை மீட்டமை" : "Reset Draft"}
             </button>
           )}
@@ -1527,7 +1527,7 @@ function Membership() {
       {/* ── Unified Stepper ── */}
       {step < 4 && (
         <div className="max-w-4xl mx-auto px-4 sm:px-6 mt-8">
-          <div className="bg-white rounded-2xl border border-slate-200/60 p-4 md:p-5 shadow-xs">
+          <div className="bg-card rounded-md border border-border p-4 md:p-5 shadow-xs">
             {/* Desktop Stepper */}
             <div className="hidden sm:flex items-center justify-between relative text-center">
               {/* Stepper background track line */}
@@ -1542,7 +1542,7 @@ function Membership() {
                 const done = step > s.n;
                 const active = step === s.n;
                 return (
-                  <div key={s.n} className="flex flex-col items-center relative z-10 bg-white px-4">
+                  <div key={s.n} className="flex flex-col items-center relative z-10 bg-card px-4">
                     <button
                       onClick={() => {
                         if (s.n < step) setStep(s.n);
@@ -1552,16 +1552,16 @@ function Membership() {
                         done
                           ? "bg-primary text-white border-primary cursor-pointer hover:bg-primary/95"
                           : active
-                          ? "bg-white border-primary text-primary ring-4 ring-primary/10"
-                          : "bg-white border-slate-200 text-slate-400 cursor-not-allowed"
+                          ? "bg-card border-primary text-primary ring-4 ring-primary/10"
+                          : "bg-card border-border text-muted-foreground cursor-not-allowed"
                       }`}
                     >
                       {done ? <Check className="w-4 h-4" /> : <span>{s.n}</span>}
                     </button>
-                    <span className={`text-xs font-bold mt-2 ${active ? "text-primary" : done ? "text-slate-700" : "text-slate-400"}`}>
+                    <span className={`text-xs font-bold mt-2 ${active ? "text-primary" : done ? "text-foreground" : "text-muted-foreground"}`}>
                       {s.t}
                     </span>
-                    <span className={`font-tamil text-[10px] mt-0.5 ${active ? "text-primary/80" : done ? "text-slate-500" : "text-slate-400/70"}`}>
+                    <span className={`font-tamil text-[10px] mt-0.5 ${active ? "text-primary/80" : done ? "text-muted-foreground" : "text-muted-foreground/70"}`}>
                       {s.ta}
                     </span>
                   </div>
@@ -1571,20 +1571,20 @@ function Membership() {
 
             {/* Mobile Stepper */}
             <div className="sm:hidden flex flex-col gap-2">
-              <div className="flex items-center justify-between text-xs font-bold text-slate-500">
+              <div className="flex items-center justify-between text-xs font-bold text-muted-foreground">
                 <span className="text-primary font-extrabold uppercase tracking-wide">
                   Step {step} of 3: {currentStep.t}
                 </span>
-                <span className="font-tamil text-slate-400 font-normal">
+                <span className="font-tamil text-muted-foreground font-normal">
                   {currentStep.ta}
                 </span>
               </div>
-              <div className="flex gap-1.5 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+              <div className="flex gap-1.5 h-1.5 w-full bg-muted rounded-full overflow-hidden">
                 {[1, 2, 3].map((i) => (
                   <div
                     key={i}
                     className={`flex-1 h-full rounded-full transition-all duration-550 ${
-                      step >= i ? "bg-primary" : "bg-slate-200/60"
+                      step >= i ? "bg-primary" : "bg-muted"
                     }`}
                   />
                 ))}
@@ -1603,20 +1603,20 @@ function Membership() {
           <div className={`w-full ${step < 4 ? "lg:flex-1" : ""}`}>
             
             {/* Form Card */}
-            <div className="bg-white rounded-3xl border border-slate-250/70 shadow-sm overflow-hidden transition-all duration-300">
+            <div className="bg-card rounded-md border border-border shadow-xs overflow-hidden transition-all duration-300">
           {/* Step Header inside card */}
           {step < 4 && (
-            <div className="px-6 sm:px-10 pt-8 pb-6 border-b border-slate-100">
+            <div className="px-6 sm:px-10 pt-8 pb-6 border-b border-border">
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                 <div className="flex items-center gap-3.5">
-                  <div className="w-12 h-12 rounded-2xl bg-primary/5 text-primary flex items-center justify-center shrink-0">
+                  <div className="w-12 h-12 rounded-md bg-primary/5 text-primary flex items-center justify-center shrink-0">
                     <StepIcon className="w-6 h-6" />
                   </div>
                   <div>
-                    <h2 className="font-display text-xl sm:text-2xl font-bold text-slate-900 leading-tight">
+                    <h2 className="font-display text-xl sm:text-2xl font-bold text-ink leading-tight">
                       {currentStep.t}
                     </h2>
-                    <p className="font-tamil text-xs text-slate-500 mt-0.5">{currentStep.ta}</p>
+                    <p className="font-tamil text-xs text-muted-foreground mt-0.5">{currentStep.ta}</p>
                   </div>
                 </div>
                 
@@ -1624,12 +1624,12 @@ function Membership() {
               </div>
 
               {/* Spacious Alert Box for description and tip */}
-              <div className="mt-6 bg-slate-50 rounded-2xl px-5 py-4 border border-slate-100 space-y-2 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-slate-100/40 rounded-full translate-x-1/3 -translate-y-1/3 pointer-events-none" />
+              <div className="mt-6 bg-muted rounded-md px-5 py-4 border border-border space-y-2 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-muted/40 rounded-full translate-x-1/3 -translate-y-1/3 pointer-events-none" />
                 <p className="text-xs text-slate-650 leading-relaxed font-medium">{currentStep.desc}</p>
-                <p className="font-tamil text-xs text-slate-400 leading-relaxed">{currentStep.descTa}</p>
+                <p className="font-tamil text-xs text-muted-foreground leading-relaxed">{currentStep.descTa}</p>
                 {currentStep.tip && (
-                  <div className="mt-3 pt-3 border-t border-slate-200/80 flex items-start gap-2.5">
+                  <div className="mt-3 pt-3 border-t border-border flex items-start gap-2.5">
                     <Shield className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
                     <div>
                       <span className="text-[9px] font-extrabold text-amber-800 uppercase tracking-wider leading-none">Tip / குறிப்பு</span>
@@ -1655,8 +1655,8 @@ function Membership() {
                 {step === 1 && (
                   <div className="space-y-6">
                     {/* Search Database Box */}
-                    <div className="bg-[#F3F6FC]/60 border border-slate-200/60 rounded-2xl p-5">
-                      <label className="block text-xs font-bold text-[#002B7F] uppercase tracking-wider mb-2">
+                    <div className="bg-[#F3F6FC]/60 border border-border rounded-md p-5">
+                      <label className="block text-xs font-bold text-primary uppercase tracking-wider mb-2">
                         {language === "ta" ? "உறுப்பினர் தேடல் (விருப்பத்தேர்வு)" : "SEARCH MEMBER DATABASE (OPTIONAL)"}
                       </label>
                       <div className="flex flex-col sm:flex-row gap-2">
@@ -1666,20 +1666,20 @@ function Membership() {
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
                           onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleSearch())}
-                          className="flex-1 border border-slate-200 bg-white rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#002B7F]/40 min-h-[44px]"
+                          className="flex-1 border border-border bg-card rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 min-h-[44px]"
                         />
                         <button
                           type="button"
                           onClick={handleSearch}
                           disabled={isSearching}
-                          className="bg-[#002B7F] text-white hover:bg-[#002060] px-5 py-2 rounded-md text-sm font-semibold transition shrink-0 min-h-[44px] cursor-pointer"
+                          className="bg-primary text-white hover:bg-[#002060] px-5 py-2 rounded-md text-sm font-semibold transition shrink-0 min-h-[44px] cursor-pointer"
                         >
                           {isSearching 
                             ? (language === "ta" ? "தேடுகிறது..." : "Searching...") 
                             : (language === "ta" ? "தேடுக" : "Search")}
                         </button>
                       </div>
-                      <p className="text-[11px] text-slate-500 mt-1.5">
+                      <p className="text-[11px] text-muted-foreground mt-1.5">
                         {language === "ta"
                           ? "குறிப்பு: 'Senthil Kumar' அல்லது 'RJE1234567' எனத் தட்டச்சு செய்து விவரங்களை மீட்டெடுக்கவும்."
                           : "Tip: Search 'Senthil Kumar' or 'RJE1234567' to load pre-configured voter profiles."}
@@ -1687,7 +1687,7 @@ function Membership() {
 
                       {/* Search Results Dropdown */}
                       {hasSearched && !isSearching && searchResults.length === 0 && (
-                        <div className="mt-3 p-3 rounded-lg bg-red-50 border border-red-100 text-center">
+                        <div className="mt-3 p-3 rounded-sm bg-red-50 border border-red-100 text-center">
                           <p className="text-xs text-red-650 font-medium">
                             {language === "ta" ? "பொருந்தும் பதிவுகள் எதுவும் கிடைக்கவில்லை." : "No matching records found."}
                           </p>
@@ -1695,20 +1695,20 @@ function Membership() {
                       )}
 
                       {searchResults.length > 0 && (
-                        <div className="mt-3 border border-slate-200 bg-white rounded-lg divide-y divide-slate-100 overflow-hidden max-h-48 overflow-y-auto shadow-sm">
+                        <div className="mt-3 border border-border bg-card rounded-sm divide-y divide-slate-100 overflow-hidden max-h-48 overflow-y-auto shadow-xs">
                           {searchResults.map((v) => (
                             <button
                               key={v.ID}
                               type="button"
                               onClick={() => selectVoter(v)}
-                              className="w-full text-left px-3 py-2.5 hover:bg-slate-50 transition flex justify-between items-center text-xs cursor-pointer"
+                              className="w-full text-left px-3 py-2.5 hover:bg-muted transition flex justify-between items-center text-xs cursor-pointer"
                             >
                               <div>
-                                <span className="font-semibold text-slate-800">{v.VOTER_NAME}</span>
-                                <span className="text-slate-350 mx-2">|</span>
-                                <span className="font-mono text-[#002B7F] font-medium">{v.EPIC_NO}</span>
+                                <span className="font-semibold text-foreground">{v.VOTER_NAME}</span>
+                                <span className="text-muted-foreground mx-2">|</span>
+                                <span className="font-mono text-primary font-medium">{v.EPIC_NO}</span>
                               </div>
-                              <div className="text-slate-500 text-[10px]">
+                              <div className="text-muted-foreground text-[10px]">
                                 {v.ASSEMBLY_NAME}, {v.DISTRICT}
                               </div>
                             </button>
@@ -1721,11 +1721,11 @@ function Membership() {
                     <div className="grid md:grid-cols-2 gap-5">
                       {/* Full Name */}
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
                           {language === "ta" ? "முழு பெயர் (Full Name) *" : "Full Name (பெயர்) *"}
                         </label>
-                        <div className="relative rounded-xl shadow-xxs">
-                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <div className="relative rounded-md shadow-xs">
+                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted-foreground">
                             <User className="w-4 h-4" />
                           </div>
                           <input
@@ -1744,11 +1744,11 @@ function Membership() {
 
                       {/* EPIC ID */}
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
                           {language === "ta" ? "வாக்காளர் அடையாள எண் (EPIC / ID No) *" : "EPIC / ID No *"}
                         </label>
-                        <div className="relative rounded-xl shadow-xxs">
-                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <div className="relative rounded-md shadow-xs">
+                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted-foreground">
                             <Hash className="w-4 h-4" />
                           </div>
                           <input
@@ -1764,11 +1764,11 @@ function Membership() {
 
                       {/* Mobile */}
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
                           {language === "ta" ? "கைபேசி எண் (Mobile Number) *" : "Mobile Number (கைபேசி எண்) *"}
                         </label>
-                        <div className="relative rounded-xl shadow-xxs">
-                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <div className="relative rounded-md shadow-xs">
+                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted-foreground">
                             <Phone className="w-4 h-4" />
                           </div>
                           <input
@@ -1785,11 +1785,11 @@ function Membership() {
 
                       {/* Email */}
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
                           {language === "ta" ? "மின்னஞ்சல் முகவரி (Email Address)" : "Email Address (மின்னஞ்சல்)"}
                         </label>
-                        <div className="relative rounded-xl shadow-xxs">
-                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <div className="relative rounded-md shadow-xs">
+                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted-foreground">
                             <Mail className="w-4 h-4" />
                           </div>
                           <input
@@ -1804,7 +1804,7 @@ function Membership() {
 
                       {/* Date of Birth */}
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
                           {language === "ta" ? "பிறந்த தேதி (Date of Birth) *" : "Date of Birth (பிறந்த தேதி) *"}
                         </label>
                         <div className="grid grid-cols-3 gap-2">
@@ -1857,11 +1857,11 @@ function Membership() {
 
                       {/* Age */}
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
                           {language === "ta" ? "வயது (Age) *" : "Age (வயது) *"}
                         </label>
-                        <div className="relative rounded-xl shadow-xxs">
-                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <div className="relative rounded-md shadow-xs">
+                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted-foreground">
                             <Clock className="w-4 h-4" />
                           </div>
                           <input
@@ -1871,7 +1871,7 @@ function Membership() {
                             min="18"
                             max="120"
                             value={form.age}
-                            className={`${customInputClass} pl-10 bg-slate-50 text-slate-500 cursor-not-allowed`}
+                            className={`${customInputClass} pl-10 bg-muted text-muted-foreground cursor-not-allowed`}
                             placeholder="Age"
                           />
                         </div>
@@ -1879,11 +1879,11 @@ function Membership() {
 
                       {/* Gender */}
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
                           {language === "ta" ? "பாலினம் (Gender)" : "Gender (பாலினம்)"}
                         </label>
-                        <div className="relative rounded-xl shadow-xxs">
-                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <div className="relative rounded-md shadow-xs">
+                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted-foreground">
                             <User className="w-4 h-4" />
                           </div>
                           <select
@@ -1900,11 +1900,11 @@ function Membership() {
 
                       {/* Blood Group */}
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
                           {language === "ta" ? "இரத்த வகை (Blood Group)" : "Blood Group (இரத்த வகை)"}
                         </label>
-                        <div className="relative rounded-xl shadow-xxs">
-                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <div className="relative rounded-md shadow-xs">
+                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted-foreground">
                             <Heart className="w-4 h-4" />
                           </div>
                           <select
@@ -1921,11 +1921,11 @@ function Membership() {
 
                       {/* Shop Name */}
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
                           {language === "ta" ? "கடை / வணிகப் பெயர் (Shop / Business Name) *" : "Shop / Business Name (கடை பெயர்) *"}
                         </label>
-                        <div className="relative rounded-xl shadow-xxs">
-                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <div className="relative rounded-md shadow-xs">
+                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted-foreground">
                             <Building2 className="w-4 h-4" />
                           </div>
                           <input
@@ -1941,11 +1941,11 @@ function Membership() {
 
                       {/* Business Type */}
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
                           {language === "ta" ? "வணிக வகை (Business Type)" : "Business Type (வணிக வகை)"}
                         </label>
-                        <div className="relative rounded-xl shadow-xxs">
-                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <div className="relative rounded-md shadow-xs">
+                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted-foreground">
                             <Briefcase className="w-4 h-4" />
                           </div>
                           <select
@@ -1962,11 +1962,11 @@ function Membership() {
 
                       {/* Experience */}
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
                           {language === "ta" ? "வணிக அனுபவம் (Years in Business)" : "Years in Business (அனுபவம்)"}
                         </label>
-                        <div className="relative rounded-xl shadow-xxs">
-                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <div className="relative rounded-md shadow-xs">
+                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted-foreground">
                             <Clock className="w-4 h-4" />
                           </div>
                           <input
@@ -1982,11 +1982,11 @@ function Membership() {
 
                       {/* Assembly Name */}
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
                           {language === "ta" ? "தொகுதி (Assembly Name)" : "Assembly Name (தொகுதி)"}
                         </label>
-                        <div className="relative rounded-xl shadow-xxs">
-                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <div className="relative rounded-md shadow-xs">
+                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted-foreground">
                             <MapPin className="w-4 h-4" />
                           </div>
                           <input
@@ -2001,11 +2001,11 @@ function Membership() {
 
                       {/* District */}
                       <div className="space-y-1.5 md:col-span-2">
-                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
                           {language === "ta" ? "மாவட்டம் (District) *" : "District (மாவட்டம்) *"}
                         </label>
-                        <div className="relative rounded-xl shadow-xxs">
-                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <div className="relative rounded-md shadow-xs">
+                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted-foreground">
                             <MapPin className="w-4 h-4" />
                           </div>
                           <select
@@ -2024,11 +2024,11 @@ function Membership() {
 
                       {/* Business Wing */}
                       <div className="space-y-1.5 md:col-span-2">
-                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
                           {language === "ta" ? "வணிகப் பிரிவு (Business Wing) *" : "Business Wing / பிரிவு *"}
                         </label>
-                        <div className="relative rounded-xl shadow-xxs">
-                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <div className="relative rounded-md shadow-xs">
+                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted-foreground">
                             <Briefcase className="w-4 h-4" />
                           </div>
                           <select
@@ -2055,11 +2055,11 @@ function Membership() {
 
                       {/* Address */}
                       <div className="space-y-1.5 md:col-span-2">
-                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
                           {language === "ta" ? "முகவரி (Address) *" : "Address (முகவரி) *"}
                         </label>
-                        <div className="relative rounded-xl shadow-xxs">
-                          <div className="absolute top-3 left-0 pl-3.5 flex items-start pointer-events-none text-slate-400">
+                        <div className="relative rounded-md shadow-xs">
+                          <div className="absolute top-3 left-0 pl-3.5 flex items-start pointer-events-none text-muted-foreground">
                             <MapPin className="w-4 h-4" />
                           </div>
                           <textarea
@@ -2067,7 +2067,7 @@ function Membership() {
                             rows={3}
                             value={form.address}
                             onChange={(e) => upd("address", e.target.value)}
-                            className="w-full border border-slate-200 bg-white text-slate-800 rounded-xl pl-10 pr-3.5 py-2.5 text-sm focus:outline-none focus:ring-4 focus:ring-[#002B7F]/10 focus:border-[#002B7F] transition-all duration-200 placeholder-slate-400"
+                            className="w-full border border-border bg-card text-foreground rounded-md pl-10 pr-3.5 py-2.5 text-sm focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-200 placeholder-slate-400"
                             placeholder={language === "ta" ? "முகவரி (எ.கா. கதவு எண், தெரு பெயர், ஊர், பின்கோடு)..." : "Full address (e.g. கதவு எண், தெரு பெயர், ஊர், பின்கோடு)..."}
                           />
                         </div>
@@ -2080,8 +2080,8 @@ function Membership() {
                 {step === 2 && (
                   <div className="space-y-6 flex flex-col items-center">
                     {/* Search Database Box (kept consistent at top) */}
-                    <div className="w-full bg-[#F3F6FC]/60 border border-slate-200/60 rounded-2xl p-5 mb-4">
-                      <label className="block text-xs font-bold text-[#002B7F] uppercase tracking-wider mb-2">
+                    <div className="w-full bg-[#F3F6FC]/60 border border-border rounded-md p-5 mb-4">
+                      <label className="block text-xs font-bold text-primary uppercase tracking-wider mb-2">
                         {language === "ta" ? "உறுப்பினர் தேடல் (விருப்பத்தேர்வு)" : "SEARCH MEMBER DATABASE (OPTIONAL)"}
                       </label>
                       <div className="flex flex-col sm:flex-row gap-2">
@@ -2091,13 +2091,13 @@ function Membership() {
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
                           onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleSearch())}
-                          className="flex-1 border border-slate-200 bg-white rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#002B7F]/40 min-h-[44px]"
+                          className="flex-1 border border-border bg-card rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 min-h-[44px]"
                         />
                         <button
                           type="button"
                           onClick={handleSearch}
                           disabled={isSearching}
-                          className="bg-[#002B7F] text-white hover:bg-[#002060] px-5 py-2 rounded-md text-sm font-semibold transition shrink-0 min-h-[44px] cursor-pointer"
+                          className="bg-primary text-white hover:bg-[#002060] px-5 py-2 rounded-md text-sm font-semibold transition shrink-0 min-h-[44px] cursor-pointer"
                         >
                           {isSearching 
                             ? (language === "ta" ? "தேடுகிறது..." : "Searching...") 
@@ -2106,10 +2106,10 @@ function Membership() {
                       </div>
                     </div>
 
-                    <div className="w-full max-w-lg border-2 border-dashed border-slate-200 bg-slate-50/20 rounded-3xl p-8 flex flex-col items-center justify-center transition-all duration-300 hover:border-primary/50">
+                    <div className="w-full max-w-lg border-2 border-dashed border-border bg-muted/20 rounded-md p-8 flex flex-col items-center justify-center transition-all duration-300 hover:border-primary/50">
                       
                       {/* Circular Photo Container */}
-                      <div className="relative w-36 h-36 rounded-full overflow-hidden border-2 border-primary shadow-md flex items-center justify-center bg-slate-100 mb-6">
+                      <div className="relative w-36 h-36 rounded-full overflow-hidden border-2 border-primary shadow-xs flex items-center justify-center bg-muted mb-6">
                         {docs.selfie ? (
                           <img
                             src={photoPreview}
@@ -2117,9 +2117,9 @@ function Membership() {
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <div className="text-slate-400 flex flex-col items-center justify-center">
-                            <User className="w-14 h-14 text-slate-350" />
-                            <span className="text-[10px] font-semibold text-slate-400 mt-1 uppercase tracking-wider">Photo</span>
+                          <div className="text-muted-foreground flex flex-col items-center justify-center">
+                            <User className="w-14 h-14 text-muted-foreground" />
+                            <span className="text-[10px] font-semibold text-muted-foreground mt-1 uppercase tracking-wider">Photo</span>
                           </div>
                         )}
                         {docs.selfie && (
@@ -2135,7 +2135,7 @@ function Membership() {
 
                       {/* Upload and Capture Actions */}
                       <div className="flex flex-col sm:flex-row gap-3 w-full max-w-sm justify-center">
-                        <label className="cursor-pointer inline-flex items-center justify-center gap-2 bg-[#002B7F] hover:bg-[#002060] text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition shadow-sm min-h-[48px] flex-1 text-center">
+                        <label className="cursor-pointer inline-flex items-center justify-center gap-2 bg-primary hover:bg-[#002060] text-white px-5 py-2.5 rounded-md text-sm font-semibold transition shadow-xs min-h-[48px] flex-1 text-center">
                           <Upload className="w-4 h-4" />
                           {language === "ta" ? "பதிவேற்று" : "Upload Photo (உரிமையாளர் படம்)"}
                           <input
@@ -2162,7 +2162,7 @@ function Membership() {
                         <button
                           type="button"
                           onClick={() => setUseWebcam(true)}
-                          className="inline-flex items-center justify-center gap-2 border border-slate-250 bg-white hover:bg-slate-50 text-slate-700 px-5 py-2.5 rounded-xl text-sm font-semibold transition shadow-xs min-h-[48px] flex-1 cursor-pointer"
+                          className="inline-flex items-center justify-center gap-2 border border-border bg-card hover:bg-muted text-foreground px-5 py-2.5 rounded-md text-sm font-semibold transition shadow-xs min-h-[48px] flex-1 cursor-pointer"
                         >
                           <Camera className="w-4 h-4 text-slate-550" />
                           {language === "ta" ? "கேமரா" : "Take Photo (Camera)"}
@@ -2170,14 +2170,14 @@ function Membership() {
                       </div>
 
                       {/* Photo Quality Guide */}
-                      <div className="w-full max-w-sm mt-4 rounded-2xl border border-slate-200 overflow-hidden text-left shadow-xs">
-                        <div className="bg-[#002B7F] px-4 py-2 flex items-center gap-2">
+                      <div className="w-full max-w-sm mt-4 rounded-md border border-border overflow-hidden text-left shadow-xs">
+                        <div className="bg-primary px-4 py-2 flex items-center gap-2">
                           <Info className="w-3.5 h-3.5 text-blue-200 shrink-0" />
                           <p className="text-[11px] font-bold text-white uppercase tracking-wider">
                             {language === "ta" ? "புகைப்பட வழிகாட்டி" : "Photo Quality Guide"}
                           </p>
                         </div>
-                        <div className="bg-white px-4 py-3 grid grid-cols-2 gap-x-4 gap-y-1.5">
+                        <div className="bg-card px-4 py-3 grid grid-cols-2 gap-x-4 gap-y-1.5">
                           {[
                             { ok: true,  text: language === "ta" ? "பாஸ்போர்ட் அளவு" : "Passport-size portrait" },
                             { ok: false, text: language === "ta" ? "இருட்டான / மங்கலான" : "Dark or blurry selfies" },
@@ -2190,11 +2190,11 @@ function Membership() {
                               <span className={`mt-0.5 text-[10px] font-extrabold shrink-0 ${item.ok ? "text-emerald-500" : "text-red-400"}`}>
                                 {item.ok ? "✓" : "✗"}
                               </span>
-                              <p className={`text-[10px] leading-snug ${ item.ok ? "text-slate-700" : "text-slate-400"}`}>{item.text}</p>
+                              <p className={`text-[10px] leading-snug ${ item.ok ? "text-foreground" : "text-muted-foreground"}`}>{item.text}</p>
                             </div>
                           ))}
                         </div>
-                        <div className="bg-amber-50 border-t border-amber-100 px-4 py-2">
+                        <div className="bg-primary/10 border-t border-amber-100 px-4 py-2">
                           <p className="text-[10px] text-amber-700 font-medium">
                             {language === "ta"
                               ? "அதிகபட்சம் 5MB · JPG, PNG, WebP"
@@ -2217,32 +2217,32 @@ function Membership() {
                         return (
                           <div
                             key={doc.k}
-                            className={`relative rounded-2xl border-2 transition-all duration-300 overflow-hidden group shadow-xxs ${
+                            className={`relative rounded-md border-2 transition-all duration-300 overflow-hidden group shadow-xs ${
                               uploaded
-                                ? "border-emerald-300 bg-emerald-50/40"
-                                : "border-dashed border-slate-200 hover:border-primary/50 hover:bg-slate-50/50 hover:scale-[1.01]"
+                                ? "border-emerald-300 bg-primary/10/40"
+                                : "border-dashed border-border hover:border-primary/50 hover:bg-background hover:scale-[1.01]"
                             }`}
                           >
                             <div className="p-4 flex flex-col justify-between h-full min-h-[140px]">
                               {/* Header */}
                               <div className="flex items-start gap-2.5">
-                                <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 ${uploaded ? "bg-emerald-100 text-emerald-600 scale-105" : "bg-slate-100 text-slate-500 group-hover:bg-primary/10 group-hover:text-primary"}`}>
+                                <div className={`w-9 h-9 rounded-md flex items-center justify-center shrink-0 transition-all duration-300 ${uploaded ? "bg-emerald-100 text-emerald-600 scale-105" : "bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary"}`}>
                                   {uploaded ? <Check className="w-4 h-4" /> : <DocIcon className="w-4 h-4" />}
                                 </div>
                                 <div className="min-w-0 flex-1">
-                                  <div className="text-xs font-bold text-slate-800 leading-tight">{doc.l}</div>
-                                  <div className="font-tamil text-[10px] text-slate-400 mt-0.5">{doc.ta}</div>
+                                  <div className="text-xs font-bold text-foreground leading-tight">{doc.l}</div>
+                                  <div className="font-tamil text-[10px] text-muted-foreground mt-0.5">{doc.ta}</div>
                                 </div>
                               </div>
 
                               {/* Upload Action/Status Area */}
                               <div className="mt-4">
                                 {uploaded ? (
-                                  <div className="text-[11px] text-emerald-800 font-bold bg-emerald-100/70 border border-emerald-200/50 px-2.5 py-1.5 rounded-lg flex items-center justify-between gap-1.5 animate-fadeIn">
+                                  <div className="text-[11px] text-emerald-800 font-bold bg-emerald-100/70 border border-emerald-200/50 px-2.5 py-1.5 rounded-sm flex items-center justify-between gap-1.5 animate-fadeIn">
                                     <span className="truncate max-w-[80%]">
                                       {typeof uploaded === "string" ? "Uploaded ✓" : (uploaded as File).name}
                                     </span>
-                                    <label className="text-primary hover:underline cursor-pointer shrink-0 text-[9px] font-bold uppercase tracking-wider bg-white px-1.5 py-0.5 rounded border border-slate-200 shadow-xxs">
+                                    <label className="text-primary hover:underline cursor-pointer shrink-0 text-[9px] font-bold uppercase tracking-wider bg-card px-1.5 py-0.5 rounded border border-border shadow-xs">
                                       Change
                                       <input
                                         type="file"
@@ -2253,8 +2253,8 @@ function Membership() {
                                     </label>
                                   </div>
                                 ) : (
-                                  <label className="w-full inline-flex justify-center items-center gap-1.5 border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer shadow-xxs">
-                                    <Upload className="w-3.5 h-3.5 text-slate-400" />
+                                  <label className="w-full inline-flex justify-center items-center gap-1.5 border border-border bg-card hover:bg-muted text-foreground px-3 py-1.5 rounded-sm text-xs font-semibold transition cursor-pointer shadow-xs">
+                                    <Upload className="w-3.5 h-3.5 text-muted-foreground" />
                                     {language === "ta" ? "கோப்பைத் தேர்ந்தெடு" : "Choose File"}
                                     <input
                                       type="file"
@@ -2272,24 +2272,24 @@ function Membership() {
                     </div>
 
                     {/* Review Details Card */}
-                    <div className="border-t border-slate-200 pt-6">
+                    <div className="border-t border-border pt-6">
                       <div className="flex items-center gap-2 mb-4">
-                        <ClipboardList className="w-5 h-5 text-[#002B7F]" />
-                        <h3 className="font-display text-lg font-bold text-slate-900">Review Your Details</h3>
+                        <ClipboardList className="w-5 h-5 text-primary" />
+                        <h3 className="font-display text-lg font-bold text-ink">Review Your Details</h3>
                       </div>
 
                       <div className="grid md:grid-cols-2 gap-6">
                         {/* Personal & Contact Summary Card */}
-                        <div className="bg-slate-50 rounded-2xl border border-slate-200 p-5 space-y-4 shadow-xxs">
-                          <div className="flex justify-between items-center pb-2.5 border-b border-slate-200/80">
+                        <div className="bg-muted rounded-md border border-border p-5 space-y-4 shadow-xs">
+                          <div className="flex justify-between items-center pb-2.5 border-b border-border">
                             <div className="flex items-center gap-2">
-                              <User className="w-4 h-4 text-[#002B7F]" />
-                              <span className="text-sm font-bold text-slate-800">Personal Details</span>
+                              <User className="w-4 h-4 text-primary" />
+                              <span className="text-sm font-bold text-foreground">Personal Details</span>
                             </div>
                             <button
                               type="button"
                               onClick={() => setStep(1)}
-                              className="text-xs text-[#002B7F] font-extrabold hover:underline cursor-pointer border-none bg-transparent"
+                              className="text-xs text-primary font-extrabold hover:underline cursor-pointer border-none bg-transparent"
                             >
                               Edit
                             </button>
@@ -2303,25 +2303,25 @@ function Membership() {
                               { label: "DOB", value: form.dob || "—" },
                               { label: "Age / Gender / Blood", value: `${form.age || "—"} yrs / ${form.gender} / ${form.bloodGroup}` },
                             ].map(({ label, value }) => (
-                              <div key={label} className="bg-white rounded-xl p-3 border border-slate-100 shadow-xxs">
-                                <div className="text-[9px] font-bold uppercase tracking-wider text-slate-400">{label}</div>
-                                <div className="text-xs text-slate-800 font-bold mt-1.5 break-all">{value}</div>
+                              <div key={label} className="bg-card rounded-md p-3 border border-border shadow-xs">
+                                <div className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground">{label}</div>
+                                <div className="text-xs text-foreground font-bold mt-1.5 break-all">{value}</div>
                               </div>
                             ))}
                           </div>
                         </div>
 
                         {/* Business Summary Card */}
-                        <div className="bg-slate-50 rounded-2xl border border-slate-200 p-5 space-y-4 shadow-xxs">
-                          <div className="flex justify-between items-center pb-2.5 border-b border-slate-200/80">
+                        <div className="bg-muted rounded-md border border-border p-5 space-y-4 shadow-xs">
+                          <div className="flex justify-between items-center pb-2.5 border-b border-border">
                             <div className="flex items-center gap-2">
-                              <Briefcase className="w-4 h-4 text-[#002B7F]" />
-                              <span className="text-sm font-bold text-slate-800">Business Details</span>
+                              <Briefcase className="w-4 h-4 text-primary" />
+                              <span className="text-sm font-bold text-foreground">Business Details</span>
                             </div>
                             <button
                               type="button"
                               onClick={() => setStep(1)}
-                              className="text-xs text-[#002B7F] font-extrabold hover:underline cursor-pointer border-none bg-transparent"
+                              className="text-xs text-primary font-extrabold hover:underline cursor-pointer border-none bg-transparent"
                             >
                               Edit
                             </button>
@@ -2335,16 +2335,16 @@ function Membership() {
                               { label: "Assembly", value: form.assembly || "—" },
                               { label: "District", value: form.district },
                             ].map(({ label, value }) => (
-                              <div key={label} className="bg-white rounded-xl p-3 border border-slate-100 shadow-xxs">
-                                <div className="text-[9px] font-bold uppercase tracking-wider text-slate-400">{label}</div>
-                                <div className="text-xs text-slate-800 font-bold mt-1.5 break-all">{value}</div>
+                              <div key={label} className="bg-card rounded-md p-3 border border-border shadow-xs">
+                                <div className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground">{label}</div>
+                                <div className="text-xs text-foreground font-bold mt-1.5 break-all">{value}</div>
                               </div>
                             ))}
                           </div>
                           {form.address && (
-                            <div className="bg-white rounded-xl p-3 border border-slate-100 shadow-xxs">
-                              <div className="text-[9px] font-bold uppercase tracking-wider text-slate-400">Shop Address</div>
-                              <div className="text-xs text-slate-800 font-bold mt-1.5 leading-relaxed">{form.address}</div>
+                            <div className="bg-card rounded-md p-3 border border-border shadow-xs">
+                              <div className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground">Shop Address</div>
+                              <div className="text-xs text-foreground font-bold mt-1.5 leading-relaxed">{form.address}</div>
                             </div>
                           )}
                         </div>
@@ -2352,17 +2352,17 @@ function Membership() {
                     </div>
 
                     {/* Security PIN Section */}
-                    <div className="border-t border-slate-150 pt-6">
+                    <div className="border-t border-border pt-6">
                       <div className="max-w-md">
                         <div className="flex items-center gap-2 mb-1.5">
-                          <div className="p-1 rounded-lg bg-primary/10 text-primary">
+                          <div className="p-1 rounded-sm bg-primary/10 text-primary">
                             <Lock className="w-4 h-4" />
                           </div>
-                          <label className="text-sm font-extrabold text-slate-900">
+                          <label className="text-sm font-extrabold text-ink">
                             {language === "ta" ? "பாதுகாப்பு PIN குறியீட்டை உருவாக்கவும்" : "Create Security PIN"}
                           </label>
                         </div>
-                        <p className="text-xs text-slate-500 leading-relaxed mb-4 font-tamil">
+                        <p className="text-xs text-muted-foreground leading-relaxed mb-4 font-tamil">
                           {language === "ta"
                             ? "உறுப்பினர் அட்டை மற்றும் தகவல்களைப் பாதுகாக்க 4-இலக்க PIN ஐ உள்ளிடவும்."
                             : "Set a 4-digit security PIN to protect your digital membership pass."}
@@ -2384,12 +2384,12 @@ function Membership() {
                               return (
                                 <div
                                   key={index}
-                                  className={`w-12 h-14 rounded-2xl border-2 text-xl font-extrabold flex items-center justify-center transition-all duration-300 ${
+                                  className={`w-12 h-14 rounded-md border-2 text-xl font-extrabold flex items-center justify-center transition-all duration-300 ${
                                     isFocused
-                                      ? "border-primary ring-4 ring-primary/15 scale-105 bg-white shadow-md shadow-primary/5"
+                                      ? "border-primary ring-4 ring-primary/15 scale-105 bg-card shadow-xs shadow-primary/5"
                                       : char
-                                      ? "border-emerald-400 bg-emerald-50 text-emerald-850"
-                                      : "border-slate-200 bg-slate-50 text-slate-300"
+                                      ? "border-emerald-400 bg-primary/10 text-emerald-850"
+                                      : "border-border bg-muted text-muted-foreground"
                                   }`}
                                 >
                                   {char ? "•" : ""}
@@ -2402,23 +2402,23 @@ function Membership() {
                     </div>
 
                     {/* Membership Info Card (No Pricing or Amount) */}
-                    <div className="bg-linear-to-br from-slate-900 to-slate-800 border border-slate-950 rounded-2xl p-6 text-white relative overflow-hidden shadow-md">
+                    <div className="bg-linear-to-br from-slate-900 to-slate-800 border border-slate-950 rounded-md p-6 text-white relative overflow-hidden shadow-xs">
                       <div className="absolute -right-4 -bottom-4 w-32 h-32 bg-primary/10 rounded-full blur-2xl" />
-                      <div className="absolute top-0 right-10 w-24 h-24 bg-emerald-500/5 rounded-full blur-xl pointer-events-none" />
+                      <div className="absolute top-0 right-10 w-24 h-24 bg-primary/5 rounded-full blur-xl pointer-events-none" />
                       
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
                         <div className="space-y-1">
                           <div className="flex items-center gap-2">
                             <FileCheck className="w-4 h-4 text-emerald-400" />
-                            <span className="font-extrabold text-sm text-slate-200 tracking-wide uppercase">{language === "ta" ? "சங்க உறுப்பினர் பதிவு" : "TNVS Member Registry"}</span>
+                            <span className="font-extrabold text-sm text-foreground tracking-wide uppercase">{language === "ta" ? "சங்க உறுப்பினர் பதிவு" : "TNVS Member Registry"}</span>
                           </div>
-                          <p className="text-xs text-slate-350">{language === "ta" ? "டிஜிட்டல் உறுப்பினர் அட்டை மற்றும் வணிகப் பிரிவு அணுகலை உள்ளடக்கியது" : "Official registration with digital membership pass and selected trade wing division access."}</p>
+                          <p className="text-xs text-muted-foreground">{language === "ta" ? "டிஜிட்டல் உறுப்பினர் அட்டை மற்றும் வணிகப் பிரிவு அணுகலை உள்ளடக்கியது" : "Official registration with digital membership pass and selected trade wing division access."}</p>
                         </div>
                       </div>
                       
                       <div className="h-px bg-slate-800/80 my-4" />
                       
-                      <div className="flex flex-col sm:flex-row justify-between gap-3 text-[11px] text-slate-400 relative z-10">
+                      <div className="flex flex-col sm:flex-row justify-between gap-3 text-[11px] text-muted-foreground relative z-10">
                         <span className="flex items-center gap-1.5">
                           <Shield className="w-3.5 h-3.5 text-emerald-400" /> {language === "ta" ? "உடனடி டிஜிட்டல் அட்டை உருவாக்கம்" : "Instant Digital ID Generation"}
                         </span>
@@ -2436,20 +2436,20 @@ function Membership() {
                     {/* Success badge */}
                     <div className="text-center max-w-md mx-auto mb-8">
                       <div className="relative inline-block">
-                        <div className="w-20 h-20 rounded-full bg-emerald-100 text-emerald-700 grid place-items-center mx-auto shadow-md">
+                        <div className="w-20 h-20 rounded-full bg-emerald-100 text-emerald-700 grid place-items-center mx-auto shadow-xs">
                           <Check className="w-10 h-10" />
                         </div>
-                        <div className="absolute -right-1 -top-1 w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center border-2 border-white shadow-sm">
+                        <div className="absolute -right-1 -top-1 w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center border-2 border-white shadow-xs">
                           <Star className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
                         </div>
                       </div>
-                      <h2 className="mt-6 font-display text-2xl sm:text-3xl font-black text-slate-850 tracking-tight">Registration Complete!</h2>
-                      <p className="font-tamil text-sm text-slate-500 mt-1.5">உறுப்பினர் பதிவு வெற்றிகரமாக முடிந்தது.</p>
-                      <p className="text-xs text-slate-500 mt-1 leading-relaxed">Welcome to the Tamil Nadu Vanigargalin Sangamam community.</p>
+                      <h2 className="mt-6 font-display text-2xl sm:text-3xl font-black text-foreground tracking-tight">Registration Complete!</h2>
+                      <p className="font-tamil text-sm text-muted-foreground mt-1.5">உறுப்பினர் பதிவு வெற்றிகரமாக முடிந்தது.</p>
+                      <p className="text-xs text-muted-foreground mt-1 leading-relaxed">Welcome to the Tamil Nadu Vanigargalin Sangamam community.</p>
                     </div>
 
                     {/* Both card faces display */}
-                    <div className="w-full max-w-md bg-slate-50 border border-slate-200 rounded-3xl p-6 mb-8 flex flex-col items-center gap-6 shadow-sm">
+                    <div className="w-full max-w-md bg-muted border border-border rounded-md p-6 mb-8 flex flex-col items-center gap-6 shadow-xs">
                       <div className="w-full">
                         <p className="text-xs font-semibold text-slate-550 uppercase tracking-widest mb-2 text-center">முன்பக்கம் · FRONT</p>
                         <div ref={frontRef} className="card-scale-wrapper">
@@ -2458,7 +2458,7 @@ function Membership() {
                           </div>
                         </div>
                       </div>
-                      <div className="w-full border-t border-slate-200 pt-5">
+                      <div className="w-full border-t border-border pt-5">
                         <p className="text-xs font-semibold text-slate-550 uppercase tracking-widest mb-2 text-center">பின்பக்கம் · BACK</p>
                         <div ref={backRef} className="card-scale-wrapper">
                           <div className="responsive-card-scale">
@@ -2469,19 +2469,19 @@ function Membership() {
                     </div>
 
                     {/* Next Steps info */}
-                    <div className="w-full max-w-md bg-slate-50 border border-slate-200 rounded-2xl p-5 mb-8 space-y-3 shadow-xxs">
-                      <div className="text-xs font-bold text-slate-700 uppercase tracking-wider pb-1.5 border-b border-slate-200">What's Next?</div>
+                    <div className="w-full max-w-md bg-muted border border-border rounded-md p-5 mb-8 space-y-3 shadow-xs">
+                      <div className="text-xs font-bold text-foreground uppercase tracking-wider pb-1.5 border-b border-border">What's Next?</div>
                       {[
                         { text: "Download your PDF Membership Certificate", ta: "உறுப்பினர் சான்றிதழை பதிவிறக்கவும்", done: true },
                         { text: "View and edit your profile on the dashboard", ta: "டாஷ்போர்டில் உங்கள் சுயவிவரத்தை பாருங்கள்", done: false },
                       ].map((item, i) => (
                         <div key={i} className="flex items-start gap-3 text-xs text-slate-650">
-                          <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${item.done ? "bg-emerald-100 text-emerald-700" : "bg-slate-200 text-slate-500"}`}>
+                          <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${item.done ? "bg-emerald-100 text-emerald-700" : "bg-muted text-muted-foreground"}`}>
                             {item.done ? <Check className="w-3 h-3" /> : <span className="text-[10px] font-bold">{i + 1}</span>}
                           </div>
                           <div className="space-y-0.5">
-                            <p className="font-semibold text-slate-800">{language === "ta" ? item.ta : item.text}</p>
-                            <p className="text-[10px] text-slate-450">{i === 0 ? "Generate high-resolution printable pass" : "Manage your wings and local constituencies"}</p>
+                            <p className="font-semibold text-foreground">{language === "ta" ? item.ta : item.text}</p>
+                            <p className="text-[10px] text-muted-foreground">{i === 0 ? "Generate high-resolution printable pass" : "Manage your wings and local constituencies"}</p>
                           </div>
                         </div>
                       ))}
@@ -2494,13 +2494,13 @@ function Membership() {
                       <div className="flex flex-col sm:flex-row gap-3 w-full">
                         <button
                           onClick={downloadCertificate}
-                          className="btn-primary flex-1 justify-center py-3 rounded-xl text-xs font-bold shadow-md cursor-pointer transition active:scale-95 flex items-center gap-1.5"
+                          className="btn-primary flex-1 justify-center py-3 rounded-md text-xs font-bold shadow-xs cursor-pointer transition active:scale-95 flex items-center gap-1.5"
                         >
                           <Download className="w-4 h-4" /> Download Certificate
                         </button>
                         <button
                           onClick={handlePrint}
-                          className="bg-slate-900 hover:bg-slate-800 text-white flex-1 justify-center py-3 rounded-xl text-xs font-bold shadow-xs cursor-pointer transition active:scale-95 flex items-center gap-1.5 border-none"
+                          className="btn-secondary flex-1 justify-center py-3 rounded-md text-xs font-bold shadow-xs cursor-pointer transition active:scale-95 flex items-center gap-1.5"
                         >
                           <Printer className="w-4 h-4" /> Print / PDF Card
                         </button>
@@ -2508,14 +2508,14 @@ function Membership() {
 
                       <button
                         onClick={downloadIdCardPng}
-                        className="bg-emerald-600 hover:bg-emerald-700 text-white w-full justify-center py-3 rounded-xl text-xs font-bold shadow-xs cursor-pointer transition active:scale-95 flex items-center gap-1.5 border-none"
+                        className="btn-primary w-full justify-center py-3 rounded-md text-xs font-bold shadow-xs cursor-pointer transition active:scale-95 flex items-center gap-1.5"
                       >
                         <Download className="w-4 h-4" /> Download ID Card (PNG)
                       </button>
 
                       <button
                         onClick={() => handleShare(generatedMno)}
-                        className="bg-slate-100 hover:bg-slate-200 text-slate-700 w-full justify-center py-3 rounded-xl text-xs font-bold shadow-xxs cursor-pointer transition active:scale-95 flex items-center gap-1.5 border border-slate-200"
+                        className="bg-muted hover:bg-muted/80 text-foreground w-full justify-center py-3 rounded-md text-xs font-bold shadow-xs cursor-pointer transition active:scale-95 flex items-center gap-1.5 border border-border"
                       >
                         <Share2 className="w-4 h-4" /> Share Registration Info
                       </button>
@@ -2523,7 +2523,7 @@ function Membership() {
                     <div className="w-full max-w-md mt-4 text-center">
                       <Link
                         to="/dashboard"
-                        className="text-xs font-semibold text-[#002B7F] hover:underline inline-flex items-center gap-1"
+                        className="text-xs font-semibold text-primary hover:underline inline-flex items-center gap-1"
                       >
                         <FileCheck className="w-3.5 h-3.5" /> Go to Dashboard
                       </Link>
@@ -2535,11 +2535,11 @@ function Membership() {
 
             {/* ── Navigation Buttons ── */}
             {step < 4 && (
-              <div className="mt-8 pt-6 border-t border-slate-150 flex justify-between items-center">
+              <div className="mt-8 pt-6 border-t border-border flex justify-between items-center">
                 <button
                   onClick={back}
                   disabled={step === 1 || submitting}
-                  className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-bold text-slate-500 hover:text-slate-850 hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent transition cursor-pointer rounded-xl border-none bg-transparent"
+                  className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-bold text-muted-foreground hover:text-foreground hover:bg-muted disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent transition cursor-pointer rounded-md border-none bg-transparent"
                 >
                   <ArrowLeft className="w-4 h-4" /> Back
                 </button>
@@ -2548,7 +2548,7 @@ function Membership() {
                   <button
                     onClick={step === 3 ? handlePaySubmit : next}
                     disabled={submitting}
-                    className="btn-primary py-2.5 px-5 rounded-xl text-xs font-bold cursor-pointer hover:shadow-md transition duration-200 flex items-center gap-1.5"
+                    className="btn-primary py-2.5 px-5 rounded-md text-xs font-bold cursor-pointer hover:shadow-xs transition duration-200 flex items-center gap-1.5"
                   >
                     {submitting ? (
                       <><Loader2 className="w-4 h-4 animate-spin" /> Processing…</>
@@ -2567,8 +2567,8 @@ function Membership() {
 
       {/* Right Column: Unity Banner */}
       {step < 4 && (
-        <div className="w-full lg:w-80 shrink-0 bg-white rounded-3xl border border-slate-200/60 p-5 flex flex-col items-center gap-5 shadow-xs overflow-hidden">
-          <div className="w-full aspect-square flex items-center justify-center bg-slate-50 rounded-2xl overflow-hidden relative">
+        <div className="w-full lg:w-80 shrink-0 bg-card rounded-md border border-border p-5 flex flex-col items-center gap-5 shadow-xs overflow-hidden">
+          <div className="w-full aspect-square flex items-center justify-center bg-muted rounded-md overflow-hidden relative">
             <img 
               src={unityHands} 
               alt="Unity" 
@@ -2576,7 +2576,7 @@ function Membership() {
             />
           </div>
           <div className="space-y-1.5 text-center lg:text-left">
-            <h3 className="font-display font-bold text-base text-slate-800 leading-tight">
+            <h3 className="font-display font-bold text-base text-foreground leading-tight">
               {t("வணிகர்கள் சங்கமம் — ஒற்றுமையே வலிமை", "Traders Union — Unity is Strength")}
             </h3>
             <p className="text-xs text-slate-550 leading-relaxed font-tamil">
@@ -2595,16 +2595,16 @@ function Membership() {
 
       {/* ── Webcam Modal ── */}
       {useWebcam && (
-        <div className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm grid place-items-center p-4">
-          <div className="bg-white rounded-2xl p-5 max-w-sm w-full text-center space-y-4 shadow-2xl border border-slate-100 animate-scaleIn">
-            <div className="flex justify-between items-center pb-3 border-b border-slate-100">
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs grid place-items-center p-4">
+          <div className="bg-card rounded-md p-5 max-w-sm w-full text-center space-y-4 shadow-2xl border border-border animate-scaleIn">
+            <div className="flex justify-between items-center pb-3 border-b border-border">
               <div className="flex items-center gap-2">
                 <Camera className="w-4 h-4 text-primary" />
-                <span className="font-bold text-sm text-slate-800">Selfie Camera Scanner</span>
+                <span className="font-bold text-sm text-foreground">Selfie Camera Scanner</span>
               </div>
-              <button onClick={() => setUseWebcam(false)} className="text-slate-400 hover:text-slate-600 text-xs font-semibold border-none bg-transparent cursor-pointer">✕ Close</button>
+              <button onClick={() => setUseWebcam(false)} className="text-muted-foreground hover:text-muted-foreground text-xs font-semibold border-none bg-transparent cursor-pointer">✕ Close</button>
             </div>
-            <div className="aspect-square bg-slate-950 rounded-xl relative overflow-hidden flex items-center justify-center">
+            <div className="aspect-square bg-black rounded-md relative overflow-hidden flex items-center justify-center">
               {tempSelfie ? (
                 <img
                   src={tempSelfie}
@@ -2621,11 +2621,11 @@ function Membership() {
                 />
               ) : (
                 <div className="text-center p-4">
-                  <div className="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <Camera className="w-6 h-6 text-slate-550" />
+                  <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center mx-auto mb-2">
+                    <Camera className="w-6 h-6 text-muted-foreground" />
                   </div>
-                  <span className="text-slate-400 text-xs block">Camera Access Blocked / Unavailable</span>
-                  <span className="text-slate-500 text-[10px] mt-1 block">Simulating fallback capture...</span>
+                  <span className="text-muted-foreground text-xs block">Camera Access Blocked / Unavailable</span>
+                  <span className="text-muted-foreground text-[10px] mt-1 block">Simulating fallback capture...</span>
                 </div>
               )}
               
@@ -2636,20 +2636,20 @@ function Membership() {
                 </>
               )}
               {webcamCapturing && (
-                <div className="absolute inset-0 bg-slate-950/80 flex flex-col items-center justify-center text-white text-xs space-y-2">
+                <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center text-white text-xs space-y-2">
                   <Loader2 className="w-6 h-6 animate-spin text-primary" />
                   <span>Scanning Face...</span>
                 </div>
               )}
             </div>
             {tempSelfie ? (
-              <p className="text-xs text-slate-500 font-tamil leading-relaxed">
+              <p className="text-xs text-muted-foreground font-tamil leading-relaxed">
                 {language === "ta" 
                   ? "புகைப்படம் உங்களுக்கு திருப்தியா? அல்லது மீண்டும் எடுக்க வேண்டுமா?" 
                   : "Are you satisfied with this photo? Or would you like to retake it?"}
               </p>
             ) : (
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-muted-foreground">
                 {language === "ta" 
                   ? "உங்கள் முகத்தை வட்டத்திற்குள் நேராக வைக்கவும்" 
                   : "Align your face inside the scanning circle"}
@@ -2660,14 +2660,14 @@ function Membership() {
                 <button
                   type="button"
                   onClick={handleSelfieConfirm}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white flex-1 justify-center py-2.5 rounded-xl font-bold text-xs flex items-center gap-1.5 cursor-pointer border-none shadow-sm transition active:scale-98"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white flex-1 justify-center py-2.5 rounded-md font-bold text-xs flex items-center gap-1.5 cursor-pointer border-none shadow-xs transition active:scale-98"
                 >
                   <Check className="w-4 h-4" /> {language === "ta" ? "சரி / OK" : "OK"}
                 </button>
                 <button
                   type="button"
                   onClick={handleSelfieRetake}
-                  className="bg-slate-100 hover:bg-slate-200 text-slate-700 flex-1 justify-center py-2.5 rounded-xl font-bold text-xs flex items-center gap-1.5 cursor-pointer border border-slate-200 shadow-xxs transition active:scale-98"
+                  className="bg-muted hover:bg-muted text-foreground flex-1 justify-center py-2.5 rounded-md font-bold text-xs flex items-center gap-1.5 cursor-pointer border border-border shadow-xs transition active:scale-98"
                 >
                   <RefreshCw className="w-3.5 h-3.5" /> {language === "ta" ? "மீண்டும் எடு" : "Retake Photo"}
                 </button>
@@ -2677,7 +2677,7 @@ function Membership() {
                 type="button"
                 onClick={handleSelfieCapture}
                 disabled={webcamCapturing}
-                className="btn-primary w-full justify-center cursor-pointer py-2.5 rounded-xl font-bold"
+                className="btn-primary w-full justify-center cursor-pointer py-2.5 rounded-md font-bold"
               >
                 {webcamCapturing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Camera className="w-4 h-4" />}
                 {language === "ta" ? "புகைப்படம் எடு" : "Capture Photo"}

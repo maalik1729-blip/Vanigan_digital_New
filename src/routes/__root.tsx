@@ -75,7 +75,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ta">
+    <html lang="en">
       <head><HeadContent /></head>
       <body>{children}<Scripts /></body>
     </html>
@@ -110,9 +110,9 @@ function RootInner() {
       setIsFadingOut(true);
       const removeTimer = setTimeout(() => {
         setShowSplash(false);
-      }, 550);
+      }, 300);
       return () => clearTimeout(removeTimer);
-    }, 2200);
+    }, 800); // Reduced from 2200ms → 800ms for faster perceived load
 
     return () => clearTimeout(fadeTimer);
   }, []);
@@ -163,15 +163,10 @@ function RootInner() {
         </div>
       )}
       {/*
-        Header height breakdown:
-          gov-stripe:   3px
-          ticker bar:   ~32px on desktop, ~30px on mobile
-          nav row:      h-16 = 64px
-        Total:          ~99px desktop / ~99px mobile
-        We use pt-[99px] with a safe fallback.
-        Bottom nav adds 60px on mobile, so we add pb-[60px] for mobile.
+        Header height: 64px (single-layer — ticker bar removed)
+        Bottom nav: 64px on mobile + safe area inset
       */}
-      <div className="min-h-screen flex flex-col pt-[99px] pb-[60px] xl:pb-0">
+      <div className="min-h-screen flex flex-col pt-16 pb-16 lg:pb-0">
         <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-100 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md focus:text-sm focus:font-medium">
           Skip to main content
         </a>

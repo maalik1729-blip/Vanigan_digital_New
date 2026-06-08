@@ -26,6 +26,7 @@ import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BusinessIndexRouteImport } from './routes/business.index'
+import { Route as BusinessNewRouteImport } from './routes/business.new'
 import { Route as BusinessIdRouteImport } from './routes/business.$id'
 import { Route as ApiVoterSearchRouteImport } from './routes/api/voter-search'
 import { Route as ApiCategoriesRouteImport } from './routes/api/categories'
@@ -120,6 +121,11 @@ const BusinessIndexRoute = BusinessIndexRouteImport.update({
   path: '/',
   getParentRoute: () => BusinessRoute,
 } as any)
+const BusinessNewRoute = BusinessNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => BusinessRoute,
+} as any)
 const BusinessIdRoute = BusinessIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -182,6 +188,7 @@ export interface FileRoutesByFullPath {
   '/api/categories': typeof ApiCategoriesRoute
   '/api/voter-search': typeof ApiVoterSearchRoute
   '/business/$id': typeof BusinessIdRoute
+  '/business/new': typeof BusinessNewRoute
   '/business/': typeof BusinessIndexRoute
   '/api/public/business': typeof ApiPublicBusinessRouteWithChildren
   '/api/public/members': typeof ApiPublicMembersRoute
@@ -208,6 +215,7 @@ export interface FileRoutesByTo {
   '/api/categories': typeof ApiCategoriesRoute
   '/api/voter-search': typeof ApiVoterSearchRoute
   '/business/$id': typeof BusinessIdRoute
+  '/business/new': typeof BusinessNewRoute
   '/business': typeof BusinessIndexRoute
   '/api/public/business': typeof ApiPublicBusinessRouteWithChildren
   '/api/public/members': typeof ApiPublicMembersRoute
@@ -236,6 +244,7 @@ export interface FileRoutesById {
   '/api/categories': typeof ApiCategoriesRoute
   '/api/voter-search': typeof ApiVoterSearchRoute
   '/business/$id': typeof BusinessIdRoute
+  '/business/new': typeof BusinessNewRoute
   '/business/': typeof BusinessIndexRoute
   '/api/public/business': typeof ApiPublicBusinessRouteWithChildren
   '/api/public/members': typeof ApiPublicMembersRoute
@@ -265,6 +274,7 @@ export interface FileRouteTypes {
     | '/api/categories'
     | '/api/voter-search'
     | '/business/$id'
+    | '/business/new'
     | '/business/'
     | '/api/public/business'
     | '/api/public/members'
@@ -291,6 +301,7 @@ export interface FileRouteTypes {
     | '/api/categories'
     | '/api/voter-search'
     | '/business/$id'
+    | '/business/new'
     | '/business'
     | '/api/public/business'
     | '/api/public/members'
@@ -318,6 +329,7 @@ export interface FileRouteTypes {
     | '/api/categories'
     | '/api/voter-search'
     | '/business/$id'
+    | '/business/new'
     | '/business/'
     | '/api/public/business'
     | '/api/public/members'
@@ -472,6 +484,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BusinessIndexRouteImport
       parentRoute: typeof BusinessRoute
     }
+    '/business/new': {
+      id: '/business/new'
+      path: '/new'
+      fullPath: '/business/new'
+      preLoaderRoute: typeof BusinessNewRouteImport
+      parentRoute: typeof BusinessRoute
+    }
     '/business/$id': {
       id: '/business/$id'
       path: '/$id'
@@ -533,11 +552,13 @@ declare module '@tanstack/react-router' {
 
 interface BusinessRouteChildren {
   BusinessIdRoute: typeof BusinessIdRoute
+  BusinessNewRoute: typeof BusinessNewRoute
   BusinessIndexRoute: typeof BusinessIndexRoute
 }
 
 const BusinessRouteChildren: BusinessRouteChildren = {
   BusinessIdRoute: BusinessIdRoute,
+  BusinessNewRoute: BusinessNewRoute,
   BusinessIndexRoute: BusinessIndexRoute,
 }
 

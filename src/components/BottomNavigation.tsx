@@ -1,13 +1,13 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Home, User, Search, Store, MoreHorizontal } from "lucide-react";
+import { Home, LayoutGrid, Users, User, HelpCircle } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 
 const BOTTOM_NAV = [
-  { to: "/", icon: Home, label: "Home", labelTa: "முகப்பு" },
-  { to: "/membership", icon: User, label: "Membership", labelTa: "உறுப்பினர்" },
-  { to: "/voter-id", icon: Search, label: "Search", labelTa: "தேடல்" },
-  { to: "/members", search: { tab: "businesses" }, icon: Store, label: "Business", labelTa: "வணிகர்" },
-  { to: "/members", icon: MoreHorizontal, label: "Services", labelTa: "சேவைகள்" },
+  { to: "/",          icon: Home,         label: "Home",      labelTa: "முகப்பு"  },
+  { to: "/services",  icon: LayoutGrid,   label: "Services",  labelTa: "சேவைகள்"  },
+  { to: "/members",   icon: Users,        label: "Directory", labelTa: "பட்டியல்"  },
+  { to: "/dashboard", icon: User,         label: "Account",   labelTa: "கணக்கு"   },
+  { to: "/assistant", icon: HelpCircle,   label: "Help",      labelTa: "உதவி"     },
 ] as const;
 
 export function BottomNavigation() {
@@ -16,44 +16,50 @@ export function BottomNavigation() {
 
   return (
     <nav
-      className="xl:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-slate-200"
+      className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-card border-t border-border"
       aria-label="Mobile navigation"
+      style={{ boxShadow: "0 -1px 0 var(--border), 0 -4px 16px -4px oklch(4% 0.004 95 / 0.16)" }}
     >
-      <div className="flex items-center justify-around h-[60px] px-2">
+      <div className="flex items-stretch justify-around h-16 px-1">
         {BOTTOM_NAV.map((item) => {
           const Icon = item.icon;
-          const isBusinessTab = item.to === "/members" && "search" in item && (item.search as any)?.tab === "businesses";
-          const queryParams = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
-          const active = isBusinessTab
-            ? (loc.pathname === "/members" && queryParams.get("tab") === "businesses")
-            : (item.to === "/members"
-                ? (loc.pathname === "/members" && queryParams.get("tab") !== "businesses")
-                : loc.pathname === item.to);
+          const active =
+            item.to === "/"
+              ? loc.pathname === "/"
+              : loc.pathname.startsWith(item.to);
 
           return (
             <Link
-              key={item.to + ("search" in item ? JSON.stringify(item.search) : "")}
+              key={item.to}
               to={item.to}
-              search={"search" in item ? (item as any).search : undefined}
               aria-current={active ? "page" : undefined}
               className={[
-                "flex flex-col items-center justify-center gap-1 min-w-[48px] min-h-[48px] rounded-lg transition-colors duration-200",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
-                active
-                  ? "text-primary"
-                  : "text-slate-400 hover:text-slate-600",
+                "flex flex-col items-center justify-center gap-1 flex-1 relative",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset",
+                "transition-colors duration-200 min-h-[44px]",
+                active ? "text-primary" : "text-muted-foreground hover:text-foreground",
               ].join(" ")}
             >
-              <Icon className="w-6 h-6" aria-hidden="true" />
-              <span className="text-[11px] font-medium leading-tight">
+              {/* Active pill background */}
+              {active && (
+                <span
+                  className="absolute top-2.5 left-1/2 -translate-x-1/2 w-12 h-7 rounded-full bg-primary/10"
+                  aria-hidden="true"
+                />
+              )}
+              <Icon
+                className={`w-5 h-5 relative z-10 transition-colors ${active ? "text-primary" : "text-muted-foreground"}`}
+                aria-hidden="true"
+              />
+              <span className={`text-[11px] font-semibold leading-tight relative z-10 ${active ? "text-primary" : "text-muted-foreground"}`}>
                 {language === "ta" ? item.labelTa : item.label}
               </span>
             </Link>
           );
         })}
       </div>
-      {/* Safe area for iPhone notch */}
-      <div className="h-[env(safe-area-inset-bottom)] bg-white" />
+      {/* iPhone home indicator safe area */}
+      <div className="bg-card" style={{ height: "env(safe-area-inset-bottom)" }} />
     </nav>
   );
 }

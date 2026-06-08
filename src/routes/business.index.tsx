@@ -647,15 +647,15 @@ function getSubcategoryImage(subCategory: string): string | null {
 const CATEGORY_META: Record<string, { icon: string; image: string; color: string; colorDark: string }> = {
   // ── Food & Hospitality ───────────────────────────────────────────────────────
   "Hotels & Restaurants":      { icon: "🍽️", image: UNS("1517248135467-4c7edcad34c4"), color: "from-orange-500 to-red-500",    colorDark: "bg-orange-50 border-orange-200" },
-  "Caterers":                  { icon: "🥘", image: UNS("1555244162-803834f70033"), color: "from-amber-500 to-orange-500",   colorDark: "bg-amber-50 border-amber-200" },
+  "Caterers":                  { icon: "🥘", image: UNS("1555244162-803834f70033"), color: "from-amber-500 to-orange-500",   colorDark: "bg-primary/10 border-amber-200" },
   "Daily Needs":               { icon: "🛒", image: UNS("1542838132-92c53300491e"), color: "from-green-500 to-emerald-500",  colorDark: "bg-green-50 border-green-200" },
   "Organic Products":          { icon: "🌿", image: UNS("1490818387583-1baba5e638af"), color: "from-lime-500 to-green-500",   colorDark: "bg-lime-50 border-lime-200" },
 
   // ── Health & Medical ─────────────────────────────────────────────────────────
   "Doctors":                   { icon: "👨‍⚕️", image: UNS("1551601651-2a8555f1a136"), color: "from-blue-500 to-cyan-500",    colorDark: "bg-blue-50 border-blue-200" },
-  "Hospitals & Clinics":       { icon: "🏥", image: UNS("1538108149393-fbbd81895907"), color: "from-sky-500 to-blue-500",    colorDark: "bg-sky-50 border-sky-200" },
+  "Hospitals & Clinics":       { icon: "🏥", image: UNS("1538108149393-fbbd81895907"), color: "from-sky-500 to-blue-500",    colorDark: "bg-primary/10 border-sky-200" },
   "Pharmacy":                  { icon: "💊", image: UNS("1585435557343-3b092031a831"), color: "from-teal-500 to-cyan-500",   colorDark: "bg-teal-50 border-teal-200" },
-  "Labs & Diagnostics":        { icon: "🔬", image: UNS("1576086213369-97a306d36557"), color: "from-sky-600 to-blue-700",    colorDark: "bg-sky-50 border-sky-200" },
+  "Labs & Diagnostics":        { icon: "🔬", image: UNS("1576086213369-97a306d36557"), color: "from-sky-600 to-blue-700",    colorDark: "bg-primary/10 border-sky-200" },
 
   // ── Beauty & Wellness ────────────────────────────────────────────────────────
   "Spa & Beauty":              { icon: "💅", image: UNS("1560750588-73207b1ef5b8"), color: "from-pink-500 to-rose-500",    colorDark: "bg-pink-50 border-pink-200" },
@@ -665,20 +665,20 @@ const CATEGORY_META: Record<string, { icon: string; image: string; color: string
   "Coaching Centers":          { icon: "📚", image: UNS("1434030216411-0b793f4b4173"), color: "from-purple-500 to-indigo-500", colorDark: "bg-purple-50 border-purple-200" },
 
   // ── Technology ───────────────────────────────────────────────────────────────
-  "IT & Software":             { icon: "💻", image: UNS("1461749280684-dccba630e2f6"), color: "from-indigo-500 to-blue-500",  colorDark: "bg-indigo-50 border-indigo-200" },
+  "IT & Software":             { icon: "💻", image: UNS("1461749280684-dccba630e2f6"), color: "from-indigo-500 to-blue-500",  colorDark: "bg-primary/10 border-indigo-200" },
   "Digital & IT Products":     { icon: "🖥️", image: UNS("1587831990711-23ca6441447b"), color: "from-blue-500 to-indigo-500",  colorDark: "bg-blue-50 border-blue-200" },
   "Electricals & Electronics": { icon: "⚡", image: UNS("1550751827-4bd374c3f58b"), color: "from-yellow-500 to-amber-500",  colorDark: "bg-yellow-50 border-yellow-200" },
 
   // ── Construction & Real Estate ───────────────────────────────────────────────
   "Construction Materials":    { icon: "🧱", image: UNS("1504307651254-35680f356dfd"), color: "from-stone-500 to-slate-500",  colorDark: "bg-stone-50 border-stone-200" },
-  "Civil Contractors":         { icon: "🏗️", image: UNS("1581094794329-c8112a89af12"), color: "from-slate-500 to-gray-600",   colorDark: "bg-slate-50 border-slate-200" },
-  "Real Estate":               { icon: "🏠", image: UNS("1560518883-ce09059eeffa"), color: "from-emerald-500 to-teal-500",  colorDark: "bg-emerald-50 border-emerald-200" },
+  "Civil Contractors":         { icon: "🏗️", image: UNS("1581094794329-c8112a89af12"), color: "from-slate-500 to-gray-600",   colorDark: "bg-muted border-border" },
+  "Real Estate":               { icon: "🏠", image: UNS("1560518883-ce09059eeffa"), color: "from-emerald-500 to-teal-500",  colorDark: "bg-primary/10 border-emerald-200" },
   "Interior Design":           { icon: "🛋️", image: UNS("1618221195710-dd6b41faaea6"), color: "from-fuchsia-500 to-pink-500", colorDark: "bg-fuchsia-50 border-fuchsia-200" },
 
   // ── Transport & Automotive ───────────────────────────────────────────────────
   "Transport":                 { icon: "🚛", image: UNS("1492144534655-ae79c964c9d7"), color: "from-blue-600 to-indigo-600",  colorDark: "bg-blue-50 border-blue-200" },
-  "Automobiles":               { icon: "🚗", image: UNS("1503376780353-7e6692767b70"), color: "from-gray-600 to-slate-600",   colorDark: "bg-gray-50 border-gray-200" },
-  "Automobile":                { icon: "🚘", image: UNS("1494976388531-d1058494cdd8"), color: "from-gray-500 to-zinc-600",    colorDark: "bg-gray-50 border-gray-200" },
+  "Automobiles":               { icon: "🚗", image: UNS("1503376780353-7e6692767b70"), color: "from-gray-600 to-slate-600",   colorDark: "bg-muted border-border" },
+  "Automobile":                { icon: "🚘", image: UNS("1494976388531-d1058494cdd8"), color: "from-gray-500 to-zinc-600",    colorDark: "bg-muted border-border" },
 
   // ── Fashion & Lifestyle ──────────────────────────────────────────────────────
   "Textiles & Garments":       { icon: "👗", image: UNS("1558618666-fcd25c85cd64"), color: "from-rose-500 to-pink-500",     colorDark: "bg-rose-50 border-rose-200" },
@@ -694,24 +694,24 @@ const CATEGORY_META: Record<string, { icon: string; image: string; color: string
   "Finance & Banking":         { icon: "🏦", image: UNS("1554224155-6726b3ff858f"), color: "from-blue-700 to-indigo-700",   colorDark: "bg-blue-50 border-blue-200" },
   "Banking & Finance":         { icon: "🏦", image: UNS("1611974789855-9c2a0a7236a3"), color: "from-blue-800 to-indigo-800",  colorDark: "bg-blue-50 border-blue-200" },
   "Insurance":                 { icon: "🛡️", image: UNS("1450101499163-c8848c66ca85"), color: "from-teal-600 to-cyan-700",   colorDark: "bg-teal-50 border-teal-200" },
-  "Legal Services":            { icon: "⚖️", image: UNS("1589829545856-d10d557cf95f"), color: "from-slate-600 to-gray-700",  colorDark: "bg-slate-50 border-slate-200" },
-  "Advocate & Legal":          { icon: "⚖️", image: UNS("1521791055903-6e73b4e8de57"), color: "from-slate-700 to-gray-800",  colorDark: "bg-slate-50 border-slate-200" },
-  "Jobs":                      { icon: "💼", image: UNS("1507679799987-c73779587ccf"), color: "from-sky-500 to-blue-600",    colorDark: "bg-sky-50 border-sky-200" },
+  "Legal Services":            { icon: "⚖️", image: UNS("1589829545856-d10d557cf95f"), color: "from-slate-600 to-gray-700",  colorDark: "bg-muted border-border" },
+  "Advocate & Legal":          { icon: "⚖️", image: UNS("1521791055903-6e73b4e8de57"), color: "from-slate-700 to-gray-800",  colorDark: "bg-muted border-border" },
+  "Jobs":                      { icon: "💼", image: UNS("1507679799987-c73779587ccf"), color: "from-sky-500 to-blue-600",    colorDark: "bg-primary/10 border-sky-200" },
 
   // ── Marketing & Media ────────────────────────────────────────────────────────
   "Advertising":               { icon: "📢", image: UNS("1504711434969-e33886168f5c"), color: "from-red-500 to-rose-500",    colorDark: "bg-red-50 border-red-200" },
-  "Printing Services":         { icon: "🖨️", image: UNS("1562776977-f5db5477e89c"), color: "from-gray-500 to-slate-500",   colorDark: "bg-gray-50 border-gray-200" },
+  "Printing Services":         { icon: "🖨️", image: UNS("1562776977-f5db5477e89c"), color: "from-gray-500 to-slate-500",   colorDark: "bg-muted border-border" },
   "Photography":               { icon: "📸", image: UNS("1471341971476-ae15ff5dd4ea"), color: "from-violet-600 to-purple-600", colorDark: "bg-violet-50 border-violet-200" },
 
   // ── Events & Entertainment ───────────────────────────────────────────────────
   "Wedding Services":          { icon: "💒", image: UNS("1519741497674-611481863552"), color: "from-pink-400 to-rose-400",   colorDark: "bg-pink-50 border-pink-200" },
-  "Event Management":          { icon: "🎉", image: UNS("1511578314322-379afb476865"), color: "from-amber-400 to-yellow-400", colorDark: "bg-amber-50 border-amber-200" },
-  "Banquets & Event Halls":    { icon: "🏛️", image: UNS("1587825140708-dfaf72ae4b04"), color: "from-amber-500 to-orange-500", colorDark: "bg-amber-50 border-amber-200" },
+  "Event Management":          { icon: "🎉", image: UNS("1511578314322-379afb476865"), color: "from-amber-400 to-yellow-400", colorDark: "bg-primary/10 border-amber-200" },
+  "Banquets & Event Halls":    { icon: "🏛️", image: UNS("1587825140708-dfaf72ae4b04"), color: "from-amber-500 to-orange-500", colorDark: "bg-primary/10 border-amber-200" },
 
   // ── Home & Lifestyle ─────────────────────────────────────────────────────────
   "Home Appliances":           { icon: "🏠", image: UNS("1556909114-f6e7ad7d3136"), color: "from-teal-400 to-cyan-500",    colorDark: "bg-teal-50 border-teal-200" },
   "Furniture":                 { icon: "🪑", image: UNS("1555041469-a586c61ea9bc"), color: "from-stone-400 to-amber-500",  colorDark: "bg-stone-50 border-stone-200" },
-  "Hardware & Tools":          { icon: "🔧", image: UNS("1572981779307-38b8cabb2407"), color: "from-zinc-500 to-slate-500",  colorDark: "bg-zinc-50 border-zinc-200" },
+  "Hardware & Tools":          { icon: "🔧", image: UNS("1572981779307-38b8cabb2407"), color: "from-zinc-500 to-slate-500",  colorDark: "bg-muted border-border" },
 
   // ── Services ─────────────────────────────────────────────────────────────────
   "Demand Services":           { icon: "🛠️", image: UNS("1581092921461-eab62e97a780"), color: "from-orange-600 to-red-600",  colorDark: "bg-orange-50 border-orange-200" },
@@ -719,13 +719,13 @@ const CATEGORY_META: Record<string, { icon: string; image: string; color: string
   "Courier Services":          { icon: "📦", image: UNS("1566576912321-d58ddd7a6097"), color: "from-orange-500 to-amber-500", colorDark: "bg-orange-50 border-orange-200" },
   "Packers & Movers":          { icon: "🚚", image: UNS("1601584428474-47a887d20b1e"), color: "from-blue-500 to-sky-500",    colorDark: "bg-blue-50 border-blue-200" },
   "Pest Control":              { icon: "🐛", image: UNS("1628177201049-f4cd92bf93a5"), color: "from-lime-700 to-green-700",  colorDark: "bg-lime-50 border-lime-200" },
-  "Repairs":                   { icon: "🔩", image: UNS("1621905251189-08b45d6a269e"), color: "from-slate-500 to-gray-500",  colorDark: "bg-slate-50 border-slate-200" },
+  "Repairs":                   { icon: "🔩", image: UNS("1621905251189-08b45d6a269e"), color: "from-slate-500 to-gray-500",  colorDark: "bg-muted border-border" },
 
   // ── Sports, Recreation & Utility ─────────────────────────────────────────────
   "Sports":                    { icon: "⚽", image: UNS("1571019613454-1cb2f99b2d8b"), color: "from-green-600 to-emerald-600", colorDark: "bg-green-50 border-green-200" },
-  "Religious":                 { icon: "🛕", image: UNS("1609710228159-0fa9bd7c0827"), color: "from-amber-600 to-yellow-600", colorDark: "bg-amber-50 border-amber-200" },
-  "Bills & Recharge":          { icon: "📱", image: UNS("1556742049-0cfed4f6a45d"), color: "from-indigo-500 to-blue-600",  colorDark: "bg-indigo-50 border-indigo-200" },
-  "Travel & Tourism":          { icon: "✈️", image: UNS("1488085061851-e6be41f0fe9a"), color: "from-sky-500 to-cyan-500",    colorDark: "bg-sky-50 border-sky-200" },
+  "Religious":                 { icon: "🛕", image: UNS("1609710228159-0fa9bd7c0827"), color: "from-amber-600 to-yellow-600", colorDark: "bg-primary/10 border-amber-200" },
+  "Bills & Recharge":          { icon: "📱", image: UNS("1556742049-0cfed4f6a45d"), color: "from-indigo-500 to-blue-600",  colorDark: "bg-primary/10 border-indigo-200" },
+  "Travel & Tourism":          { icon: "✈️", image: UNS("1488085061851-e6be41f0fe9a"), color: "from-sky-500 to-cyan-500",    colorDark: "bg-primary/10 border-sky-200" },
 };
 
 const DEFAULT_META = { icon: "🏪", image: UNS("1486406146926-c627a92ad1ab"), color: "from-primary to-blue-700", colorDark: "bg-primary/5 border-primary/20" };
@@ -1066,16 +1066,45 @@ function getBusinessImage(b: Business): string {
   return pool[hash % pool.length];
 }
 
-// ─── Tamil Nadu districts ─────────────────────────────────────────────────
 const TN_DISTRICTS = [
-  "Chennai", "Coimbatore", "Madurai", "Tiruchirappalli", "Salem",
-  "Tirunelveli", "Vellore", "Erode", "Thoothukudi", "Dindigul",
-  "Thanjavur", "Ranipet", "Sivaganga", "Virudhunagar", "Nagapattinam",
-  "Villupuram", "Kancheepuram", "Chengalpattu", "Tiruvannamalai",
-  "Cuddalore", "Kallakurichi", "Ariyalur", "Perambalur", "Karur",
-  "Namakkal", "The Nilgiris", "Krishnagiri", "Dharmapuri", "Tiruppur",
-  "Tiruvarur", "Pudukkottai", "Ramanathapuram", "Tenkasi", "Tirupattur",
-  "Mayiladuthurai", "Chengalpattu"
+  { en: "Ariyalur", ta: "அரியலூர்" },
+  { en: "Chengalpattu", ta: "செங்கல்பட்டு" },
+  { en: "Chennai", ta: "சென்னை" },
+  { en: "Coimbatore", ta: "கோயம்புத்தூர்" },
+  { en: "Cuddalore", ta: "கடலூர்" },
+  { en: "Dharmapuri", ta: "தர்மபுரி" },
+  { en: "Dindigul", ta: "திண்டுக்கல்" },
+  { en: "Erode", ta: "ஈரோடு" },
+  { en: "Kallakurichi", ta: "கள்ளக்குறிச்சி" },
+  { en: "Kanchipuram", ta: "காஞ்சிபுரம்" },
+  { en: "Kanyakumari", ta: "கன்னியாகுமரி" },
+  { en: "Karur", ta: "கரூர்" },
+  { en: "Krishnagiri", ta: "கிருஷ்ணகிரி" },
+  { en: "Madurai", ta: "மதுரை" },
+  { en: "Mayiladuthurai", ta: "மயிலாடுதுறை" },
+  { en: "Nagapattinam", ta: "நாகப்பட்டினம்" },
+  { en: "Namakkal", ta: "நாமக்கல்" },
+  { en: "Nilgiris", ta: "நீலகிரி" },
+  { en: "Perambalur", ta: "பெரம்பலூர்" },
+  { en: "Pudukkottai", ta: "புதுக்கோட்டை" },
+  { en: "Ramanathapuram", ta: "இராமநாதபுரம்" },
+  { en: "Ranipet", ta: "இராணிப்பேட்டை" },
+  { en: "Salem", ta: "சேலம்" },
+  { en: "Sivaganga", ta: "சிவகங்கை" },
+  { en: "Tenkasi", ta: "தென்காசி" },
+  { en: "Thanjavur", ta: "தஞ்சாவூர்" },
+  { en: "Theni", ta: "தேனி" },
+  { en: "Thoothukudi", ta: "தூத்துக்குடி" },
+  { en: "Tiruchirappalli", ta: "திருச்சிராப்பள்ளி" },
+  { en: "Tirunelveli", ta: "திருநெல்வேலி" },
+  { en: "Tirupathur", ta: "திருப்பத்தூர்" },
+  { en: "Tiruppur", ta: "திருப்பூர்" },
+  { en: "Tiruvallur", ta: "திருவள்ளூர்" },
+  { en: "Tiruvannamalai", ta: "திருவண்ணாமலை" },
+  { en: "Tiruvarur", ta: "திருவாரூர்" },
+  { en: "Vellore", ta: "வேலூர்" },
+  { en: "Viluppuram", ta: "விழுப்புரம்" },
+  { en: "Virudhunagar", ta: "விருதுநகர்" },
 ];
 
 const LIMIT = 12;
@@ -1375,19 +1404,19 @@ function BusinessesPage() {
           {/* Search bar */}
           <div className="flex gap-3 max-w-2xl">
             <div className="relative flex-1">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
               <input
                 id="business-search"
                 type="search"
                 value={localSearch}
                 onChange={e => setLocalSearch(e.target.value)}
                 placeholder={t("வணிகர் பெயர், விளக்கம், நகரம்...", "Business name, description, city...")}
-                className="w-full pl-10 pr-4 py-3 rounded-xl bg-white text-slate-800 placeholder:text-slate-400 text-sm font-sans focus:outline-none focus:ring-2 focus:ring-gold/50 shadow-lg"
+                className="input-base pl-12! text-sm font-sans focus:ring-2 focus:ring-primary/50"
               />
               {localSearch && (
                 <button
                   onClick={() => { setLocalSearch(""); navigate({ search: (p) => ({ ...p, search: undefined, page: 1 }) }); }}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -1395,7 +1424,7 @@ function BusinessesPage() {
             </div>
             <button
               onClick={() => setShowFilters(f => !f)}
-              className={`flex items-center gap-2 px-4 py-3 rounded-xl font-semibold text-sm transition shadow-lg border ${showFilters ? "bg-gold text-gold-foreground border-gold" : "bg-white/10 text-white hover:bg-white/20 border-white/10"}`}
+              className={`flex items-center gap-2 px-4 py-3 rounded-md font-semibold text-sm transition shadow-xs border ${showFilters ? "bg-gold text-gold-foreground border-gold" : "bg-primary/10 text-white hover:bg-primary/20 border-white/10"}`}
             >
               <Filter className="w-4 h-4" />
               {t("வடிகட்டு", "Filter")}
@@ -1404,24 +1433,24 @@ function BusinessesPage() {
 
           {/* District Filter Panel */}
           {showFilters && (
-            <div className="mt-4 p-4 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 max-w-2xl">
+            <div className="mt-4 p-4 bg-primary/10 backdrop-blur-sm rounded-md border border-white/20 max-w-2xl">
               <label className="text-white text-xs font-semibold mb-2 block">
                 {t("மாவட்டம் தேர்வு", "Select District")}
               </label>
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => navigate({ search: (p) => ({ ...p, district: undefined, page: 1 }) })}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition border ${!selectedDistrict ? "bg-gold text-gold-foreground border-gold" : "bg-white/10 text-white hover:bg-white/20 border-white/10"}`}
+                  className={`px-3 py-1.5 rounded-sm text-xs font-semibold transition border ${!selectedDistrict ? "bg-gold text-gold-foreground border-gold" : "bg-primary/10 text-white hover:bg-primary/20 border-white/10"}`}
                 >
                   {t("அனைத்தும்", "All Districts")}
                 </button>
                 {TN_DISTRICTS.map(d => (
                   <button
-                    key={d}
-                    onClick={() => navigate({ search: (p) => ({ ...p, district: d === selectedDistrict ? undefined : d, page: 1 }) })}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition border ${selectedDistrict === d ? "bg-gold text-gold-foreground border-gold" : "bg-white/10 text-white hover:bg-white/20 border-white/10"}`}
+                    key={d.en}
+                    onClick={() => navigate({ search: (p) => ({ ...p, district: d.en === selectedDistrict ? undefined : d.en, page: 1 }) })}
+                    className={`px-3 py-1.5 rounded-sm text-xs font-semibold transition border ${selectedDistrict === d.en ? "bg-gold text-gold-foreground border-gold" : "bg-primary/10 text-white hover:bg-primary/20 border-white/10"}`}
                   >
-                    {d}
+                    {d.ta} / {d.en}
                   </button>
                 ))}
               </div>
@@ -1430,7 +1459,7 @@ function BusinessesPage() {
 
           {/* Stats Cards Dashboard Component */}
           {stats && (
-            <div className="grid grid-cols-3 gap-3 sm:gap-6 mt-8 max-w-2xl bg-white/5 backdrop-blur-md border border-gold/15 hover:border-gold/30 rounded-2xl p-4 transition-all duration-300">
+            <div className="grid grid-cols-3 gap-3 sm:gap-6 mt-8 max-w-2xl bg-primary/5 backdrop-blur-md border border-gold/15 hover:border-gold/30 rounded-md p-4 transition-all duration-300">
               <div className="text-center sm:text-left">
                 <p className="text-xs text-white/60 font-semibold uppercase tracking-wider mb-1 font-Tamil">
                   {t("மொத்த வணிகங்கள்", "Total Businesses")}
@@ -1479,7 +1508,7 @@ function BusinessesPage() {
           {catLoading ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
               {Array.from({ length: 20 }).map((_, i) => (
-                <div key={i} className="rounded-2xl bg-slate-100 animate-pulse h-36" />
+                <div key={i} className="rounded-md bg-muted animate-pulse h-36" />
               ))}
             </div>
           ) : (
@@ -1491,7 +1520,7 @@ function BusinessesPage() {
                     key={category}
                     id={`category-${category.replace(/[^a-zA-Z0-9]/g, "-")}`}
                     onClick={() => selectCategory(category)}
-                    className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white hover:border-primary/30 hover:shadow-lg transition-all duration-300 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                    className="group relative overflow-hidden rounded-md border border-border bg-card hover:border-primary/30 hover:shadow-xs transition-all duration-300 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                   >
                     {/* Gradient bg */}
                     <div className={`absolute inset-0 bg-linear-to-br ${meta.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`} />
@@ -1510,15 +1539,15 @@ function BusinessesPage() {
 
                     {/* Text */}
                     <div className="p-3">
-                      <div className="font-semibold text-slate-800 text-xs sm:text-sm leading-tight group-hover:text-primary transition-colors">
+                      <div className="font-semibold text-foreground text-xs sm:text-sm leading-tight group-hover:text-primary transition-colors">
                         {category}
                       </div>
                       {count > 0 && (
-                        <div className="text-[10px] text-slate-400 mt-1">{count} {t("வணிகங்கள்", "businesses")}</div>
+                        <div className="text-[10px] text-muted-foreground mt-1">{count} {t("வணிகங்கள்", "businesses")}</div>
                       )}
                     </div>
 
-                    <ChevronRight className="absolute bottom-3 right-3 w-4 h-4 text-slate-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+                    <ChevronRight className="absolute bottom-3 right-3 w-4 h-4 text-muted-foreground group-hover:text-primary transition-all" />
                   </button>
                 );
               })}
@@ -1536,14 +1565,14 @@ function BusinessesPage() {
             onClick={clearCategory}
             className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition mb-6 group"
           >
-            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
+            <ArrowLeft className="w-4 h-4" />
             {t("அனைத்து பிரிவுகளும்", "All Categories")}
           </button>
 
           {/* Category header */}
           <div className="flex items-center gap-4 mb-6">
             <div
-              className={`w-14 h-14 rounded-2xl bg-linear-to-br ${getCategoryMeta(selectedCategory).color} flex items-center justify-center text-2xl shadow-md`}
+              className={`w-14 h-14 rounded-md bg-linear-to-br ${getCategoryMeta(selectedCategory).color} flex items-center justify-center text-2xl shadow-xs`}
               aria-hidden="true"
             >
               {getCategoryMeta(selectedCategory).icon}
@@ -1561,14 +1590,14 @@ function BusinessesPage() {
           {/* Subcategory pills */}
           {(subLoading || subcategories.length > 0) && (
             <div className="mb-8">
-              <h3 className="text-sm font-semibold text-slate-600 mb-3">
+              <h3 className="text-sm font-semibold text-muted-foreground mb-3">
                 {t("துணைப்பிரிவுகள்", "Subcategories")}
                 {subLoading && <Loader2 className="inline w-3 h-3 ml-2 animate-spin" />}
               </h3>
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => navigate({ search: (p) => ({ ...p, subCategory: undefined, page: 1 }) })}
-                  className={`px-4 py-2 rounded-full text-sm font-semibold border transition ${!selectedSubCategory ? "bg-primary text-white border-primary shadow-sm" : "bg-white text-slate-600 border-slate-200 hover:border-primary/40 hover:text-primary"}`}
+                  className={`px-4 py-2 rounded-full text-sm font-semibold border transition ${!selectedSubCategory ? "bg-primary text-white border-primary shadow-xs" : "bg-card text-muted-foreground border-border hover:border-primary/40 hover:text-primary"}`}
                 >
                   {t("அனைத்தும்", "All")}
                 </button>
@@ -1576,7 +1605,7 @@ function BusinessesPage() {
                   <button
                     key={sub}
                     onClick={() => selectSubCategory(sub)}
-                    className={`px-4 py-2 rounded-full text-sm font-semibold border transition ${selectedSubCategory === sub ? "bg-primary text-white border-primary shadow-sm" : "bg-white text-slate-600 border-slate-200 hover:border-primary/40 hover:text-primary"}`}
+                    className={`px-4 py-2 rounded-full text-sm font-semibold border transition ${selectedSubCategory === sub ? "bg-primary text-white border-primary shadow-xs" : "bg-card text-muted-foreground border-border hover:border-primary/40 hover:text-primary"}`}
                   >
                     {sub}
                   </button>
@@ -1594,17 +1623,17 @@ function BusinessesPage() {
                 </span>
               )}
             </div>
-            <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-1">
+            <div className="flex items-center gap-1 bg-muted rounded-sm p-1">
               <button
                 onClick={() => setViewMode("grid")}
-                className={`p-1.5 rounded-md transition ${viewMode === "grid" ? "bg-white shadow text-primary" : "text-slate-400 hover:text-slate-600"}`}
+                className={`p-1.5 rounded-md transition ${viewMode === "grid" ? "bg-card shadow text-primary" : "text-muted-foreground hover:text-muted-foreground"}`}
                 aria-label="Grid view"
               >
                 <Grid3x3 className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setViewMode("list")}
-                className={`p-1.5 rounded-md transition ${viewMode === "list" ? "bg-white shadow text-primary" : "text-slate-400 hover:text-slate-600"}`}
+                className={`p-1.5 rounded-md transition ${viewMode === "list" ? "bg-card shadow text-primary" : "text-muted-foreground hover:text-muted-foreground"}`}
                 aria-label="List view"
               >
                 <List className="w-4 h-4" />
@@ -1639,8 +1668,8 @@ function BusinessesPage() {
           
           {/* Matching categories & subcategories section */}
           {(matchingCats.length > 0 || matchingSubs.length > 0) && (
-            <div className="mb-8 p-5 bg-[#F3F6FC]/60 border border-slate-200/80 rounded-2xl shadow-xxs">
-              <h3 className="text-xs font-bold text-[#002B7F] uppercase tracking-wider mb-3">
+            <div className="mb-8 p-5 bg-surface-raised border border-border rounded-md shadow-xs">
+              <h3 className="text-xs font-bold text-primary uppercase tracking-wider mb-3">
                 {t("பொருந்தும் பிரிவுகள் & துணைப்பிரிவுகள்", "Matching Categories & Subcategories")}
               </h3>
               <div className="flex flex-wrap gap-2.5">
@@ -1657,7 +1686,7 @@ function BusinessesPage() {
                       });
                       setLocalSearch("");
                     }}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary/10 border border-primary/20 text-primary text-xs font-bold hover:bg-primary/20 transition cursor-pointer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-primary/10 border border-primary/20 text-primary text-xs font-bold hover:bg-primary/20 transition cursor-pointer"
                   >
                     <span>🏪</span>
                     <span>{c.category}</span>
@@ -1677,11 +1706,11 @@ function BusinessesPage() {
                       });
                       setLocalSearch("");
                     }}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold hover:bg-emerald-100 transition cursor-pointer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-primary/10 border border-emerald-200 text-emerald-700 text-xs font-semibold hover:bg-emerald-100 transition cursor-pointer"
                   >
                     <span>🏷️</span>
                     <span>{s.subCategory}</span>
-                    <span className="text-[10px] text-slate-455 font-normal">({s.category})</span>
+                    <span className="text-[10px] text-muted-foreground font-normal">({s.category})</span>
                   </button>
                 ))}
               </div>
@@ -1699,17 +1728,17 @@ function BusinessesPage() {
                   : `${total.toLocaleString()} ${t("வணிகங்கள் கண்டுபிடிக்கப்பட்டன", "businesses found")} "${searchText}"`}
               </p>
             </div>
-            <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-1">
+            <div className="flex items-center gap-1 bg-muted rounded-sm p-1">
               <button
                 onClick={() => setViewMode("grid")}
-                className={`p-1.5 rounded-md transition ${viewMode === "grid" ? "bg-white shadow text-primary" : "text-slate-400"}`}
+                className={`p-1.5 rounded-md transition ${viewMode === "grid" ? "bg-card shadow text-primary" : "text-muted-foreground"}`}
                 aria-label="Grid view"
               >
                 <Grid3x3 className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setViewMode("list")}
-                className={`p-1.5 rounded-md transition ${viewMode === "list" ? "bg-white shadow text-primary" : "text-slate-400"}`}
+                className={`p-1.5 rounded-md transition ${viewMode === "list" ? "bg-card shadow text-primary" : "text-muted-foreground"}`}
                 aria-label="List view"
               >
                 <List className="w-4 h-4" />
@@ -1757,7 +1786,7 @@ function BusinessList({
     return (
       <div className={viewMode === "grid" ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" : "space-y-4"}>
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="rounded-2xl bg-slate-100 animate-pulse h-60" />
+          <div key={i} className="rounded-md bg-muted animate-pulse h-60" />
         ))}
       </div>
     );
@@ -1767,7 +1796,7 @@ function BusinessList({
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
         <AlertCircle className="w-12 h-12 text-rose-400 mb-4" />
-        <h3 className="font-semibold text-slate-700 mb-1">{t("பிழை ஏற்பட்டது", "Something went wrong")}</h3>
+        <h3 className="font-semibold text-foreground mb-1">{t("பிழை ஏற்பட்டது", "Something went wrong")}</h3>
         <p className="text-sm text-muted-foreground max-w-sm">{error}</p>
       </div>
     );
@@ -1776,8 +1805,8 @@ function BusinessList({
   if (businesses.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
-        <Store className="w-16 h-16 text-slate-300 mb-4" />
-        <h3 className="font-semibold text-slate-700 mb-1">{t("வணிகங்கள் இல்லை", "No businesses found")}</h3>
+        <Store className="w-16 h-16 text-muted-foreground mb-4" />
+        <h3 className="font-semibold text-foreground mb-1">{t("வணிகங்கள் இல்லை", "No businesses found")}</h3>
         <p className="text-sm text-muted-foreground max-w-sm">
           {t("மற்றொரு பிரிவை அல்லது வேறு வார்த்தைகளை முயற்சிக்கவும்", "Try a different category or search term")}
         </p>
@@ -1815,10 +1844,10 @@ function BusinessGridCard({ business: b, t }: { business: Business; t: (ta: stri
       to="/business/$id"
       params={{ id: b._id }}
       id={`business-card-${b._id}`}
-      className="group block bg-white rounded-2xl border border-slate-200 overflow-hidden hover:border-primary/30 hover:shadow-xl transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+      className="group block bg-card rounded-md border border-border overflow-hidden hover:border-primary/30 hover:shadow-xl transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
     >
       {/* Image */}
-      <div className="relative h-44 overflow-hidden bg-slate-100">
+      <div className="relative h-44 overflow-hidden bg-muted">
         <img
           src={img}
           alt={b.name}
@@ -1837,7 +1866,7 @@ function BusinessGridCard({ business: b, t }: { business: Business; t: (ta: stri
 
         {/* Rating */}
         {b.avgRating && b.avgRating > 0 && (
-          <div className="absolute bottom-3 right-3 flex items-center gap-1 px-2 py-1 rounded-full bg-amber-500 text-white text-[10px] font-bold">
+          <div className="absolute bottom-3 right-3 flex items-center gap-1 px-2 py-1 rounded-full bg-primary text-white text-[10px] font-bold">
             <Star className="w-3 h-3 fill-current" />
             {b.avgRating.toFixed(1)}
           </div>
@@ -1846,7 +1875,7 @@ function BusinessGridCard({ business: b, t }: { business: Business; t: (ta: stri
 
       {/* Body */}
       <div className="p-4">
-        <h3 className="font-display font-semibold text-slate-800 text-sm sm:text-base leading-tight group-hover:text-primary transition-colors line-clamp-2">
+        <h3 className="font-display font-semibold text-foreground text-sm sm:text-base leading-tight group-hover:text-primary transition-colors line-clamp-2">
           {b.name}
         </h3>
 
@@ -1860,16 +1889,16 @@ function BusinessGridCard({ business: b, t }: { business: Business; t: (ta: stri
           <p className="mt-2 text-xs text-muted-foreground line-clamp-2 leading-relaxed">{b.description}</p>
         )}
 
-        <div className="mt-3 pt-3 border-t border-slate-100 space-y-1.5">
+        <div className="mt-3 pt-3 border-t border-border space-y-1.5">
           {(b.district || b.city) && (
-            <div className="flex items-center gap-1.5 text-xs text-slate-500">
-              <MapPin className="w-3.5 h-3.5 shrink-0 text-slate-400" />
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <MapPin className="w-3.5 h-3.5 shrink-0 text-muted-foreground" />
               <span className="truncate">{[b.city, b.district].filter(Boolean).join(", ")}</span>
             </div>
           )}
           {b.phone && (
-            <div className="flex items-center gap-1.5 text-xs text-slate-500">
-              <Phone className="w-3.5 h-3.5 shrink-0 text-slate-400" />
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <Phone className="w-3.5 h-3.5 shrink-0 text-muted-foreground" />
               <span>{b.phone}</span>
             </div>
           )}
@@ -1880,7 +1909,7 @@ function BusinessGridCard({ business: b, t }: { business: Business; t: (ta: stri
             {t("மேலும் அறிக", "View Details")} →
           </span>
           {b.listingCode && (
-            <span className="text-[9px] text-slate-300">{b.listingCode}</span>
+            <span className="text-[9px] text-muted-foreground">{b.listingCode}</span>
           )}
         </div>
       </div>
@@ -1898,10 +1927,10 @@ function BusinessListCard({ business: b, t }: { business: Business; t: (ta: stri
       to="/business/$id"
       params={{ id: b._id }}
       id={`business-list-${b._id}`}
-      className="group flex gap-4 bg-white rounded-2xl border border-slate-200 p-4 hover:border-primary/30 hover:shadow-lg transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+      className="group flex gap-4 bg-card rounded-md border border-border p-4 hover:border-primary/30 hover:shadow-xs transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
     >
       {/* Thumbnail */}
-      <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden bg-slate-100 shrink-0">
+      <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-md overflow-hidden bg-muted shrink-0">
         <img
           src={img}
           alt={b.name}
@@ -1915,16 +1944,16 @@ function BusinessListCard({ business: b, t }: { business: Business; t: (ta: stri
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
-            <h3 className="font-display font-semibold text-slate-800 group-hover:text-primary transition-colors truncate">
+            <h3 className="font-display font-semibold text-foreground group-hover:text-primary transition-colors truncate">
               {b.name}
             </h3>
             <div className="flex items-center gap-2 mt-0.5">
               {b.category && (
-                <span className="text-[10px] font-semibold text-slate-400">{b.category}</span>
+                <span className="text-[10px] font-semibold text-muted-foreground">{b.category}</span>
               )}
               {b.subCategory && (
                 <>
-                  <span className="text-slate-300">·</span>
+                  <span className="text-muted-foreground">·</span>
                   <span className="text-[10px] font-semibold text-primary/70">{b.subCategory}</span>
                 </>
               )}
@@ -1944,19 +1973,19 @@ function BusinessListCard({ business: b, t }: { business: Business; t: (ta: stri
 
         <div className="mt-2 flex flex-wrap gap-3">
           {(b.district || b.city) && (
-            <div className="flex items-center gap-1 text-xs text-slate-500">
+            <div className="flex items-center gap-1 text-xs text-muted-foreground">
               <MapPin className="w-3 h-3 shrink-0" />
               <span>{[b.city, b.district].filter(Boolean).join(", ")}</span>
             </div>
           )}
           {b.phone && (
-            <div className="flex items-center gap-1 text-xs text-slate-500">
+            <div className="flex items-center gap-1 text-xs text-muted-foreground">
               <Phone className="w-3 h-3 shrink-0" />
               <span>{b.phone}</span>
             </div>
           )}
           {b.email && (
-            <div className="sm:flex hidden items-center gap-1 text-xs text-slate-500">
+            <div className="sm:flex hidden items-center gap-1 text-xs text-muted-foreground">
               <Mail className="w-3 h-3 shrink-0" />
               <span className="truncate max-w-[150px]">{b.email}</span>
             </div>
@@ -1964,7 +1993,7 @@ function BusinessListCard({ business: b, t }: { business: Business; t: (ta: stri
         </div>
       </div>
 
-      <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0 self-center" />
+      <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-all shrink-0 self-center" />
     </Link>
   );
 }
@@ -1993,7 +2022,7 @@ function Pagination({
       <button
         onClick={() => onPage(page - 1)}
         disabled={page === 1}
-        className="flex items-center gap-1 px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition"
+        className="flex items-center gap-1 px-3 py-2 rounded-sm border border-border text-sm text-muted-foreground hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed transition"
         aria-label="Previous page"
       >
         <ChevronLeft className="w-4 h-4" />
@@ -2002,8 +2031,8 @@ function Pagination({
 
       {page > 4 && totalPages > 7 && (
         <>
-          <button onClick={() => onPage(1)} className="px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-600 hover:bg-slate-50 transition">1</button>
-          <span className="text-slate-400 text-sm">…</span>
+          <button onClick={() => onPage(1)} className="px-3 py-2 rounded-sm border border-border text-sm text-muted-foreground hover:bg-muted transition">1</button>
+          <span className="text-muted-foreground text-sm">…</span>
         </>
       )}
 
@@ -2011,7 +2040,7 @@ function Pagination({
         <button
           key={p}
           onClick={() => onPage(p)}
-          className={`px-3 py-2 rounded-lg border text-sm font-semibold transition ${p === page ? "bg-primary text-white border-primary shadow-sm" : "border-slate-200 text-slate-600 hover:bg-slate-50"}`}
+          className={`px-3 py-2 rounded-sm border text-sm font-semibold transition ${p === page ? "bg-primary text-white border-primary shadow-xs" : "border-border text-muted-foreground hover:bg-muted"}`}
         >
           {p}
         </button>
@@ -2019,15 +2048,15 @@ function Pagination({
 
       {page < totalPages - 3 && totalPages > 7 && (
         <>
-          <span className="text-slate-400 text-sm">…</span>
-          <button onClick={() => onPage(totalPages)} className="px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-600 hover:bg-slate-50 transition">{totalPages}</button>
+          <span className="text-muted-foreground text-sm">…</span>
+          <button onClick={() => onPage(totalPages)} className="px-3 py-2 rounded-sm border border-border text-sm text-muted-foreground hover:bg-muted transition">{totalPages}</button>
         </>
       )}
 
       <button
         onClick={() => onPage(page + 1)}
         disabled={page === totalPages}
-        className="flex items-center gap-1 px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition"
+        className="flex items-center gap-1 px-3 py-2 rounded-sm border border-border text-sm text-muted-foreground hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed transition"
         aria-label="Next page"
       >
         {t("அடுத்த", "Next")}

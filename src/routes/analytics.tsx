@@ -40,8 +40,8 @@ export const growthData: MonthData[] = [
 export type WingMetric = { id: string; nameEn: string; nameTa: string; count: number; colorClass: string; percentage: number };
 export const wingMetrics: WingMetric[] = [
   { id: "professional", nameEn: "Professional Services", nameTa: "தொழில்முறைப் பிரிவுகள்", count: 38450, colorClass: "bg-violet-500", percentage: 31 },
-  { id: "agricultural", nameEn: "Agricultural & Food", nameTa: "விவசாயம் & உணவு", count: 24120, colorClass: "bg-emerald-500", percentage: 19 },
-  { id: "industrial", nameEn: "Industrial & Manufacturing", nameTa: "தொழில் & வர்த்தகம்", count: 31900, colorClass: "bg-amber-500", percentage: 26 },
+  { id: "agricultural", nameEn: "Agricultural & Food", nameTa: "விவசாயம் & உணவு", count: 24120, colorClass: "bg-primary/100", percentage: 19 },
+  { id: "industrial", nameEn: "Industrial & Manufacturing", nameTa: "தொழில் & வர்த்தகம்", count: 31900, colorClass: "bg-primary/100", percentage: 26 },
   { id: "public", nameEn: "Public & General Services", nameTa: "பொது & சமூகப் பிரிவுகள்", count: 30090, colorClass: "bg-blue-500", percentage: 24 },
 ];
 
@@ -130,16 +130,16 @@ function AnalyticsDashboard() {
   }, [points, linePath]);
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-slate-50/40">
+    <div className="min-h-screen overflow-x-hidden bg-background">
       
       {/* Header Profile Section */}
-      <section className="border-b border-slate-200/60 bg-white">
+      <section className="border-b border-border bg-card">
         <div className="max-w-7xl mx-auto px-5 sm:px-6 py-10 md:py-12 w-full">
           <SectionLabel>{t("அசோசியேஷன் புள்ளிவிவரம்", "ASSOCIATION INTEL & STATS")}</SectionLabel>
-          <h1 className="mt-3 font-display text-2xl md:text-4.5xl font-bold text-slate-900 leading-tight">
+          <h1 className="mt-3 font-display text-2xl md:text-4.5xl font-bold text-ink leading-tight">
             {t("மாநில அளவிலான வளர்ச்சி மற்றும் பகுப்பாய்வு", "Statewide Growth & Analytical Breakdown")}
           </h1>
-          <p className="mt-3 text-xs md:text-sm text-slate-500 max-w-2xl font-tamil leading-relaxed">
+          <p className="mt-3 text-xs md:text-sm text-muted-foreground max-w-2xl font-tamil leading-relaxed">
             {t(
               "உறுப்பினர் சேர்க்கை, 34 தனிப்பிரிவுகள், 38 மாவட்டங்கள் மற்றும் வணிகக் கடன் ஒதுக்கீடுகளை பகுப்பாய்வு செய்யும் அதிகாரப்பூர்வ கண்காணிப்பகம்.",
               "The official dashboard providing live statistical transparency for member registrations, specialized departments, and business credit capital distribution across Tamil Nadu."
@@ -147,7 +147,7 @@ function AnalyticsDashboard() {
           </p>
 
           {/* Sub-Header Tab Switcher */}
-          <div className="flex border-b border-slate-200 mt-8" role="tablist" aria-label="Analytics Navigation">
+          <div className="flex border-b border-border mt-8" role="tablist" aria-label="Analytics Navigation">
             {[
               { id: "overview", ta: "பொது விவரங்கள்", en: "Overview" },
               { id: "regional", ta: "மண்டல வாரியாக", en: "Regional Layout" },
@@ -161,7 +161,7 @@ function AnalyticsDashboard() {
                   aria-selected={active}
                   onClick={() => setActiveTab(tab.id as any)}
                   className={`pb-4 px-4 sm:px-6 font-display text-xs sm:text-sm font-bold transition-all relative cursor-pointer group ${
-                    active ? "text-primary font-extrabold" : "text-slate-400 hover:text-slate-600"
+                    active ? "text-primary font-extrabold" : "text-muted-foreground hover:text-muted-foreground"
                   }`}
                 >
                   <span className="relative z-10">{language === "ta" ? tab.ta : tab.en}</span>
@@ -206,18 +206,18 @@ function AnalyticsDashboard() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 
                 {/* Metric 1 */}
-                <div className="relative overflow-hidden card-base p-6 bg-linear-to-br from-white to-blue-50/10 border border-slate-200/80 shadow-sm hover:shadow-md hover:border-primary/20 hover:-translate-y-0.5 transition-all duration-300">
+                <div className="relative overflow-hidden card-base p-6 bg-linear-to-br from-white to-blue-50/10 border border-border shadow-xs hover:shadow-xs hover:border-primary/20 hover:-translate-y-0.5 transition-all duration-300">
                   <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full blur-xl -mr-6 -mt-6 pointer-events-none" />
                   <div className="flex justify-between items-start">
                     <div>
-                      <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 font-sans">
+                      <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground font-sans">
                         {t("பதிவுசெய்த உறுப்பினர்கள்", "TOTAL ACTIVE MEMBERS")}
                       </div>
-                      <div className="text-3xl font-extrabold text-slate-800 mt-2 tracking-tight tabular-nums">
+                      <div className="text-3xl font-extrabold text-foreground mt-2 tracking-tight tabular-nums">
                         1,24,560
                       </div>
                     </div>
-                    <div className="p-2 bg-primary/10 text-primary rounded-xl shrink-0"><Users className="w-5 h-5" /></div>
+                    <div className="p-2 bg-primary/10 text-primary rounded-md shrink-0"><Users className="w-5 h-5" /></div>
                   </div>
                   <div className="flex items-center gap-1 mt-4 text-xs font-semibold text-emerald-600">
                     <ArrowUpRight className="w-4 h-4" />
@@ -226,18 +226,18 @@ function AnalyticsDashboard() {
                 </div>
 
                 {/* Metric 2 */}
-                <div className="relative overflow-hidden card-base p-6 bg-linear-to-br from-white to-emerald-50/10 border border-slate-200/80 shadow-sm hover:shadow-md hover:border-emerald-500/20 hover:-translate-y-0.5 transition-all duration-300">
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full blur-xl -mr-6 -mt-6 pointer-events-none" />
+                <div className="relative overflow-hidden card-base p-6 bg-linear-to-br from-white to-emerald-50/10 border border-border shadow-xs hover:shadow-xs hover:border-emerald-500/20 hover:-translate-y-0.5 transition-all duration-300">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-primary/100/5 rounded-full blur-xl -mr-6 -mt-6 pointer-events-none" />
                   <div className="flex justify-between items-start">
                     <div>
-                      <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 font-sans">
+                      <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground font-sans">
                         {t("வழங்கப்பட்ட கடனுதவி", "CREDIT DISBURSED")}
                       </div>
-                      <div className="text-3xl font-extrabold text-slate-800 mt-2 tracking-tight tabular-nums">
+                      <div className="text-3xl font-extrabold text-foreground mt-2 tracking-tight tabular-nums">
                         ₹8.40 Cr
                       </div>
                     </div>
-                    <div className="p-2 bg-emerald-500/10 text-emerald-600 rounded-xl shrink-0"><Award className="w-5 h-5" /></div>
+                    <div className="p-2 bg-primary/100/10 text-emerald-600 rounded-md shrink-0"><Award className="w-5 h-5" /></div>
                   </div>
                   <div className="flex items-center gap-1 mt-4 text-xs font-semibold text-emerald-600">
                     <CheckCircle2 className="w-4 h-4" />
@@ -246,18 +246,18 @@ function AnalyticsDashboard() {
                 </div>
 
                 {/* Metric 3 */}
-                <div className="relative overflow-hidden card-base p-6 bg-linear-to-br from-white to-amber-50/10 border border-slate-200/80 shadow-sm hover:shadow-md hover:border-amber-500/20 hover:-translate-y-0.5 transition-all duration-300">
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-full blur-xl -mr-6 -mt-6 pointer-events-none" />
+                <div className="relative overflow-hidden card-base p-6 bg-linear-to-br from-white to-amber-50/10 border border-border shadow-xs hover:shadow-xs hover:border-amber-500/20 hover:-translate-y-0.5 transition-all duration-300">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-primary/100/5 rounded-full blur-xl -mr-6 -mt-6 pointer-events-none" />
                   <div className="flex justify-between items-start">
                     <div>
-                      <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 font-sans">
+                      <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground font-sans">
                         {t("வட்டி இல்லா வணிகக் கடன்", "0% INTEREST CAPITAL")}
                       </div>
-                      <div className="text-3xl font-extrabold text-slate-800 mt-2 tracking-tight tabular-nums">
+                      <div className="text-3xl font-extrabold text-foreground mt-2 tracking-tight tabular-nums">
                         ₹12.50 Cr
                       </div>
                     </div>
-                    <div className="p-2 bg-amber-500/10 text-amber-600 rounded-xl shrink-0"><Coins className="w-5 h-5" /></div>
+                    <div className="p-2 bg-primary/100/10 text-amber-600 rounded-md shrink-0"><Coins className="w-5 h-5" /></div>
                   </div>
                   <div className="flex items-center gap-1 mt-4 text-xs font-semibold text-primary">
                     <ArrowUpRight className="w-4 h-4" />
@@ -266,20 +266,20 @@ function AnalyticsDashboard() {
                 </div>
 
                 {/* Metric 4 */}
-                <div className="relative overflow-hidden card-base p-6 bg-linear-to-br from-white to-indigo-50/10 border border-slate-200/80 shadow-sm hover:shadow-md hover:border-indigo-500/20 hover:-translate-y-0.5 transition-all duration-300">
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/5 rounded-full blur-xl -mr-6 -mt-6 pointer-events-none" />
+                <div className="relative overflow-hidden card-base p-6 bg-linear-to-br from-white to-indigo-50/10 border border-border shadow-xs hover:shadow-xs hover:border-indigo-500/20 hover:-translate-y-0.5 transition-all duration-300">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-primary/100/5 rounded-full blur-xl -mr-6 -mt-6 pointer-events-none" />
                   <div className="flex justify-between items-start">
                     <div>
-                      <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 font-sans">
+                      <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground font-sans">
                         {t("மண்டலப் பரப்பளவு", "DISTRICT FOOTPRINT")}
                       </div>
-                      <div className="text-3xl font-extrabold text-slate-800 mt-2 tracking-tight tabular-nums">
+                      <div className="text-3xl font-extrabold text-foreground mt-2 tracking-tight tabular-nums">
                         38 / 38
                       </div>
                     </div>
-                    <div className="p-2 bg-indigo-500/10 text-indigo-600 rounded-xl shrink-0"><Globe className="w-5 h-5" /></div>
+                    <div className="p-2 bg-primary/100/10 text-indigo-600 rounded-md shrink-0"><Globe className="w-5 h-5" /></div>
                   </div>
-                  <div className="flex items-center gap-1 mt-4 text-xs font-semibold text-slate-500">
+                  <div className="flex items-center gap-1 mt-4 text-xs font-semibold text-muted-foreground">
                     <MapPin className="w-4 h-4 text-indigo-500" />
                     <span>100% {t("மாநில அளவிலான பரப்பு", "state coverage")}</span>
                   </div>
@@ -287,24 +287,24 @@ function AnalyticsDashboard() {
               </div>
 
               {/* Hardware Accelerated SVG Line Chart (Member Growth Trends) */}
-              <div className="card-base p-6 bg-white border border-slate-200/80 shadow-sm">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
+              <div className="card-base p-6 bg-card border border-border shadow-xs">
+                <div className="flex items-center justify-between border-b border-border pb-4 mb-6">
                   <div>
-                    <h3 className="font-display font-bold text-base text-slate-800 flex items-center gap-2">
+                    <h3 className="font-display font-bold text-base text-foreground flex items-center gap-2">
                       <TrendingUp className="w-4 h-4 text-primary animate-pulse" />
                       {t("உறுப்பினர் சேர்க்கை வளர்ச்சி வரைபடம்", "Membership Growth Over Time (1 Year)")}
                     </h3>
-                    <p className="text-[11px] text-slate-400 font-tamil mt-1">
+                    <p className="text-[11px] text-muted-foreground font-tamil mt-1">
                       {t("2025 மே முதல் 2026 ஏப்ரல் வரையிலான மாதாந்திர பதிவு விவரங்கள்.", "Historical compilation of monthly active registered trader counts.")}
                     </p>
                   </div>
-                  <span className="text-[10px] bg-slate-100 text-slate-600 font-bold px-3 py-1 rounded-full uppercase">
+                  <span className="text-[10px] bg-muted text-muted-foreground font-bold px-3 py-1 rounded-full uppercase">
                     12 MONTH COMPILATION
                   </span>
                 </div>
 
                 {/* Custom Responsive SVG Chart Canvas */}
-                <div className="relative pt-2 pb-1 bg-linear-to-b from-slate-50/50 to-white rounded-xl border border-slate-100 shadow-inner overflow-x-auto select-none">
+                <div className="relative pt-2 pb-1 bg-linear-to-b from-slate-50/50 to-white rounded-md border border-border shadow-inner overflow-x-auto select-none">
                   <svg 
                     viewBox={`0 0 ${chartWidth} ${chartHeight}`} 
                     className="min-w-[640px] w-full h-[220px]"
@@ -431,19 +431,19 @@ function AnalyticsDashboard() {
                         initial={{ opacity: 0, scale: 0.95, y: -5 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: -5 }}
-                        className="absolute bg-slate-900 text-white rounded-xl p-3 shadow-lg border border-slate-800 pointer-events-none text-xs space-y-1"
+                        className="absolute bg-card text-foreground rounded-md p-3 shadow-sm border border-border pointer-events-none text-xs space-y-1"
                         style={{
                           left: `${Math.min(Math.max((hoveredIndex / (growthData.length - 1)) * 85 + 5, 10), 80)}%`,
                           top: "24px"
                         }}
                       >
-                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                        <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
                           {language === "ta" ? hoveredPoint.labelTa : hoveredPoint.month}
                         </div>
-                        <div className="font-mono text-sm font-black text-gold">
+                        <div className="font-mono text-sm font-black text-primary">
                           {hoveredPoint.members.toLocaleString()} {language === "ta" ? "வணிகர்கள்" : "Traders"}
                         </div>
-                        <div className="text-[9px] text-emerald-400 font-semibold flex items-center gap-0.5 mt-1 font-sans">
+                        <div className="text-[9px] text-emerald-600 font-semibold flex items-center gap-0.5 mt-1 font-sans">
                           <ArrowUpRight className="w-3 h-3" />
                           <span>+{(hoveredIndex > 0 ? ((hoveredPoint.members - growthData[hoveredIndex - 1].members) / growthData[hoveredIndex - 1].members * 100).toFixed(1) : "4.2")}% MoM</span>
                         </div>
@@ -467,33 +467,33 @@ function AnalyticsDashboard() {
             >
               
               {/* Leaderboard Table (Left 7 Cols) */}
-              <div className="lg:col-span-7 card-base p-5 md:p-6 bg-white border border-slate-200/80 shadow-sm space-y-4">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="lg:col-span-7 card-base p-5 md:p-6 bg-card border border-border shadow-xs space-y-4">
+                <div className="flex items-center justify-between border-b border-border pb-3">
                   <div>
-                    <h3 className="font-display font-bold text-base text-slate-800">
+                    <h3 className="font-display font-bold text-base text-foreground">
                       {t("மாவட்ட வாரியான முன்னணி அட்டவணை", "Active Districts Coverage Leaderboard")}
                     </h3>
-                    <p className="text-[11px] text-slate-400 mt-1 font-tamil">
+                    <p className="text-[11px] text-muted-foreground mt-1 font-tamil">
                       {t("மாவட்ட வாரியாக பதிவு செய்த உறுப்பினர்கள் மற்றும் கோரப்பட்ட நலத்திட்டங்கள்.", "Sort districts by member counts or active emergency aid requests.")}
                     </p>
                   </div>
-                  <span className="text-[10px] font-bold bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full uppercase">
+                  <span className="text-[10px] font-bold bg-primary/10 text-indigo-700 px-3 py-1 rounded-full uppercase">
                     DISTRICT RANKING
                   </span>
                 </div>
 
                 {/* Sort Controls */}
-                <div className="flex gap-2 text-xxs font-bold uppercase tracking-wider text-slate-500">
+                <div className="flex gap-2 text-xxs font-bold uppercase tracking-wider text-muted-foreground">
                   <button 
                     onClick={() => toggleSort("count")}
-                    className={`px-3 py-1.5 border rounded-lg flex items-center gap-1 transition-all cursor-pointer ${sortField === "count" ? "bg-primary border-primary text-white" : "bg-white border-slate-200 hover:bg-slate-50"}`}
+                    className={`px-3 py-1.5 border rounded-sm flex items-center gap-1 transition-all cursor-pointer ${sortField === "count" ? "bg-primary border-primary text-white" : "bg-card border-border hover:bg-muted"}`}
                   >
                     <span>{t("உறுப்பினர்கள்", "Traders")}</span>
                     <ArrowUpDown className="w-3 h-3" />
                   </button>
                   <button 
                     onClick={() => toggleSort("claims")}
-                    className={`px-3 py-1.5 border rounded-lg flex items-center gap-1 transition-all cursor-pointer ${sortField === "claims" ? "bg-primary border-primary text-white" : "bg-white border-slate-200 hover:bg-slate-50"}`}
+                    className={`px-3 py-1.5 border rounded-sm flex items-center gap-1 transition-all cursor-pointer ${sortField === "claims" ? "bg-primary border-primary text-white" : "bg-card border-border hover:bg-muted"}`}
                   >
                     <span>{t("கோரிக்கைகள்", "Claims")}</span>
                     <ArrowUpDown className="w-3 h-3" />
@@ -501,27 +501,27 @@ function AnalyticsDashboard() {
                 </div>
 
                 {/* Desktop Table */}
-                <div className="hidden md:block overflow-x-auto rounded-xl border border-slate-100">
+                <div className="hidden md:block overflow-x-auto rounded-md border border-border">
                   <table className="w-full text-left border-collapse" aria-label="District Stats Table">
                     <thead>
-                      <tr className="bg-slate-50 border-b border-slate-100">
-                        <th className="px-4 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wide">{t("மாவட்டம்", "District")}</th>
-                        <th className="px-4 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wide">{t("மண்டலம்", "Zone")}</th>
-                        <th className="px-4 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wide text-right">{t("வியாபாரிகள்", "Members")}</th>
-                        <th className="px-4 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wide text-right">{t("கோரிக்கைகள்", "Claims")}</th>
+                      <tr className="bg-muted border-b border-border">
+                        <th className="px-4 py-3.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide">{t("மாவட்டம்", "District")}</th>
+                        <th className="px-4 py-3.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide">{t("மண்டலம்", "Zone")}</th>
+                        <th className="px-4 py-3.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide text-right">{t("வியாபாரிகள்", "Members")}</th>
+                        <th className="px-4 py-3.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide text-right">{t("கோரிக்கைகள்", "Claims")}</th>
                       </tr>
                     </thead>
                     <tbody>
                       {sortedDistricts.map((dist, idx) => (
-                        <tr key={dist.nameEn} className="border-b border-slate-100 hover:bg-slate-50/60 transition text-slate-700">
-                          <td className="px-4 py-3.5 text-xs font-bold text-slate-800">
-                            <span className="inline-block w-4 text-[10px] text-slate-400 font-mono">{idx + 1}.</span>
+                        <tr key={dist.nameEn} className="border-b border-border hover:bg-muted/60 transition text-foreground">
+                          <td className="px-4 py-3.5 text-xs font-bold text-foreground">
+                            <span className="inline-block w-4 text-[10px] text-muted-foreground font-mono">{idx + 1}.</span>
                             {language === "ta" ? dist.nameTa : dist.nameEn}
                           </td>
-                          <td className="px-4 py-3.5 text-[10px] uppercase font-bold text-slate-400">{dist.zone}</td>
-                          <td className="px-4 py-3.5 text-xs font-bold font-mono text-slate-800 text-right tabular-nums">{dist.count.toLocaleString()}</td>
+                          <td className="px-4 py-3.5 text-[10px] uppercase font-bold text-muted-foreground">{dist.zone}</td>
+                          <td className="px-4 py-3.5 text-xs font-bold font-mono text-foreground text-right tabular-nums">{dist.count.toLocaleString()}</td>
                           <td className="px-4 py-3.5 text-xs font-bold font-mono text-right text-indigo-600 tabular-nums">
-                            {dist.claims} <span className="text-[10px] font-normal text-slate-400">({dist.ratio})</span>
+                            {dist.claims} <span className="text-[10px] font-normal text-muted-foreground">({dist.ratio})</span>
                           </td>
                         </tr>
                       ))}
@@ -532,26 +532,26 @@ function AnalyticsDashboard() {
                 {/* Mobile Card View */}
                 <div className="md:hidden space-y-3">
                   {sortedDistricts.map((dist, idx) => (
-                    <div key={dist.nameEn} className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+                    <div key={dist.nameEn} className="bg-card rounded-md border border-border p-4 shadow-xs">
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-2">
                           <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center">
                             {idx + 1}
                           </span>
-                          <span className="text-sm font-bold text-slate-800">
+                          <span className="text-sm font-bold text-foreground">
                             {language === "ta" ? dist.nameTa : dist.nameEn}
                           </span>
                         </div>
-                        <span className="text-[10px] uppercase font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded">
+                        <span className="text-[10px] uppercase font-bold text-muted-foreground bg-muted px-2 py-1 rounded">
                           {dist.zone}
                         </span>
                       </div>
                       <div className="grid grid-cols-2 gap-3">
-                        <div className="bg-slate-50 rounded-lg p-3">
-                          <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">{t("வியாபாரிகள்", "Members")}</div>
-                          <div className="text-sm font-bold font-mono text-slate-800 mt-1 tabular-nums">{dist.count.toLocaleString()}</div>
+                        <div className="bg-muted rounded-sm p-3">
+                          <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">{t("வியாபாரிகள்", "Members")}</div>
+                          <div className="text-sm font-bold font-mono text-foreground mt-1 tabular-nums">{dist.count.toLocaleString()}</div>
                         </div>
-                        <div className="bg-indigo-50 rounded-lg p-3">
+                        <div className="bg-primary/10 rounded-sm p-3">
                           <div className="text-[10px] uppercase tracking-wider text-indigo-400 font-semibold">{t("கோரிக்கைகள்", "Claims")}</div>
                           <div className="text-sm font-bold font-mono text-indigo-700 mt-1 tabular-nums">
                             {dist.claims} <span className="text-[10px] font-normal text-indigo-400">({dist.ratio})</span>
@@ -564,13 +564,13 @@ function AnalyticsDashboard() {
               </div>
 
               {/* Wing Distribution Chart (Right 5 Cols) */}
-              <div className="lg:col-span-5 card-base p-5 md:p-6 bg-white border border-slate-200/80 shadow-sm space-y-5">
-                <div className="border-b border-slate-100 pb-3">
-                  <h3 className="font-display font-bold text-base text-slate-800 flex items-center gap-2">
+              <div className="lg:col-span-5 card-base p-5 md:p-6 bg-card border border-border shadow-xs space-y-5">
+                <div className="border-b border-border pb-3">
+                  <h3 className="font-display font-bold text-base text-foreground flex items-center gap-2">
                     <BarChart3 className="w-4 h-4 text-primary animate-pulse" />
                     {t("துறை வாரியான பகிர்வு", "Organizational Wings Distribution")}
                   </h3>
-                  <p className="text-[11px] text-slate-400 mt-1 font-tamil">
+                  <p className="text-[11px] text-muted-foreground mt-1 font-tamil">
                     {t("4 சேவைப் பிரிவுகளின் கீழ் 34 உத்தியோகபூர்வ பிரிவுகளின் உறுப்பினர் விகிதம்.", "Member ratio distribution across the 4 main service departments.")}
                   </p>
                 </div>
@@ -579,17 +579,17 @@ function AnalyticsDashboard() {
                   {wingMetrics.map((wing) => (
                     <div key={wing.id} className="space-y-1.5">
                       <div className="flex justify-between items-baseline text-xs">
-                        <span className="font-bold text-slate-700">
+                        <span className="font-bold text-foreground">
                           {language === "ta" ? wing.nameTa : wing.nameEn}
                         </span>
                         <div className="flex gap-2 items-center font-mono">
-                          <span className="font-bold text-slate-900">{wing.count.toLocaleString()}</span>
-                          <span className="text-[10px] text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded font-semibold">{wing.percentage}%</span>
+                          <span className="font-bold text-ink">{wing.count.toLocaleString()}</span>
+                          <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded font-semibold">{wing.percentage}%</span>
                         </div>
                       </div>
                       
                       {/* Interactive visual progress bar */}
-                      <div className="w-full bg-slate-100 rounded-full h-3.5 overflow-hidden">
+                      <div className="w-full bg-muted rounded-full h-3.5 overflow-hidden">
                         <motion.div 
                           initial={{ width: 0 }}
                           animate={{ width: `${wing.percentage}%` }}
@@ -597,7 +597,7 @@ function AnalyticsDashboard() {
                           className={`h-full rounded-full ${wing.colorClass} shadow-xs relative`}
                         >
                           {/* Inner glowing accent stripe */}
-                          <div className="absolute inset-0 bg-white/10" />
+                          <div className="absolute inset-0 bg-primary/10" />
                         </motion.div>
                       </div>
                     </div>
@@ -605,9 +605,9 @@ function AnalyticsDashboard() {
                 </div>
 
                 {/* Additional Statistics Card */}
-                <div className="bg-primary/5 rounded-2xl p-4 border border-primary/10 text-xs text-primary leading-relaxed space-y-1">
+                <div className="bg-primary/5 rounded-md p-4 border border-primary/10 text-xs text-primary leading-relaxed space-y-1">
                   <p className="font-bold">Total Wings: 34 Sub-Divisions</p>
-                  <p className="text-slate-500 font-tamil leading-relaxed">
+                  <p className="text-muted-foreground font-tamil leading-relaxed">
                     ஒவ்வொரு பிரிவிற்கும் தனித்தனியாக 3 அதிகாரிகள் (தலைவர், செயலாளர், பொருளாளர்) தேர்ந்தெடுக்கப்பட்டு மாவட்ட வாரியாக செயல்படுகின்றனர்.
                   </p>
                 </div>
@@ -629,13 +629,13 @@ function AnalyticsDashboard() {
             >
               
               {/* SVG Donut Chart (Left 5 Cols) */}
-              <div className="lg:col-span-5 card-base p-5 md:p-6 bg-white border border-slate-200/80 shadow-sm space-y-5">
-                <div className="border-b border-slate-100 pb-3">
-                  <h3 className="font-display font-bold text-base text-slate-800 flex items-center gap-2">
+              <div className="lg:col-span-5 card-base p-5 md:p-6 bg-card border border-border shadow-xs space-y-5">
+                <div className="border-b border-border pb-3">
+                  <h3 className="font-display font-bold text-base text-foreground flex items-center gap-2">
                     <PieIcon className="w-4 h-4 text-primary animate-pulse" />
                     {t("கடன் விநியோகப் பகிர்வு", "Loan Portfolio Distribution (Donut Chart)")}
                   </h3>
-                  <p className="text-[11px] text-slate-400 mt-1 font-tamil">
+                  <p className="text-[11px] text-muted-foreground mt-1 font-tamil">
                     {t("₹12.5 கோடி மொத்த வணிகக் கடன் ஒதுக்கீட்டின் விநியோக விகிதம்.", "Breakdown of ₹12.5 Crore credit capital distributed to registered traders.")}
                   </p>
                 </div>
@@ -662,23 +662,23 @@ function AnalyticsDashboard() {
                   </svg>
                   {/* Centered label */}
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-[10px] font-black uppercase text-slate-400 font-sans tracking-wide">TOTAL LOANS</span>
-                    <span className="text-sm font-black text-slate-800 font-mono">₹12.50 Cr</span>
+                    <span className="text-[10px] font-black uppercase text-muted-foreground font-sans tracking-wide">TOTAL LOANS</span>
+                    <span className="text-sm font-black text-foreground font-mono">₹12.50 Cr</span>
                   </div>
                 </div>
 
                 {/* Legends List */}
                 <div className="w-full grid grid-cols-1 gap-2 pt-2 text-xs">
                   {loanDistribution.map((seg, idx) => (
-                    <div key={idx} className="flex justify-between items-center bg-slate-50/50 hover:bg-slate-50 border border-slate-100 p-2.5 rounded-xl transition">
+                    <div key={idx} className="flex justify-between items-center bg-background hover:bg-muted border border-border p-2.5 rounded-md transition">
                       <div className="flex items-center gap-2">
                         <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: seg.color }} />
-                        <span className="font-bold text-slate-700">
+                        <span className="font-bold text-foreground">
                           {language === "ta" ? seg.nameTa : seg.nameEn}
                         </span>
                       </div>
-                      <div className="font-mono font-bold text-slate-800">
-                        {seg.amount} <span className="text-[10px] text-slate-400 font-normal">({seg.percentage}%)</span>
+                      <div className="font-mono font-bold text-foreground">
+                        {seg.amount} <span className="text-[10px] text-muted-foreground font-normal">({seg.percentage}%)</span>
                       </div>
                     </div>
                   ))}
@@ -687,32 +687,32 @@ function AnalyticsDashboard() {
               </div>
 
               {/* Credit Scheme Information Board (Right 7 Cols) */}
-              <div className="lg:col-span-7 card-base p-5 md:p-6 bg-white border border-slate-200/80 shadow-sm space-y-6">
-                <div className="border-b border-slate-100 pb-3">
-                  <h3 className="font-display font-bold text-base text-slate-800 flex items-center gap-2">
+              <div className="lg:col-span-7 card-base p-5 md:p-6 bg-card border border-border shadow-xs space-y-6">
+                <div className="border-b border-border pb-3">
+                  <h3 className="font-display font-bold text-base text-foreground flex items-center gap-2">
                     <Coins className="w-4 h-4 text-emerald-600" />
                     {t("வட்டியற்ற கடனுதவி பகுப்பாய்வு", "0% Interest Credit Scheme Statistics")}
                   </h3>
-                  <p className="text-[11px] text-slate-400 mt-1 font-tamil">
+                  <p className="text-[11px] text-muted-foreground mt-1 font-tamil">
                     {t("Proprietorships, Freelancers, மற்றும் கூட்டு வியாபாரிகளுக்கான சிறப்பு மானியக் கடன்.", "Analytical report on capital distribution for subsidized business loans.")}
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Stat Card 1 */}
-                  <div className="bg-slate-50 border border-slate-150 p-4 rounded-xl space-y-1">
-                    <div className="text-[10px] font-black uppercase text-slate-400 font-sans tracking-wide">BUSINESS ASSISTANCE CAP</div>
-                    <div className="text-lg font-black text-slate-800">₹25,00,000</div>
-                    <p className="text-[10px] text-slate-500 font-tamil leading-relaxed">
+                  <div className="bg-muted border border-border p-4 rounded-md space-y-1">
+                    <div className="text-[10px] font-black uppercase text-muted-foreground font-sans tracking-wide">BUSINESS ASSISTANCE CAP</div>
+                    <div className="text-lg font-black text-foreground">₹25,00,000</div>
+                    <p className="text-[10px] text-muted-foreground font-tamil leading-relaxed">
                       ஒரு தகுதியான வணிகருக்கு வழங்கப்படும் அதிகபட்ச வட்டியில்லா கடன் வரம்பு.
                     </p>
                   </div>
 
                   {/* Stat Card 2 */}
-                  <div className="bg-slate-50 border border-slate-150 p-4 rounded-xl space-y-1">
-                    <div className="text-[10px] font-black uppercase text-slate-400 font-sans tracking-wide">AVERAGE REQUEST TIME</div>
-                    <div className="text-lg font-black text-slate-800">48-72 {t("மணிகள்", "Hours")}</div>
-                    <p className="text-[10px] text-slate-500 font-tamil leading-relaxed">
+                  <div className="bg-muted border border-border p-4 rounded-md space-y-1">
+                    <div className="text-[10px] font-black uppercase text-muted-foreground font-sans tracking-wide">AVERAGE REQUEST TIME</div>
+                    <div className="text-lg font-black text-foreground">48-72 {t("மணிகள்", "Hours")}</div>
+                    <p className="text-[10px] text-muted-foreground font-tamil leading-relaxed">
                       அரசு மானியங்கள் சரிபார்க்கப்பட்டு கடன் ஒப்புதல் பெற எடுக்கும் சராசரி நேரம்.
                     </p>
                   </div>
@@ -720,26 +720,26 @@ function AnalyticsDashboard() {
 
                 {/* Subsidized Loan Progress Breakdown */}
                 <div className="space-y-4">
-                  <h4 className="font-display font-bold text-xs text-slate-400 uppercase tracking-widest">
+                  <h4 className="font-display font-bold text-xs text-muted-foreground uppercase tracking-widest">
                     {t("கடன் விநியோகப் பிரிவு", "Capital Distribution by Sector")}
                   </h4>
                   
                   {[
-                    { label: "Proprietorship & Retail", percentage: 55, amount: "₹6.87 Cr", color: "bg-amber-500" },
+                    { label: "Proprietorship & Retail", percentage: 55, amount: "₹6.87 Cr", color: "bg-primary/100" },
                     { label: "Partnership & Pvt Ltd", percentage: 30, amount: "₹3.75 Cr", color: "bg-blue-500" },
                     { label: "Freelancers & Home-based", percentage: 15, amount: "₹1.88 Cr", color: "bg-purple-500" },
                   ].map((sec) => (
                     <div key={sec.label} className="space-y-1.5">
                       <div className="flex justify-between text-xs font-semibold">
-                        <span className="text-slate-600 font-display">{sec.label}</span>
-                        <span className="font-mono text-slate-800">{sec.amount} ({sec.percentage}%)</span>
+                        <span className="text-muted-foreground font-display">{sec.label}</span>
+                        <span className="font-mono text-foreground">{sec.amount} ({sec.percentage}%)</span>
                       </div>
-                      <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                      <div className="w-full bg-muted rounded-full h-2.5 overflow-hidden">
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: `${sec.percentage}%` }}
                           transition={{ duration: 0.8, ease: "easeOut" }}
-                          className={`h-full rounded-full ${sec.color} shadow-xxs`}
+                          className={`h-full rounded-full ${sec.color} shadow-xs`}
                         />
                       </div>
                     </div>

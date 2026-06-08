@@ -10,9 +10,9 @@ import { Breadcrumb } from "@/components/Breadcrumb";
 import { toast } from "sonner";
 import { VoterIdCard, type Voter, membershipNo, getZoneName, formatDob } from "@/components/VoterIdCard";
 import { WINGS } from "@/data/wings";
-import ownerPhoto from "@/assets/349b584e-1b60-469e-9e5d-8d124cb057cb.png";
-import orgLogo from "@/assets/ChatGPT Image Mar 25, 2026, 05_31_25 PM (1).png";
-import signImg from "@/assets/8bb61dfb-f349-4e0b-8501-560feae9f000.png";
+import ownerPhoto from "@/assets/round-logo.png";
+import orgLogo from "@/assets/association-logo.png";
+import signImg from "@/assets/president-signature.png";
 
 export const Route = createFileRoute("/voter-id")({
   validateSearch: (search: Record<string, unknown>) => {
@@ -384,7 +384,7 @@ function SecureDownloadPage() {
 
         // Draw green border (thinner 3px outer stroke)
         ctx.save();
-        ctx.strokeStyle = "#009245";
+        ctx.strokeStyle = "var(--primary)";
         ctx.lineWidth = 3;
         ctx.beginPath();
         ctx.moveTo(photoX + radius, photoY);
@@ -405,7 +405,7 @@ function SecureDownloadPage() {
         
         // Name
         ctx.font = "bold 23px Arial, sans-serif";
-        ctx.fillStyle = "#009245";
+        ctx.fillStyle = "var(--primary)";
         ctx.fillText(name.toUpperCase(), W / 2, 350);
 
         // Assembly : Value
@@ -726,10 +726,10 @@ function SecureDownloadPage() {
     : "";
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-slate-50/50 pb-12">
+    <div className="relative min-h-screen overflow-x-hidden bg-background pb-12">
       {/* Page Header */}
-      <section className="bg-slate-900 text-white border-b border-slate-800 shadow-xs relative overflow-hidden">
-        <div className="absolute inset-0 bg-radial-at-t from-primary/30 to-transparent pointer-events-none" />
+      <section className="bg-card text-foreground border-b border-border shadow-xs relative overflow-hidden">
+        <div className="absolute inset-0 bg-linear-to-b from-primary/5 to-transparent pointer-events-none" />
         <div className="max-w-6xl mx-auto px-5 sm:px-6 py-8 sm:py-10 w-full relative z-10">
           <div className="mb-3">
             <Breadcrumb
@@ -740,14 +740,14 @@ function SecureDownloadPage() {
             />
           </div>
           <div className="flex">
-            <div className="inline-flex items-center gap-1.5 bg-primary/25 text-blue-300 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider mb-1.5 border border-primary/30">
+            <div className="inline-flex items-center gap-1.5 bg-primary/10 text-primary px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider mb-1.5 border border-primary/20">
               Secure Access · பாதுகாப்பான அணுகல்
             </div>
           </div>
-          <h1 className="font-display font-semibold text-white">
+          <h1 className="font-display font-semibold text-ink">
             Certificate & Card Download
           </h1>
-          <p className="font-tamil text-sm sm:text-base text-slate-400 mt-1">
+          <p className="font-tamil text-sm sm:text-base text-muted-foreground mt-1">
             டிஜிட்டல் உறுப்பினர் சான்றிதழ் மற்றும் அடையாள அட்டை பதிவிறக்கம்
           </p>
         </div>
@@ -762,14 +762,14 @@ function SecureDownloadPage() {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="max-w-md mx-auto bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 shadow-md"
+              className="max-w-md mx-auto bg-card border border-border rounded-md p-6 sm:p-8 shadow-xs"
             >
               <div className="text-center mb-6">
-                <div className="w-14 h-14 bg-blue-50 text-[#002B7F] rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
+                <div className="w-14 h-14 bg-blue-50 text-primary rounded-md flex items-center justify-center mx-auto mb-4 shadow-xs">
                   <Lock className="w-6 h-6" />
                 </div>
-                <h2 className="font-display text-xl font-bold text-slate-900">Enter Security PIN</h2>
-                <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                <h2 className="font-display text-xl font-bold text-ink">Enter Security PIN</h2>
+                <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
                   {language === "ta"
                     ? "உங்கள் உறுப்பினர் அட்டை மற்றும் சான்றிதழைப் பெற 4-இலக்க பாதுகாப்பு PIN மற்றும் EPIC ID அல்லது மொபைல் எண்ணை உள்ளிடவும்."
                     : "Verify your EPIC ID / Mobile Number and 4-digit Security PIN to access your digital membership certificate & card."}
@@ -779,7 +779,7 @@ function SecureDownloadPage() {
               <form onSubmit={handleVerify} className="space-y-5">
                 {/* EPIC ID / Mobile Number */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-700 block">
+                  <label className="text-xs font-semibold text-foreground block">
                     {language === "ta" ? "EPIC ID / அலைபேசி எண் (EPIC ID / Mobile Number) *" : "EPIC ID / Mobile Number *"}
                   </label>
                   <input
@@ -787,14 +787,14 @@ function SecureDownloadPage() {
                     type="text"
                     value={epicInput}
                     onChange={(e) => setEpicInput(e.target.value)}
-                    className="w-full border border-[#EADCC9] bg-[#FAF8F5] text-slate-800 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#002B7F]/40 focus:border-[#002B7F] min-h-[44px]"
+                    className="w-full border border-[#EADCC9] bg-[#FAF8F5] text-foreground rounded-sm px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary min-h-[44px]"
                     placeholder="e.g. RJE1234567 or 9876543210"
                   />
                 </div>
 
                 {/* 4-Digit Security PIN */}
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold text-slate-700 block">
+                  <label className="text-xs font-semibold text-foreground block">
                     {language === "ta" ? "பாதுகாப்பு PIN (Security PIN) *" : "Security PIN *"}
                   </label>
                   
@@ -815,12 +815,12 @@ function SecureDownloadPage() {
                         return (
                           <div
                             key={index}
-                            className={`w-12 h-14 rounded-2xl border-2 text-xl font-extrabold flex items-center justify-center transition-all duration-300 ${
+                            className={`w-12 h-14 rounded-md border-2 text-xl font-extrabold flex items-center justify-center transition-all duration-300 ${
                               isFocused
-                                ? "border-primary ring-4 ring-primary/15 scale-105 bg-white shadow-md shadow-primary/5"
+                                ? "border-primary ring-4 ring-primary/15 scale-105 bg-card shadow-xs shadow-primary/5"
                                 : char
-                                ? "border-emerald-400 bg-emerald-50 text-emerald-850"
-                                : "border-slate-200 bg-slate-50 text-slate-300"
+                                ? "border-emerald-400 bg-primary/10 text-emerald-850"
+                                : "border-border bg-muted text-muted-foreground"
                             }`}
                           >
                             {char ? "•" : ""}
@@ -835,7 +835,7 @@ function SecureDownloadPage() {
                 <button
                   type="submit"
                   disabled={isVerifying}
-                  className="btn-primary w-full justify-center mt-2 cursor-pointer shadow-md py-3 rounded-xl"
+                  className="btn-primary w-full justify-center mt-2 cursor-pointer shadow-xs py-3 rounded-md"
                 >
                   {isVerifying ? (
                     <><RefreshCw className="w-4 h-4 animate-spin" /> Verifying PIN...</>
@@ -845,13 +845,13 @@ function SecureDownloadPage() {
                 </button>
               </form>
 
-              <div className="mt-6 pt-5 border-t border-slate-100 text-center text-[10px] text-slate-400">
+              <div className="mt-6 pt-5 border-t border-border text-center text-[10px] text-muted-foreground">
                 <p>
                   {language === "ta" 
                     ? "டெமோ: வாக்காளர் 'RJE1234567' மற்றும் PIN '1234' கொண்டு சோதிக்கலாம்." 
                     : "Demo Account: Use EPIC 'RJE1234567' and PIN '1234' to unlock default voter details."}
                 </p>
-                <Link to="/membership" className="text-[#002B7F] font-bold hover:underline block mt-2">
+                <Link to="/membership" className="text-primary font-bold hover:underline block mt-2">
                   Not a member? Apply for membership now
                 </Link>
               </div>
@@ -865,15 +865,15 @@ function SecureDownloadPage() {
               className="grid lg:grid-cols-12 gap-8 items-start animate-fadeIn"
             >
               {/* Left Column: Member Details Summary card */}
-              <div className="lg:col-span-5 bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-6">
-                <div className="flex justify-between items-start gap-4 pb-4 border-b border-slate-100">
+              <div className="lg:col-span-5 bg-card border border-border rounded-md p-6 shadow-xs space-y-6">
+                <div className="flex justify-between items-start gap-4 pb-4 border-b border-border">
                   <div className="flex items-center gap-3">
                     {/* Circle photo */}
-                    <div className="w-14 h-14 rounded-full overflow-hidden border border-slate-200 bg-slate-50">
+                    <div className="w-14 h-14 rounded-full overflow-hidden border border-border bg-muted">
                       <img src={verifiedVoter.PHOTO_URL} alt="Profile" className="w-full h-full object-cover" />
                     </div>
                     <div>
-                      <h2 className="font-display text-lg font-bold text-slate-850">{verifiedVoter.VOTER_NAME}</h2>
+                      <h2 className="font-display text-lg font-bold text-foreground">{verifiedVoter.VOTER_NAME}</h2>
                       <span className="text-[10px] uppercase font-mono bg-blue-50 text-primary border border-blue-100 px-2 py-0.5 rounded-md font-bold tracking-wider">{verifiedVoter.EPIC_NO}</span>
                     </div>
                   </div>
@@ -882,14 +882,14 @@ function SecureDownloadPage() {
                       setVerifiedVoter(null);
                       setPinInput("");
                     }}
-                    className="text-[10px] font-bold text-slate-450 hover:text-red-650 bg-slate-100 hover:bg-red-50 border border-slate-200 hover:border-red-150 px-2.5 py-1.5 rounded-xl transition cursor-pointer"
+                    className="text-[10px] font-bold text-muted-foreground hover:text-red-650 bg-muted hover:bg-red-50 border border-border hover:border-red-150 px-2.5 py-1.5 rounded-md transition cursor-pointer"
                   >
                     Lock Session
                   </button>
                 </div>
 
                 <div className="space-y-3.5">
-                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Member Credentials</h3>
+                  <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Member Credentials</h3>
                   
                   <div className="grid grid-cols-2 gap-3">
                     {[
@@ -900,51 +900,51 @@ function SecureDownloadPage() {
                       { label: "Assembly Name", value: verifiedVoter.ASSEMBLY_NAME, icon: Building2 },
                       { label: "District Location", value: verifiedVoter.DISTRICT, icon: MapPin },
                     ].map(({ label, value, icon: Icon }) => (
-                      <div key={label} className="bg-[#FAF8F5] border border-slate-100 rounded-xl p-3 shadow-xxs">
-                        <div className="text-[9px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                          <Icon className="w-3.5 h-3.5 text-slate-400" />
+                      <div key={label} className="bg-[#FAF8F5] border border-border rounded-md p-3 shadow-xs">
+                        <div className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                          <Icon className="w-3.5 h-3.5 text-muted-foreground" />
                           {label}
                         </div>
-                        <div className="text-xs text-slate-800 font-bold mt-1.5 truncate">{value}</div>
+                        <div className="text-xs text-foreground font-bold mt-1.5 truncate">{value}</div>
                       </div>
                     ))}
                   </div>
 
                   {verifiedVoter.POLLING_STATION_ADDRESS && (
-                    <div className="bg-[#FAF8F5] border border-slate-100 rounded-xl p-3 shadow-xxs">
-                      <div className="text-[9px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                        <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                    <div className="bg-[#FAF8F5] border border-border rounded-md p-3 shadow-xs">
+                      <div className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                        <MapPin className="w-3.5 h-3.5 text-muted-foreground" />
                         Shop Address
                       </div>
-                      <div className="text-xs text-slate-800 font-bold mt-1.5 leading-relaxed">{verifiedVoter.POLLING_STATION_ADDRESS}</div>
+                      <div className="text-xs text-foreground font-bold mt-1.5 leading-relaxed">{verifiedVoter.POLLING_STATION_ADDRESS}</div>
                     </div>
                   )}
                 </div>
 
                 {/* Print & Download Action Sidebar */}
-                <div className="pt-4 border-t border-slate-100 flex flex-col gap-3">
+                <div className="pt-4 border-t border-border flex flex-col gap-3">
                   {shareMsg && <span className="text-xs text-primary font-medium text-center">{shareMsg}</span>}
                   <button
                     onClick={downloadCertificate}
-                    className="btn-primary w-full justify-center shadow-md cursor-pointer py-3 rounded-xl flex items-center gap-2"
+                    className="btn-primary w-full justify-center shadow-xs cursor-pointer py-3 rounded-md flex items-center gap-2"
                   >
                     <Download className="w-4 h-4" /> Download Certificate
                   </button>
                   <button
                     onClick={handlePrint}
-                    className="bg-slate-900 hover:bg-slate-800 text-white w-full justify-center py-3 rounded-xl font-bold text-xs flex items-center gap-2 border-none cursor-pointer shadow-xs"
+                    className="btn-secondary w-full justify-center shadow-xs cursor-pointer py-3 rounded-md flex items-center gap-2"
                   >
                     <Printer className="w-4 h-4" /> Print / PDF Membership Card
                   </button>
                   <button
                     onClick={downloadIdCardPng}
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white w-full justify-center py-3 rounded-xl font-bold text-xs flex items-center gap-2 border-none cursor-pointer shadow-xs"
+                    className="btn-primary w-full justify-center shadow-xs cursor-pointer py-3 rounded-md flex items-center gap-2"
                   >
                     <Download className="w-4 h-4" /> Download ID Card (PNG)
                   </button>
                   <button
                     onClick={() => handleShare(generatedMno)}
-                    className="bg-slate-100 hover:bg-slate-200 text-slate-700 w-full justify-center py-3 rounded-xl font-bold text-xs flex items-center gap-2 border border-slate-200 cursor-pointer shadow-xxs"
+                    className="bg-muted hover:bg-muted/80 text-foreground w-full justify-center py-3 rounded-md font-bold text-xs flex items-center gap-2 border border-border cursor-pointer shadow-xs"
                   >
                     <Share2 className="w-4 h-4" /> Share Membership
                   </button>
@@ -952,21 +952,21 @@ function SecureDownloadPage() {
               </div>
 
               {/* Right Column: ID Card Render templates (Front/Back) */}
-              <div className="lg:col-span-7 bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
-                <h3 className="font-display text-lg font-bold text-slate-900 border-b border-slate-100 pb-3 mb-6">
+              <div className="lg:col-span-7 bg-card border border-border rounded-md p-6 shadow-xs">
+                <h3 className="font-display text-lg font-bold text-ink border-b border-border pb-3 mb-6">
                   Membership ID Card Preview
                 </h3>
                 
-                <div className="flex flex-col items-center gap-6 rounded-2xl p-4 bg-slate-50/50 border border-slate-200/60">
+                <div className="flex flex-col items-center gap-6 rounded-md p-4 bg-background border border-border">
                   <div className="w-full">
-                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2 text-center">முன்பக்கம் · FRONT</p>
+                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-2 text-center">முன்பக்கம் · FRONT</p>
                     <div ref={frontRef} className="card-scale-wrapper">
                       <div className="responsive-card-scale">
                         <VoterIdCard voter={verifiedVoter} template="front" />
                       </div>
                     </div>
                   </div>
-                  <div className="w-full border-t border-slate-200 pt-5">
+                  <div className="w-full border-t border-border pt-5">
                     <p className="text-xs font-semibold text-slate-550 uppercase tracking-widest mb-2 text-center">பின்பக்கம் · BACK</p>
                     <div ref={backRef} className="card-scale-wrapper">
                       <div className="responsive-card-scale">

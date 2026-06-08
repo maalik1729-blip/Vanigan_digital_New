@@ -1,5 +1,5 @@
-import rightLogo from "@/assets/ChatGPT Image Mar 25, 2026, 05_31_25 PM (1).png";
-import ownerSign from "@/assets/8bb61dfb-f349-4e0b-8501-560feae9f000.png";
+import rightLogo from "@/assets/association-logo.png";
+import ownerSign from "@/assets/president-signature.png";
 import { ZONE_BREAKDOWN } from "@/data/zones";
 
 export type Voter = {

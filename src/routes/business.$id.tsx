@@ -719,14 +719,14 @@ function BusinessDetailPage() {
       <div className="min-h-screen flex items-center justify-center px-4">
         <div className="text-center max-w-md">
           <AlertCircle className="w-16 h-16 text-rose-400 mx-auto mb-4" />
-          <h2 className="font-display font-bold text-xl text-slate-800 mb-2">
+          <h2 className="font-display font-bold text-xl text-foreground mb-2">
             {t("வணிகம் கண்டுபிடிக்கப்படவில்லை", "Business Not Found")}
           </h2>
           <p className="text-muted-foreground text-sm mb-6">{error || "The business you're looking for doesn't exist."}</p>
           <Link
             to="/members"
             search={{ tab: "businesses" }}
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl text-sm font-semibold hover:bg-primary/90 transition"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-md text-sm font-semibold hover:bg-primary/90 transition"
           >
             <ArrowLeft className="w-4 h-4" />
             {t("பட்டியலுக்கு திரும்பு", "Back to Directory")}
@@ -745,7 +745,7 @@ function BusinessDetailPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* ── Hero Section ─────────────────────────────────────────────────────── */}
-      <div className="relative h-64 sm:h-80 md:h-96 overflow-hidden bg-slate-900">
+      <div className="relative h-64 sm:h-80 md:h-96 overflow-hidden bg-black">
         <img
           src={heroImg}
           alt={business.name}
@@ -759,7 +759,7 @@ function BusinessDetailPage() {
           <Link
             to="/members"
             search={{ tab: "businesses", category: business.category }}
-            className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-black/40 backdrop-blur-sm text-white text-sm font-semibold hover:bg-black/60 transition"
+            className="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-black/40 backdrop-blur-sm text-white text-sm font-semibold hover:bg-black/60 transition"
           >
             <ArrowLeft className="w-4 h-4" />
             {t("திரும்பு", "Back")}
@@ -770,7 +770,7 @@ function BusinessDetailPage() {
         <div className="absolute top-4 right-4">
           <button
             onClick={handleShare}
-            className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-black/40 backdrop-blur-sm text-white text-sm font-semibold hover:bg-black/60 transition"
+            className="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-black/40 backdrop-blur-sm text-white text-sm font-semibold hover:bg-black/60 transition"
           >
             {copied ? <CheckCircle2 className="w-4 h-4 text-emerald-400" /> : <Share2 className="w-4 h-4" />}
             {copied ? t("நகலெடுக்கப்பட்டது!", "Copied!") : t("பகிர்", "Share")}
@@ -792,7 +792,7 @@ function BusinessDetailPage() {
               )}
             </span>
           )}
-          <h1 className="font-display font-bold text-2xl sm:text-3xl md:text-4xl text-white leading-tight drop-shadow-lg">
+          <h1 className="font-display font-bold text-2xl sm:text-3xl md:text-4xl text-white leading-tight drop-shadow-xs">
             {business.name}
           </h1>
           {(business.city || business.district) && (
@@ -829,7 +829,7 @@ function BusinessDetailPage() {
             </>
           )}
           <ChevronRight className="w-3 h-3" />
-          <span className="text-slate-600 font-medium truncate max-w-[180px]">{business.name}</span>
+          <span className="text-muted-foreground font-medium truncate max-w-[180px]">{business.name}</span>
         </nav>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -840,11 +840,11 @@ function BusinessDetailPage() {
             {/* Rating */}
             {business.avgRating && business.avgRating > 0 && (
               <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1.5 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-xl">
+                <div className="flex items-center gap-1.5 bg-primary/10 border border-amber-200 px-3 py-1.5 rounded-md">
                   {Array.from({ length: 5 }).map((_, i) => (
                     <Star
                       key={i}
-                      className={`w-4 h-4 ${i < Math.round(business.avgRating!) ? "text-amber-400 fill-amber-400" : "text-slate-200 fill-slate-200"}`}
+                      className={`w-4 h-4 ${i < Math.round(business.avgRating!) ? "text-amber-400 fill-amber-400" : "text-foreground fill-slate-200"}`}
                     />
                   ))}
                   <span className="font-bold text-amber-700 text-sm ml-1">{business.avgRating.toFixed(1)}</span>
@@ -863,7 +863,7 @@ function BusinessDetailPage() {
                 <h2 className="font-display font-semibold text-lg text-ink mb-2">
                   {t("பற்றி", "About")}
                 </h2>
-                <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
+                <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
                   {business.description}
                 </p>
               </div>
@@ -901,7 +901,7 @@ function BusinessDetailPage() {
                 </h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {gallery.slice(0, 6).map((g, i) => (
-                    <div key={i} className="aspect-square rounded-xl overflow-hidden bg-slate-100">
+                    <div key={i} className="aspect-square rounded-md overflow-hidden bg-muted">
                       <img
                         src={g.url}
                         alt={`${business.name} ${i + 1}`}
@@ -920,19 +920,19 @@ function BusinessDetailPage() {
                 <h2 className="font-display font-semibold text-lg text-ink mb-3">
                   {t("இடம்", "Location")}
                 </h2>
-                <div className="rounded-2xl overflow-hidden border border-slate-200">
+                <div className="rounded-md overflow-hidden border border-border">
                   {/* Google Maps direction link */}
                   <a
                     href={`https://www.google.com/maps/search/${encodeURIComponent(fullAddress)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 p-4 bg-slate-50 hover:bg-slate-100 transition group"
+                    className="flex items-center gap-3 p-4 bg-muted hover:bg-muted transition group"
                   >
                     <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                       <MapPin className="w-5 h-5 text-primary" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="text-sm font-semibold text-slate-700 truncate">{fullAddress}</div>
+                      <div className="text-sm font-semibold text-foreground truncate">{fullAddress}</div>
                       <div className="text-xs text-primary mt-0.5 flex items-center gap-1">
                         {t("Google Maps-ல் திற", "Open in Google Maps")}
                         <ExternalLink className="w-3 h-3" />
@@ -948,7 +948,7 @@ function BusinessDetailPage() {
           <div className="space-y-4">
 
             {/* Contact Card */}
-            <div className="rounded-2xl border border-slate-200 overflow-hidden bg-white shadow-sm">
+            <div className="rounded-md border border-border overflow-hidden bg-card shadow-xs">
               <div className={`px-5 py-4 bg-linear-to-r ${meta.color} text-white`}>
                 <div className="flex items-center gap-3">
                   <span className="text-2xl" aria-hidden="true">{meta.icon}</span>
@@ -964,7 +964,7 @@ function BusinessDetailPage() {
                 {business.phone && (
                   <a
                     href={`tel:${business.phone}`}
-                    className="flex items-center gap-3 p-3 rounded-xl bg-green-50 border border-green-100 hover:bg-green-100 transition group"
+                    className="flex items-center gap-3 p-3 rounded-md bg-green-50 border border-green-100 hover:bg-green-100 transition group"
                   >
                     <div className="w-9 h-9 rounded-full bg-green-500 flex items-center justify-center shrink-0">
                       <Phone className="w-4 h-4 text-white" />
@@ -973,7 +973,7 @@ function BusinessDetailPage() {
                       <div className="text-[10px] text-green-600 font-semibold uppercase tracking-wide">
                         {t("தொலைபேசி", "Phone")}
                       </div>
-                      <div className="text-sm font-semibold text-slate-800">{business.phone}</div>
+                      <div className="text-sm font-semibold text-foreground">{business.phone}</div>
                     </div>
                   </a>
                 )}
@@ -982,16 +982,16 @@ function BusinessDetailPage() {
                 {business.phone2 && (
                   <a
                     href={`tel:${business.phone2}`}
-                    className="flex items-center gap-3 p-3 rounded-xl bg-green-50 border border-green-100 hover:bg-green-100 transition"
+                    className="flex items-center gap-3 p-3 rounded-md bg-green-50 border border-green-100 hover:bg-green-100 transition"
                   >
-                    <div className="w-9 h-9 rounded-full bg-emerald-500 flex items-center justify-center shrink-0">
+                    <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center shrink-0">
                       <Phone className="w-4 h-4 text-white" />
                     </div>
                     <div>
                       <div className="text-[10px] text-emerald-600 font-semibold uppercase tracking-wide">
                         {t("மாற்று தொலைபேசி", "Alt. Phone")}
                       </div>
-                      <div className="text-sm font-semibold text-slate-800">{business.phone2}</div>
+                      <div className="text-sm font-semibold text-foreground">{business.phone2}</div>
                     </div>
                   </a>
                 )}
@@ -1000,7 +1000,7 @@ function BusinessDetailPage() {
                 {business.email && (
                   <a
                     href={`mailto:${business.email}`}
-                    className="flex items-center gap-3 p-3 rounded-xl bg-blue-50 border border-blue-100 hover:bg-blue-100 transition"
+                    className="flex items-center gap-3 p-3 rounded-md bg-blue-50 border border-blue-100 hover:bg-blue-100 transition"
                   >
                     <div className="w-9 h-9 rounded-full bg-blue-500 flex items-center justify-center shrink-0">
                       <Mail className="w-4 h-4 text-white" />
@@ -1009,7 +1009,7 @@ function BusinessDetailPage() {
                       <div className="text-[10px] text-blue-600 font-semibold uppercase tracking-wide">
                         {t("மின்னஞ்சல்", "Email")}
                       </div>
-                      <div className="text-sm font-semibold text-slate-800 truncate">{business.email}</div>
+                      <div className="text-sm font-semibold text-foreground truncate">{business.email}</div>
                     </div>
                   </a>
                 )}
@@ -1020,7 +1020,7 @@ function BusinessDetailPage() {
                     href={business.website.startsWith("http") ? business.website : `https://${business.website}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 p-3 rounded-xl bg-purple-50 border border-purple-100 hover:bg-purple-100 transition"
+                    className="flex items-center gap-3 p-3 rounded-md bg-purple-50 border border-purple-100 hover:bg-purple-100 transition"
                   >
                     <div className="w-9 h-9 rounded-full bg-purple-500 flex items-center justify-center shrink-0">
                       <Globe className="w-4 h-4 text-white" />
@@ -1030,7 +1030,7 @@ function BusinessDetailPage() {
                         {t("இணையதளம்", "Website")}
                         <ExternalLink className="w-2.5 h-2.5" />
                       </div>
-                      <div className="text-sm font-semibold text-slate-800 truncate">{business.website}</div>
+                      <div className="text-sm font-semibold text-foreground truncate">{business.website}</div>
                     </div>
                   </a>
                 )}
@@ -1044,7 +1044,7 @@ function BusinessDetailPage() {
             </div>
 
             {/* Business Info Card */}
-            <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4 space-y-3">
+            <div className="rounded-md border border-border bg-card shadow-xs p-4 space-y-3">
               <h3 className="font-display font-semibold text-sm text-ink">
                 {t("வணிக தகவல்", "Business Info")}
               </h3>
@@ -1052,21 +1052,21 @@ function BusinessDetailPage() {
               {business.listingCode && (
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-muted-foreground">{t("பட்டியல் குறியீடு", "Listing Code")}</span>
-                  <span className="font-semibold text-slate-700 font-mono">{business.listingCode}</span>
+                  <span className="font-semibold text-foreground font-mono">{business.listingCode}</span>
                 </div>
               )}
 
               {business.district && (
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-muted-foreground">{t("மாவட்டம்", "District")}</span>
-                  <span className="font-semibold text-slate-700">{business.district}</span>
+                  <span className="font-semibold text-foreground">{business.district}</span>
                 </div>
               )}
 
               {business.assembly && (
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-muted-foreground">{t("சட்டமன்றம்", "Assembly")}</span>
-                  <span className="font-semibold text-slate-700">{business.assembly}</span>
+                  <span className="font-semibold text-foreground">{business.assembly}</span>
                 </div>
               )}
 
@@ -1076,7 +1076,7 @@ function BusinessDetailPage() {
                     <Clock className="w-3 h-3" />
                     {t("பதிவு தேதி", "Registered")}
                   </span>
-                  <span className="font-semibold text-slate-700">
+                  <span className="font-semibold text-foreground">
                     {new Date(business.createdAt).toLocaleDateString("en-IN", { year: "numeric", month: "short" })}
                   </span>
                 </div>
@@ -1085,8 +1085,8 @@ function BusinessDetailPage() {
               {business.active !== undefined && (
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-muted-foreground">{t("நிலை", "Status")}</span>
-                  <span className={`font-semibold flex items-center gap-1 ${business.active ? "text-emerald-600" : "text-slate-400"}`}>
-                    <div className={`w-1.5 h-1.5 rounded-full ${business.active ? "bg-emerald-500" : "bg-slate-300"}`} />
+                  <span className={`font-semibold flex items-center gap-1 ${business.active ? "text-emerald-600" : "text-muted-foreground"}`}>
+                    <div className={`w-1.5 h-1.5 rounded-full ${business.active ? "bg-primary" : "bg-slate-300"}`} />
                     {business.active ? t("செயலில்", "Active") : t("செயலற்றது", "Inactive")}
                   </span>
                 </div>
@@ -1098,17 +1098,17 @@ function BusinessDetailPage() {
               <Link
                 to="/members"
                 search={{ tab: "businesses", category: business.category }}
-                className="flex items-center justify-between w-full p-4 rounded-2xl border border-primary/20 bg-primary/5 hover:bg-primary/10 transition group"
+                className="flex items-center justify-between w-full p-4 rounded-md border border-primary/20 bg-primary/5 hover:bg-primary/10 transition group"
               >
                 <div>
                   <div className="text-xs font-semibold text-primary">
                     {t("மேலும் காண்க", "Browse More")}
                   </div>
-                  <div className="text-sm font-bold text-slate-700 mt-0.5">
+                  <div className="text-sm font-bold text-foreground mt-0.5">
                     {business.category}
                   </div>
                 </div>
-                <ChevronRight className="w-5 h-5 text-primary group-hover:translate-x-0.5 transition-transform" />
+                <ChevronRight className="w-5 h-5 text-primary" />
               </Link>
             )}
           </div>

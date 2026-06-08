@@ -90,10 +90,10 @@ function Assistant() {
           <Sparkles className="w-4 h-4 text-primary animate-pulse" aria-hidden="true" />
           <span>{t("சங்கம உதவி மற்றும் சேவை மையம்", "Support & Service Center")}</span>
         </div>
-        <h1 className="font-display text-3xl md:text-4xl font-bold text-slate-800 leading-tight">
+        <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground leading-tight">
           {t("உங்களுக்கு எவ்வாறு உதவ முடியும்?", "How can we help you today?")}
         </h1>
-        <p className="text-xs md:text-sm text-slate-500 leading-relaxed font-tamil">
+        <p className="text-xs md:text-sm text-muted-foreground leading-relaxed font-tamil">
           {t(
             "உறுப்பினர் சேர்க்கை, வணிகப் பிரிவுகள் மற்றும் கணக்கு சரிபார்ப்புகளை விரைவாக செய்ய உங்கள் உத்தியோகபூர்வ உதவி மையம்.",
             "Your official support center to check membership, verify status, and explore specialized wings instantly."
@@ -107,12 +107,12 @@ function Assistant() {
         <div className="lg:col-span-2 space-y-6">
           
           {/* FAQ - Progressive Accordions */}
-          <div className="bg-white border border-slate-200/80 rounded-2xl p-5 md:p-6 shadow-sm space-y-4">
-            <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
-              <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-500 flex items-center justify-center border border-amber-100">
+          <div className="bg-card border border-border rounded-md p-5 md:p-6 shadow-xs space-y-4">
+            <div className="flex items-center gap-2 pb-3 border-b border-border">
+              <div className="w-8 h-8 rounded-sm bg-primary/10 text-amber-500 flex items-center justify-center border border-amber-100">
                 <HelpCircle className="w-4 h-4" aria-hidden="true" />
               </div>
-              <h3 className="font-display font-bold text-base text-slate-800">
+              <h3 className="font-display font-bold text-base text-foreground">
                 {t("அடிக்கடி கேட்கப்படும் கேள்விகள் (FAQs)", "Frequently Asked Questions")}
               </h3>
             </div>
@@ -123,24 +123,24 @@ function Assistant() {
                 return (
                   <div 
                     key={idx} 
-                    className={`border rounded-xl overflow-hidden transition duration-300 bg-white ${isOpen ? "border-primary/30 ring-4 ring-primary/5" : "border-slate-100 hover:bg-slate-50/40"}`}
+                    className={`border rounded-md overflow-hidden transition duration-300 bg-card ${isOpen ? "border-primary/30 ring-4 ring-primary/5" : "border-border hover:bg-background"}`}
                   >
                     <button
                       onClick={() => setActiveFaq(isOpen ? null : idx)}
                       className="w-full px-4 py-3.5 flex items-center justify-between text-left gap-3 cursor-pointer min-h-[44px]"
                       aria-expanded={isOpen}
                     >
-                      <span className="text-xs font-bold text-slate-700 leading-snug font-tamil">
+                      <span className="text-xs font-bold text-foreground leading-snug font-tamil">
                         {faq.q}
                       </span>
                       <ChevronDown 
-                        className={`w-4 h-4 text-slate-400 shrink-0 transition-transform duration-300 ${isOpen ? "rotate-180 text-primary" : ""}`} 
+                        className={`w-4 h-4 text-muted-foreground shrink-0 transition-transform duration-300 ${isOpen ? "rotate-180 text-primary" : ""}`} 
                         aria-hidden="true"
                       />
                     </button>
                       {isOpen && (
                         <div className="animate-fade-in">
-                          <div className="px-4 pb-4 pt-1.5 border-t border-slate-100 text-xs text-slate-500 leading-relaxed font-tamil">
+                          <div className="px-4 pb-4 pt-1.5 border-t border-border text-xs text-muted-foreground leading-relaxed font-tamil">
                             {faq.a}
                           </div>
                         </div>
@@ -152,17 +152,17 @@ function Assistant() {
           </div>
 
           {/* Status Checker */}
-          <div className="bg-white border border-slate-200/80 rounded-2xl p-5 md:p-6 shadow-sm space-y-5">
-            <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
-              <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-800 flex items-center justify-center border border-emerald-100">
+          <div className="bg-card border border-border rounded-md p-5 md:p-6 shadow-xs space-y-5">
+            <div className="flex items-center gap-2 pb-3 border-b border-border">
+              <div className="w-8 h-8 rounded-sm bg-primary/10 text-emerald-800 flex items-center justify-center border border-emerald-100">
                 <Search className="w-4 h-4" aria-hidden="true" />
               </div>
-              <h3 className="font-display font-bold text-base text-slate-800">
+              <h3 className="font-display font-bold text-base text-foreground">
                 {t("உறுப்பினர் நிலை சரிபார்த்தல்", "Verify Membership Status")}
               </h3>
             </div>
 
-            <p className="text-xs text-slate-500 leading-relaxed font-tamil">
+            <p className="text-xs text-muted-foreground leading-relaxed font-tamil">
               {t(
                 "உங்கள் உறுப்பினர் நிலையை அறிய, தயவுசெய்து உங்கள் EPIC ID / மொபைல் எண்ணை உள்ளிடவும்:",
                 "To check your membership status, please enter your EPIC ID or registered Mobile Number below:"
@@ -176,12 +176,12 @@ function Assistant() {
                 value={epicSearch}
                 onChange={(e) => setEpicSearch(e.target.value)}
                 placeholder={t("e.g. TNVS-782 அல்லது கைபேசி எண்", "e.g. TNVS-782 or Mobile Number")}
-                className="flex-1 border border-slate-200 bg-slate-50/30 rounded-xl px-4 py-3 text-xs md:text-sm focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition duration-300 min-h-[44px]"
+                className="input-base text-xs md:text-sm"
               />
               <button
                 type="submit"
                 disabled={isSearching}
-                className="bg-primary hover:bg-primary/95 text-white font-bold py-2.5 px-5 rounded-xl text-xs active:scale-95 transition cursor-pointer min-h-[44px]"
+                className="bg-primary hover:bg-primary/95 text-white font-bold py-2.5 px-5 rounded-md text-xs active:scale-95 transition cursor-pointer min-h-[44px]"
               >
                 {isSearching ? t("சரிபார்க்கிறது...", "Verifying...") : t("தேடுக", "Verify")}
               </button>
@@ -193,7 +193,7 @@ function Assistant() {
 
             {/* Error Message */}
             {searchError && (
-              <div className="p-3 bg-red-50 text-red-700 text-xs font-semibold rounded-xl border border-red-100 flex items-center gap-2 font-tamil animate-fade-in">
+              <div className="p-3 bg-red-50 text-red-700 text-xs font-semibold rounded-md border border-red-100 flex items-center gap-2 font-tamil animate-fade-in">
                 <ShieldAlert className="w-4 h-4 text-red-500 shrink-0" aria-hidden="true" />
                 {searchError}
               </div>
@@ -201,51 +201,51 @@ function Assistant() {
 
             {/* Simulated Live Timeline Tracker */}
               {checkedProfile && (
-                <div className="animate-fade-in p-5 bg-slate-50/50 border border-slate-200/60 rounded-2xl space-y-5 shadow-xs">
-                  <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                    <div className="flex items-center gap-2 text-slate-800 font-bold text-xs md:text-sm">
+                <div className="animate-fade-in p-5 bg-background border border-border rounded-md space-y-5 shadow-xs">
+                  <div className="flex items-center justify-between border-b border-border pb-3">
+                    <div className="flex items-center gap-2 text-foreground font-bold text-xs md:text-sm">
                       <CheckCircle2 className="w-5 h-5 text-emerald-800" aria-hidden="true" />
                       <span>{t("உறுப்பினர் கணக்கு செயலில் உள்ளது", "Active Profile (Demo)")}</span>
                     </div>
-                    <span className="text-xs bg-emerald-50 text-emerald-800 border border-emerald-100 font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                    <span className="text-xs bg-primary/10 text-emerald-800 border border-emerald-100 font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
                       {t("சரிபார்க்கப்பட்டது", "Verified")}
                     </span>
                   </div>
                   
                   <div className="grid grid-cols-2 gap-4 text-xs">
-                    <div className="bg-white p-3 rounded-xl border border-slate-100 flex items-center gap-2.5 shadow-xs">
-                      <User className="w-4 h-4 text-slate-400 shrink-0" aria-hidden="true" />
+                    <div className="bg-card p-3 rounded-md border border-border flex items-center gap-2.5 shadow-xs">
+                      <User className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" />
                       <div>
-                        <div className="text-xs uppercase font-bold text-slate-400">Name</div>
-                        <div className="font-semibold text-slate-700">{checkedProfile.name}</div>
+                        <div className="text-xs uppercase font-bold text-muted-foreground">Name</div>
+                        <div className="font-semibold text-foreground">{checkedProfile.name}</div>
                       </div>
                     </div>
-                    <div className="bg-white p-3 rounded-xl border border-slate-100 flex items-center gap-2.5 shadow-xs">
-                      <Phone className="w-4 h-4 text-slate-400 shrink-0" aria-hidden="true" />
+                    <div className="bg-card p-3 rounded-md border border-border flex items-center gap-2.5 shadow-xs">
+                      <Phone className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" />
                       <div>
-                        <div className="text-xs uppercase font-bold text-slate-400">Mobile</div>
-                        <div className="font-semibold text-slate-700">{checkedProfile.mobile}</div>
+                        <div className="text-xs uppercase font-bold text-muted-foreground">Mobile</div>
+                        <div className="font-semibold text-foreground">{checkedProfile.mobile}</div>
                       </div>
                     </div>
-                    <div className="bg-white p-3 rounded-xl border border-slate-100 flex items-center gap-2.5 shadow-xs">
-                      <MapPin className="w-4 h-4 text-slate-400 shrink-0" aria-hidden="true" />
+                    <div className="bg-card p-3 rounded-md border border-border flex items-center gap-2.5 shadow-xs">
+                      <MapPin className="w-4 h-4 text-muted-foreground shrink-0" aria-hidden="true" />
                       <div>
-                        <div className="text-xs uppercase font-bold text-slate-400">District</div>
-                        <div className="font-semibold text-slate-700">{checkedProfile.district}</div>
+                        <div className="text-xs uppercase font-bold text-muted-foreground">District</div>
+                        <div className="font-semibold text-foreground">{checkedProfile.district}</div>
                       </div>
                     </div>
-                    <div className="bg-white p-3 rounded-xl border border-slate-100 flex items-center gap-2.5 shadow-xs">
+                    <div className="bg-card p-3 rounded-md border border-border flex items-center gap-2.5 shadow-xs">
                       <Award className="w-4 h-4 text-emerald-800 shrink-0" aria-hidden="true" />
                       <div>
-                        <div className="text-xs uppercase font-bold text-slate-400">EPIC ID</div>
+                        <div className="text-xs uppercase font-bold text-muted-foreground">EPIC ID</div>
                         <div className="font-mono font-bold text-emerald-850">{checkedProfile.epic}</div>
                       </div>
                     </div>
                   </div>
 
                   {/* Real-time Status Tracker Timeline */}
-                  <div className="border-t border-slate-100 pt-5 space-y-4">
-                    <div className="text-xs uppercase font-bold tracking-wider text-slate-450">Application Progress Timeline</div>
+                  <div className="border-t border-border pt-5 space-y-4">
+                    <div className="text-xs uppercase font-bold tracking-wider text-muted-foreground">Application Progress Timeline</div>
                     
                     <div className="space-y-4">
                       {checkedProfile.timeline.map((step: any, idx: number) => (
@@ -253,34 +253,34 @@ function Assistant() {
                           {idx < checkedProfile.timeline.length - 1 && (
                             <div className="absolute left-3.5 top-7 bottom-0 w-0.5 bg-emerald-100" />
                           )}
-                          <div className="w-7 h-7 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-100 flex items-center justify-center shrink-0">
+                          <div className="w-7 h-7 rounded-full bg-primary/10 text-emerald-800 border border-emerald-100 flex items-center justify-center shrink-0">
                             <Check className="w-3.5 h-3.5" aria-hidden="true" />
                           </div>
                           <div className="flex-1">
                             <div className="flex justify-between items-baseline">
-                              <h4 className="text-xs font-bold text-slate-800 leading-snug">{step.label}</h4>
-                              <span className="text-xs text-slate-400 font-mono">{step.date}</span>
+                              <h4 className="text-xs font-bold text-foreground leading-snug">{step.label}</h4>
+                              <span className="text-xs text-muted-foreground font-mono">{step.date}</span>
                             </div>
-                            <p className="text-xs text-slate-500 leading-relaxed font-tamil mt-0.5">{step.desc}</p>
+                            <p className="text-xs text-muted-foreground leading-relaxed font-tamil mt-0.5">{step.desc}</p>
                           </div>
                         </div>
                       ))}
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap gap-2 pt-4 border-t border-slate-100">
+                  <div className="flex flex-wrap gap-2 pt-4 border-t border-border">
                     <Link 
                       to="/voter-id" 
                       search={{ epic: checkedProfile.epic }}
-                      className="text-xs bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-bold inline-flex items-center gap-1.5 transition shadow-sm active:scale-95 cursor-pointer min-h-[38px]"
+                      className="text-xs bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-md font-bold inline-flex items-center gap-1.5 transition shadow-xs active:scale-95 cursor-pointer min-h-[38px]"
                     >
                       {t("அட்டை பெறுக", "Get ID Card")} <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
                     <Link 
                       to="/members" 
-                      className="text-xs bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2.5 rounded-xl font-bold inline-flex items-center gap-1.5 transition active:scale-95 cursor-pointer min-h-[38px]"
+                      className="text-xs bg-card border border-border text-foreground hover:bg-muted px-4 py-2.5 rounded-md font-bold inline-flex items-center gap-1.5 transition active:scale-95 cursor-pointer min-h-[38px]"
                     >
-                      <FileText className="w-3.5 h-3.5 text-slate-400" /> {t("சான்றிதழ் பெறுக", "Download Certificate")}
+                      <FileText className="w-3.5 h-3.5 text-muted-foreground" /> {t("சான்றிதழ் பெறுக", "Download Certificate")}
                     </Link>
                   </div>
                 </div>
@@ -293,7 +293,7 @@ function Assistant() {
         <div className="space-y-6">
           
           {/* SIDEBAR WIDGET 1: Hero Membership Application Promo */}
-          <div className="bg-linear-to-br from-slate-900 to-slate-950 text-white rounded-2xl p-6 shadow-md space-y-4 relative overflow-hidden border border-slate-800">
+          <div className="bg-linear-to-br from-slate-900 to-slate-950 text-white rounded-md p-6 shadow-xs space-y-4 relative overflow-hidden border border-slate-800">
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-xl" aria-hidden="true" />
             
             <div className="relative space-y-3">
@@ -303,7 +303,7 @@ function Assistant() {
               <h3 className="font-display font-bold text-base leading-snug">
                 {t("5 நிமிடங்களில் ஆன்லைனில் விண்ணப்பிக்கவும்", "Apply Online in 5 Minutes")}
               </h3>
-              <p className="text-xs text-slate-400 leading-relaxed font-tamil">
+              <p className="text-xs text-muted-foreground leading-relaxed font-tamil">
                 {t(
                   "உங்களிடம் ஆதார் அட்டை, வணிக முகவரி சான்று மற்றும் புகைப்படம் தயாராக இருக்க வேண்டும். உடனே டிஜிட்டல் உறுப்பினர் அட்டை பெற்றிடுங்கள்.",
                   "Submit details online, generate your digital ID card instantly, and receive your official framed certificate."
@@ -313,22 +313,22 @@ function Assistant() {
               <div className="pt-2">
                 <Link 
                   to="/membership" 
-                  className="w-full bg-white hover:bg-slate-100 text-slate-900 font-bold py-2.5 px-4 rounded-xl text-xs transition shadow-md active:scale-95 inline-flex items-center justify-center gap-2 cursor-pointer min-h-[40px]"
+                  className="w-full bg-card hover:bg-muted text-ink font-bold py-2.5 px-4 rounded-md text-xs transition shadow-xs active:scale-95 inline-flex items-center justify-center gap-2 cursor-pointer min-h-[40px]"
                 >
                   {t("விண்ணப்பிக்க தொடங்கவும்", "Start Application")} 
-                  <ArrowRight className="w-4 h-4 text-slate-900" aria-hidden="true" />
+                  <ArrowRight className="w-4 h-4 text-ink" aria-hidden="true" />
                 </Link>
               </div>
             </div>
           </div>
 
           {/* SIDEBAR WIDGET 2: Welcome Video */}
-          <div className="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-sm">
-            <div className="flex items-center gap-2 px-4 py-3 border-b border-slate-100">
-              <div className="w-7 h-7 rounded-lg bg-primary/8 flex items-center justify-center text-primary border border-primary/10">
+          <div className="bg-card border border-border rounded-md overflow-hidden shadow-xs">
+            <div className="flex items-center gap-2 px-4 py-3 border-b border-border">
+              <div className="w-7 h-7 rounded-sm bg-primary/8 flex items-center justify-center text-primary border border-primary/10">
                 <Play className="w-3.5 h-3.5" aria-hidden="true" />
               </div>
-              <h4 className="font-display font-bold text-xs text-slate-800">
+              <h4 className="font-display font-bold text-xs text-foreground">
                 {t("வரவேற்பு காணொளி", "Welcome Video")}
               </h4>
             </div>
@@ -346,21 +346,21 @@ function Assistant() {
           </div>
 
           {/* SIDEBAR WIDGET 3: Emergency Support Card / Contact */}
-          <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-3">
-            <h4 className="font-display font-bold text-xs text-slate-800">
+          <div className="bg-muted border border-border rounded-md p-5 space-y-3">
+            <h4 className="font-display font-bold text-xs text-foreground">
               {t("அவசர உதவிக்கு தொடர்பு கொள்ளவும்", "Need Urgent Assistance?")}
             </h4>
-            <p className="text-xs text-slate-500 leading-relaxed font-tamil">
+            <p className="text-xs text-muted-foreground leading-relaxed font-tamil">
               {t(
                 "உறுப்பினர் சேர்க்கை அல்லது கூடுதல் சந்தேகங்களுக்கு எங்கள் மாவட்ட அலுவலகத்தை அழைக்கவும்:",
                 "For further queries regarding membership, account verification, or other issues, call our official helpline:"
               )}
             </p>
-            <div className="bg-white p-3 rounded-xl border border-slate-200/60 flex items-center gap-2.5">
+            <div className="bg-card p-3 rounded-md border border-border flex items-center gap-2.5">
               <Phone className="w-4 h-4 text-primary shrink-0" aria-hidden="true" />
               <div className="text-xs">
-                <div className="font-bold text-slate-700">044-2345-6789</div>
-                <div className="text-xs text-slate-400 font-medium">Landline · Mon-Sat 10am-6pm</div>
+                <div className="font-bold text-foreground">044-2345-6789</div>
+                <div className="text-xs text-muted-foreground font-medium">Landline · Mon-Sat 10am-6pm</div>
               </div>
             </div>
           </div>

@@ -20,6 +20,10 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { ScrollProgress } from "@/components/vanigan/Effects";
+import {
+  LoadingSequence, ScreenTransition,
+} from "@/components/vanigan/Effects2";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -160,8 +164,27 @@ function Home() {
 
   return (
     <div className="pb-16 sm:pb-0">
+      <LoadingSequence />
+      <ScreenTransition />
+      <ScrollProgress />
+
       {/* HERO */}
       <section className="relative overflow-hidden border-b border-border">
+        {/* ── Edition metadata strip ───────────────────────────────── */}
+        <div className="bg-muted border-b border-border">
+          <div className="max-w-7xl mx-auto py-2 px-4 flex items-center justify-between">
+            <span
+              className="text-foreground/45 text-[9px] tracking-[0.35em] uppercase font-mono"
+            >
+              Est. 2024 · The Tamil Nadu Business Register
+            </span>
+            <span
+              className="text-foreground/45 text-[9px] tracking-[0.35em] uppercase hidden md:block font-mono"
+            >
+              18,428+ Verified Listings · 38 Districts
+            </span>
+          </div>
+        </div>
 
         {/* ── Ambient background orbs — give the hero depth & warmth ───── */}
         <div aria-hidden="true" className="pointer-events-none">
@@ -239,23 +262,23 @@ function Home() {
               <form onSubmit={handleVoterSearch} className="relative">
                 <div className="relative group">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none z-10">
-                    <Search className="w-5 h-5 text-slate-400 group-focus-within:text-primary transition-colors" />
+                    <Search className="w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
                   </div>
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder={t("பெயர் அல்லது EPIC எண்ணால் தேடவும்...", "Search by name or EPIC number...")}
-                    className="w-full pl-12 pr-4 py-3.5 rounded-xl border-2 border-slate-200 bg-white text-sm sm:text-base focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all shadow-sm"
+                    className="w-full pl-12 pr-4 py-3.5 rounded-md border-2 border-border bg-card text-sm sm:text-base focus:border-primary focus:ring-4 focus:ring-primary/20 outline-none transition-all shadow-xs"
                   />
                   <button
                     type="submit"
-                    className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 bg-primary text-white rounded-sm text-sm font-semibold hover:bg-primary/90 transition-colors"
                   >
                     {t("தேடு", "Search")}
                   </button>
                 </div>
-                <p className="text-xs text-slate-500 mt-2 font-tamil">
+                <p className="text-xs text-muted-foreground mt-2 font-tamil">
                   {t("உறுப்பினர் அட்டையை உடனடியாக உருவாக்க உங்கள் பெயர் அல்லது EPIC எண்ணை உள்ளிடவும்.", "Enter your name or EPIC number to generate your member card instantly.")}
                 </p>
               </form>
@@ -272,7 +295,7 @@ function Home() {
                 {t("உடனடி டிஜிட்டல் சான்றிதழ்", "Instant digital certificate")}
               </span>
               <span className="flex items-center gap-1.5">
-                <Phone className="w-4 h-4 text-slate-400" aria-hidden="true" />
+                <Phone className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
                 <a href="tel:04423456789" className="hover:text-primary transition">044-2345-6789</a>
               </span>
             </div>
@@ -292,7 +315,7 @@ function Home() {
 
       {/* STATS — moved above services for stronger trust signal */}
       <Section className="py-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-border rounded-2xl overflow-hidden paper p-0">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-border rounded-md overflow-hidden paper p-0">
           {stats.map((s, idx) => (
             <ScrollReveal
               key={s.l}
@@ -315,7 +338,7 @@ function Home() {
       {/* OFFICIAL BADGES & CERTIFICATIONS */}
       <Section className="py-10">
         <ScrollReveal direction="up" blur>
-          <div className="bg-linear-to-br from-slate-900 to-slate-800 rounded-2xl p-6 md:p-8 text-white shadow-lg">
+          <div className="bg-linear-to-br from-slate-900 to-slate-800 rounded-md p-6 md:p-8 text-white shadow-xs">
             <div className="flex flex-col md:flex-row items-center justify-between gap-6">
               <div className="text-center md:text-left">
                 <div className="flex items-center justify-center md:justify-start gap-2 mb-2">
@@ -327,25 +350,25 @@ function Home() {
                 <h3 className="font-display text-lg md:text-xl font-bold mb-1">
                   {t("அரசு பதிவு எண்: 2012/TNVS", "Registered No: 2012/TNVS")}
                 </h3>
-                <p className="text-xs text-slate-400 font-tamil">
+                <p className="text-xs text-muted-foreground font-tamil">
                   {t("தமிழ்நாடு அரசியல் பதிவு செய்யப்பட்ட வணிகர்கள் சங்கமம்", "Govt. of Tamil Nadu Registered Traders Association")}
                 </p>
               </div>
               <div className="flex gap-4">
                 <div className="text-center">
-                  <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center mb-2 mx-auto">
+                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-2 mx-auto">
                     <Award className="w-6 h-6 text-gold" />
                   </div>
-                  <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">
+                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
                     {t("ISO", "ISO")}
                   </div>
                   <div className="text-xs font-bold">9001</div>
                 </div>
                 <div className="text-center">
-                  <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center mb-2 mx-auto">
+                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-2 mx-auto">
                     <CheckCircle2 className="w-6 h-6 text-emerald-400" />
                   </div>
-                  <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">
+                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
                     {t("சான்று", "Certified")}
                   </div>
                   <div className="text-xs font-bold">2024</div>
@@ -359,11 +382,13 @@ function Home() {
       {/* HOW IT WORKS — Horizontal scroll-linked steps */}
       <HorizontalSteps />
 
+
+
       {/* QUICK ACTIONS — WhatsApp Bot Flow Icons */}
       <Section className="py-14 border-t border-border bg-linear-to-br from-slate-50 to-white">
         <ScrollReveal direction="up" blur className="text-center mb-10">
           {/* Welcome banner from admin flow images */}
-          <div className="mb-6 rounded-2xl overflow-hidden max-w-3xl mx-auto shadow-lg">
+          <div className="mb-6 rounded-md overflow-hidden max-w-3xl mx-auto shadow-xs">
             <img
               src="/flow-images/flow_welcome_banner_1775048805.jpg"
               alt="Vanigan Digital - Official TNVS Portal"
@@ -388,16 +413,16 @@ function Home() {
               <Link
                 key={action.label}
                 to={action.to}
-                className="group flex flex-col items-center gap-2 p-3 rounded-2xl hover:bg-primary/5 hover:shadow-md transition-all duration-200 cursor-pointer"
+                className="group flex flex-col items-center gap-2 p-3 rounded-md hover:bg-primary/5 hover:shadow-xs transition-all duration-200 cursor-pointer"
               >
-                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl overflow-hidden border-2 border-slate-100 group-hover:border-primary/30 transition-all duration-200 shadow-sm group-hover:shadow-md group-hover:scale-110">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-md overflow-hidden border-2 border-border group-hover:border-primary/30 transition-all duration-200 shadow-xs group-hover:shadow-xs group-hover:scale-110">
                   <img
                     src={action.img}
                     alt={action.label}
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <span className="text-[10px] sm:text-xs font-semibold text-slate-600 group-hover:text-primary transition-colors text-center leading-tight">
+                <span className="text-[10px] sm:text-xs font-semibold text-muted-foreground group-hover:text-primary transition-colors text-center leading-tight">
                   {t(action.labelTa, action.label)}
                 </span>
               </Link>
@@ -406,8 +431,10 @@ function Home() {
         </ScrollReveal>
       </Section>
 
+
+
       {/* CTA after steps */}
-      <div className="flex justify-center py-8 border-b border-border bg-slate-50/40">
+      <div className="flex justify-center py-8 border-b border-border bg-background">
         <Link to="/membership" className="btn-primary text-sm sm:text-base px-8">
           <Users className="w-4 h-4" aria-hidden="true" />
           {t("இப்போதே விண்ணப்பிக்கவும்", "Start My Application")}
@@ -433,17 +460,19 @@ function Home() {
           </Link>
         </ScrollReveal>
 
-        <div className="max-w-4xl mx-auto py-8">
+        <div className="w-full py-8">
           <StackedServices services={TOP_SERVICES} />
         </div>
       </Section>
+
+
 
       {/* WATCH OUR STORY — VIDEO SECTION */}
       <Section className="py-16 border-t border-border">
         <div className="max-w-4xl mx-auto">
           <ScrollReveal direction="up" className="text-center mb-8">
             <SectionLabel>{t("எங்கள் கதை", "Our Story")}</SectionLabel>
-            <h2 className="mt-3 font-display text-3xl md:text-4xl font-semibold text-slate-800">
+            <h2 className="mt-3 font-display text-3xl md:text-4xl font-semibold text-foreground">
               {t("சங்கமத்தை பற்றி அறிந்துகொள்ளுங்கள்", "Watch Our Story")}
             </h2>
             <p className="mt-3 text-muted-foreground text-sm md:text-base max-w-xl mx-auto font-tamil">
@@ -455,7 +484,7 @@ function Home() {
           </ScrollReveal>
 
           <ScrollReveal direction="up" delay={0.1}>
-            <div className="relative rounded-2xl overflow-hidden shadow-xl border border-slate-200/60 bg-slate-900 group">
+            <div className="relative rounded-md overflow-hidden shadow-xl border border-border bg-black group">
               <video
                 ref={videoRef}
                 src="/welcome_video.mp4"
@@ -491,7 +520,7 @@ function Home() {
                     className="absolute inset-0 flex items-center justify-center bg-black/35 hover:bg-black/45 transition-colors cursor-pointer z-10 w-full h-full border-none focus:outline-none"
                     aria-label={t("காணொளியை இயக்கு", "Play Video")}
                   >
-                    <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 flex items-center justify-center shadow-lg transition-transform duration-300 hover:scale-110">
+                    <div className="w-16 h-16 rounded-full bg-primary/20 backdrop-blur-sm border border-white/30 flex items-center justify-center shadow-xs transition-transform duration-300 hover:scale-110">
                       <Play className="w-7 h-7 text-white fill-white ml-0.5" aria-hidden="true" />
                     </div>
                   </motion.button>
@@ -502,8 +531,10 @@ function Home() {
         </div>
       </Section>
 
+
+
       {/* TESTIMONIALS SECTION */}
-      <Section className="py-16 border-t border-border bg-slate-50/40">
+      <Section className="py-16 border-t border-border bg-background">
         <ScrollReveal direction="up" className="text-center mb-10">
           <SectionLabel>{t("உறுப்பினர் வெற்றிக் கதைகள்", "Member Success Stories")}</SectionLabel>
           <h2 className="mt-3 font-display text-3xl md:text-4xl font-semibold text-ink">
@@ -517,6 +548,8 @@ function Home() {
           <TestimonialCarousel />
         </ScrollReveal>
       </Section>
+
+
 
       {/* FAQ SECTION */}
       <Section className="py-16 border-t border-border">
@@ -537,13 +570,13 @@ function Home() {
                 <AccordionItem
                   key={index}
                   value={`faq-${index}`}
-                  className="border border-slate-200/80 rounded-2xl px-5 bg-white shadow-sm hover:border-primary/20 transition-all duration-200"
+                  className="border border-border rounded-md px-5 bg-card shadow-xs hover:border-primary/20 transition-all duration-200"
                 >
-                  <AccordionTrigger className="font-display font-semibold text-slate-800 text-sm md:text-base py-5 hover:no-underline hover:text-primary">
+                  <AccordionTrigger className="font-display font-semibold text-foreground text-sm md:text-base py-5 hover:no-underline hover:text-primary">
                     {t(faq.q, faq.e)}
                   </AccordionTrigger>
                   <AccordionContent
-                    className="text-slate-600 text-xs md:text-sm leading-relaxed pb-5 border-t border-slate-50 pt-3 font-tamil"
+                    className="text-muted-foreground text-xs md:text-sm leading-relaxed pb-5 border-t border-slate-50 pt-3 font-tamil"
                     lang={language === "ta" ? "ta" : "en"}
                   >
                     {t(faq.a, faq.ae)}
@@ -558,12 +591,13 @@ function Home() {
       {/* CTA */}
       <Section className="py-16">
         <ScrollReveal direction="scale" duration={0.7} className="w-full">
-          <div className="relative overflow-hidden rounded-2xl bg-primary text-primary-foreground p-10 md:p-14">
+          <div className="relative overflow-hidden rounded-md bg-primary text-primary-foreground p-10 md:p-14">
             <div className="absolute inset-0 opacity-10 bg-black/20" aria-hidden="true" />
             <div className="relative max-w-2xl">
-              <SectionLabel>
-                <span className="text-gold">{t("இன்றே இணையுங்கள்", "Join today")}</span>
-              </SectionLabel>
+              <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-white/90 mb-3">
+                <span className="w-6 h-px bg-white/40" />
+                {t("இன்றே இணையுங்கள்", "Join today")}
+              </div>
               <h2 className="mt-3 font-display text-3xl md:text-4xl font-semibold">
                 {t("ஒன்றாக நிற்போம். பலத்துடன் வணிகம் செய்வோம்.", "Stand together. Trade with strength.")}
               </h2>

@@ -33,7 +33,6 @@ export const Route = createFileRoute("/api/public/business")({
           }
         }
 
-        // 2. Main list/search view
         const category = url.searchParams.get("category")?.trim() || undefined;
         const subCategory = url.searchParams.get("subCategory")?.trim() || undefined;
         const search = url.searchParams.get("search")?.trim() || undefined;

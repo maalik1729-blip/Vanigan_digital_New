@@ -5,7 +5,7 @@ export function SiteFooter() {
   const { t } = useLanguage();
   
   return (
-    <footer className="mt-16 border-t border-slate-200/80 bg-primary text-slate-100">
+    <footer className="mt-16 border-t border-border bg-card text-foreground">
       {/* Saffron/Gold stripe */}
       <div className="gov-stripe h-[3px]" aria-hidden="true" />
       
@@ -13,10 +13,10 @@ export function SiteFooter() {
         
         {/* Main Logo section */}
         <div className="sm:col-span-2 lg:col-span-2 space-y-4">
-          <h3 className="font-display text-xl font-bold text-white">Tamil Nadu Vanigargalin Sangamam</h3>
-          <div className="font-tamil text-xs text-slate-300 mt-1">தமிழ்நாடு வணிகர்களின் சங்கமம்</div>
+          <h3 className="font-display text-xl font-bold text-ink">Tamil Nadu Vanigargalin Sangamam</h3>
+          <div className="font-tamil text-xs text-muted-foreground mt-1">தமிழ்நாடு வணிகர்களின் சங்கமம்</div>
           
-          <p className="text-xs md:text-sm text-slate-300 leading-relaxed max-w-sm">
+          <p className="text-xs md:text-sm text-muted-foreground leading-relaxed max-w-sm">
             {t(
               "தமிழ்நாடு முழுவதும் உள்ள வணிகர்களை ஒன்றிணைக்கும் ஒரு பதிவுசெய்யப்பட்ட சங்கம் - உறுப்பினர் சேர்க்கை, சான்றிதழ், வாதாடுதல் மற்றும் நலத்திட்ட சேவைகளை வழங்குகிறது.",
               "A registered association uniting traders across Tamil Nadu — providing membership, certification, advocacy and welfare services."
@@ -26,27 +26,27 @@ export function SiteFooter() {
 
         {/* Category 1: Services */}
         <div className="space-y-3.5">
-          <div className="text-xs font-bold uppercase tracking-wider text-gold opacity-95">
+          <div className="text-xs font-bold uppercase tracking-wider text-primary opacity-95">
             {t("சேவைகள்", "Services")}
           </div>
-          <ul className="space-y-2 text-xs text-slate-300">
+          <ul className="space-y-2 text-xs text-muted-foreground">
             <li>
-              <Link to="/membership" className="hover:underline hover:text-white transition duration-200">
+              <Link to="/membership" className="hover:underline hover:text-foreground transition duration-200">
                 {t("புதிய உறுப்பினர் சேர்க்கை", "New Membership")}
               </Link>
             </li>
             <li>
-              <Link to="/members" className="hover:underline hover:text-white transition duration-200">
+              <Link to="/members" className="hover:underline hover:text-foreground transition duration-200">
                 {t("சான்றிதழ் பதிவிறக்கம்", "Certificate Download")}
               </Link>
             </li>
             <li>
-              <Link to="/wings" className="hover:underline hover:text-white transition duration-200">
+              <Link to="/wings" className="hover:underline hover:text-foreground transition duration-200">
                 {t("சங்கமப் பிரிவுகள்", "Wings & Divisions")}
               </Link>
             </li>
             <li>
-              <Link to="/dashboard" className="hover:underline hover:text-white transition duration-200">
+              <Link to="/dashboard" className="hover:underline hover:text-foreground transition duration-200">
                 {t("உறுப்பினர் டாஷ்போர்டு", "Member Dashboard")}
               </Link>
             </li>
@@ -55,27 +55,27 @@ export function SiteFooter() {
 
         {/* Category 2: Association */}
         <div className="space-y-3.5">
-          <div className="text-xs font-bold uppercase tracking-wider text-gold opacity-95">
+          <div className="text-xs font-bold uppercase tracking-wider text-primary opacity-95">
             {t("சங்கம்", "Association")}
           </div>
-          <ul className="space-y-2 text-xs text-slate-300">
+          <ul className="space-y-2 text-xs text-muted-foreground">
             <li>
-              <Link to="/assistant" className="hover:underline hover:text-white transition duration-200">
+              <Link to="/assistant" className="hover:underline hover:text-foreground transition duration-200">
                 {t("உதவி மையம்", "Support Hub Portal")}
               </Link>
             </li>
             <li>
-              <Link to="/about" className="hover:underline hover:text-white transition duration-200">
+              <Link to="/about" className="hover:underline hover:text-foreground transition duration-200">
                 {t("சங்கத்தின் நன்மைகள்", "Member Benefits")}
               </Link>
             </li>
             <li>
-              <Link to="/terms-conditions" className="hover:underline hover:text-white transition duration-200">
+              <Link to="/terms-conditions" className="hover:underline hover:text-foreground transition duration-200">
                 {t("விதிமுறைகள் மற்றும் நிபந்தனைகள்", "Terms & Conditions")}
               </Link>
             </li>
             <li>
-              <Link to="/privacy-policy" className="hover:underline hover:text-white transition duration-200">
+              <Link to="/privacy-policy" className="hover:underline hover:text-foreground transition duration-200">
                 {t("தனியுரிமைக் கொள்கை", "Privacy Policy")}
               </Link>
             </li>
@@ -84,38 +84,38 @@ export function SiteFooter() {
 
         {/* Category 3: Office */}
         <div className="space-y-3.5">
-          <div className="text-xs font-bold uppercase tracking-wider text-gold opacity-95">
+          <div className="text-xs font-bold uppercase tracking-wider text-primary opacity-95">
             {t("அலுவலகம்", "Office")}
           </div>
-          <ul className="space-y-2 text-xs text-slate-300 leading-relaxed">
-            <li className="text-slate-200">{t("மயிலாப்பூர், சென்னை — 600 004", "Mylapore, Chennai — 600 004")}</li>
+          <ul className="space-y-2 text-xs text-muted-foreground leading-relaxed">
+            <li className="text-foreground">{t("மயிலாப்பூர், சென்னை — 600 004", "Mylapore, Chennai — 600 004")}</li>
             <li>
-              <a href="tel:04423456789" className="text-slate-200 hover:text-white transition">
+              <a href="tel:04423456789" className="text-foreground hover:text-primary transition">
                 {t("உதவி எண்: 044-2345-6789", "Helpline: 044-2345-6789")}
               </a>
             </li>
-            <li><a href="mailto:info@tnvs.gov.in" className="hover:text-white transition">info@tnvs.gov.in</a></li>
-            <li className="text-slate-400">{t("திங்கள்–சனி · 10:00 – 18:00", "Mon–Sat · 10:00 – 18:00")}</li>
+            <li><a href="mailto:info@tnvs.gov.in" className="hover:text-primary transition">info@tnvs.gov.in</a></li>
+            <li className="text-muted-foreground">{t("திங்கள்–சனி · 10:00 – 18:00", "Mon–Sat · 10:00 – 18:00")}</li>
           </ul>
         </div>
 
       </div>
 
       {/* Footer CTA */}
-      <div className="border-t border-slate-800/60">
+      <div className="border-t border-border">
         <div className="max-w-7xl mx-auto px-5 sm:px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 w-full">
-          <span className="text-xs text-slate-400">{t("இன்றே உருப்பினராகுங்கள்", "Ready to join us?")}</span>
-          <Link to="/membership" className="text-xs text-gold font-semibold hover:underline flex items-center gap-1">
+          <span className="text-xs text-muted-foreground">{t("இன்றே உருப்பினராகுங்கள்", "Ready to join us?")}</span>
+          <Link to="/membership" className="text-xs text-primary font-semibold hover:underline flex items-center gap-1">
             {t("உறுப்பினர் சேர்க்கைக்கு விண்ணப்பிக்கவும் →", "Apply for Membership →")}
           </Link>
         </div>
       </div>
 
       {/* Footer Bottom copyright section */}
-      <div className="border-t border-slate-800/80 bg-slate-950/40">
-        <div className="max-w-7xl mx-auto px-5 sm:px-6 py-4 text-xs text-slate-400 flex flex-col sm:flex-row flex-wrap justify-between gap-2 w-full">
+      <div className="border-t border-border bg-background">
+        <div className="max-w-7xl mx-auto px-5 sm:px-6 py-4 text-xs text-muted-foreground flex flex-col sm:flex-row flex-wrap justify-between gap-2 w-full">
           <span>© {new Date().getFullYear()} TN Vanigargalin Sangamam. {t("அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை.", "All rights reserved.")}</span>
-          <span className="font-semibold text-slate-300 text-xs">{t("தமிழ்நாடு அரசு · பதிவுசெய்யப்பட்ட சங்கம்", "Government of Tamil Nadu · Registered Society")}</span>
+          <span className="font-semibold text-foreground text-xs">{t("தமிழ்நாடு அரசு · பதிவுசெய்யப்பட்ட சங்கம்", "Government of Tamil Nadu · Registered Society")}</span>
         </div>
       </div>
     </footer>
