@@ -46,3 +46,9 @@ dist-ssr
 # Compiled assets
 public/assets/
 
+# Documentation files (keep local only)
+*.md
+!README.md
+outputs/*.md
+ui_redesign/*.md
+scripts/*.md
