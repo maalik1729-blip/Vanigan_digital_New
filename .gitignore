@@ -46,11 +46,11 @@ dist-ssr
 # Compiled assets
 public/assets/
 
-# Documentation files (keep local only)
+# Documentation files and folders (keep local only)
 # Exclude all .md files in root directory except README.md
 *.md
 !README.md
-# Exclude .md files in specific folders
+# Exclude entire documentation folders
 outputs/
 ui_redesign/
 scripts/README-SYNC.md
