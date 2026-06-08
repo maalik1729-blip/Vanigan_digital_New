@@ -118,14 +118,14 @@ export function Navbar() {
           {/* Right — CTA + mobile toggle */}
           <div className="flex items-center gap-3">
             <Link
-              to="/add-business"
+              to="/business/new"
               className="hidden lg:inline-flex items-center rounded-xl bg-sage hover:bg-sage-soft text-white px-5 py-2.5 text-xs font-semibold whitespace-nowrap transition-all duration-300 hover:scale-[1.02] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sage cursor-pointer"
             >
               + Add Business
             </Link>
             
             <Link
-              to="/list-business"
+              to="/business"
               className="hidden sm:inline-flex items-center rounded-xl bg-slate-900 hover:bg-slate-800 text-white px-5 py-2.5 text-xs font-semibold whitespace-nowrap transition-all duration-300 hover:scale-[1.02] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 cursor-pointer"
             >
               Explore
@@ -189,7 +189,7 @@ export function Navbar() {
           {/* Mobile CTA */}
           <div className="mt-auto flex flex-col gap-3">
             <Link
-              to="/add-business"
+              to="/business/new"
               onClick={() => setOpen(false)}
               className="inline-flex justify-center rounded-xl bg-sage hover:bg-sage-soft text-white px-6 py-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sage cursor-pointer"
             >
@@ -197,7 +197,7 @@ export function Navbar() {
             </Link>
             
             <Link
-              to="/list-business"
+              to="/business"
               onClick={() => setOpen(false)}
               className="inline-flex justify-center rounded-xl bg-slate-900 hover:bg-slate-800 text-white px-6 py-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 cursor-pointer"
             >

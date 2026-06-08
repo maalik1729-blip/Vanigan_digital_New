@@ -155,13 +155,13 @@ export function SpatialHero() {
           className="mt-8 flex flex-wrap items-center justify-center gap-4"
         >
           <Link
-            to="/list-business"
+            to="/business"
             className="inline-flex items-center gap-2 rounded-full bg-foreground hover:bg-sage text-background font-sans font-semibold px-7 py-3.5 transition-all duration-300 whitespace-nowrap active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
           >
             Find a Business <ArrowRight className="size-4" />
           </Link>
           <Link
-            to="/add-business"
+            to="/business/new"
             className="inline-flex items-center gap-2 rounded-full border-2 border-sage bg-sage/10 text-sage hover:bg-sage hover:text-white font-semibold px-7 py-3.5 transition-all duration-300 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sage"
           >
             <Plus className="size-4" /> Add Business
