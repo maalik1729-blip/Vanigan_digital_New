@@ -50,19 +50,28 @@ export default defineConfig(({ command }) => {
     },
     build: {
       cssCodeSplit: true,
-      chunkSizeWarningLimit: 600,
+      chunkSizeWarningLimit: 500,
       rollupOptions: {
         output: {
           manualChunks(id) {
-            // Only split true leaf-node libs that have no imports back into
-            // the @tanstack bootstrap chain. Never split @tanstack/* — those
-            // packages form a circular import graph that deadlocks in production.
-            if (id.includes("node_modules/framer-motion")) return "framer-motion";
-            if (id.includes("node_modules/lucide-react")) return "lucide";
-            if (id.includes("node_modules/@radix-ui")) return "radix";
+            // Split vendor chunks for better caching
+            if (id.includes('node_modules')) {
+              if (id.includes('framer-motion')) {
+                return 'framer-motion';
+              }
+              if (id.includes('lucide-react')) {
+                return 'lucide';
+              }
+              if (id.includes('@radix-ui')) {
+                return 'radix';
+              }
+              // Group all other vendors together
+              return 'vendor';
+            }
           },
         },
       },
+      minify: 'esbuild', // Changed from terser to esbuild (faster, built-in)
     },
     optimizeDeps: {
       include: [

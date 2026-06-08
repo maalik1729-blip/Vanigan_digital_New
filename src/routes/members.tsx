@@ -1283,17 +1283,17 @@ function MembersPage() {
           </SectionLabel>
           <h2 className="mt-3 font-display text-2xl md:text-3xl font-extrabold text-foreground tracking-tight">
             {tab === "organizers"
-              ? t("சங்க நிர்வாகிகள்", "Sangam Executive Organizers")
+              ? t("சங்க நிர்வாகிகள்", "Sangamam Executive Organizers")
               : tab === "businesses"
                 ? t("பதிவுசெய்யப்பட்ட வணிகங்கள்", "Registered Local Businesses")
-                : t("பதிவுசெய்யப்பட்ட உறுப்பினர்கள்", "Registered Sangam Members")}
+                : t("பதிவுசெய்யப்பட்ட உறுப்பினர்கள்", "Registered Sangamam Members")}
           </h2>
           <p className="mt-2 text-sm text-muted-foreground font-tamil max-w-xl leading-relaxed">
             {tab === "organizers"
               ? t("தமிழ்நாடு வணிகர்கள் சங்கத்தின் பொறுப்புள்ள மாநில, மாவட்ட மற்றும் வட்டார நிர்வாகிகள் பட்டியல்.", "Directory of State, District, and Assembly level executive organizers and office bearers.")
               : tab === "businesses"
                 ? t("அதிகாரப்பூர்வமாக பதிவுசெய்யப்பட்ட வணிகங்கள், கடைகள் மற்றும் சேவை வழங்குநர்கள் பட்டியல்.", "Explore verified local shops, services, and wholesale businesses across Tamil Nadu.")
-                : t("தமிழ்நாடு வணிகர்களுக்கான அதிகாரப்பூர்வ உறுப்பினர் கோப்பகம். உங்கள் விபரங்களை சரிபார்க்கவும்.", "Official directory of Tamil Nadu Sangam merchants. Search and verify registered memberships.")}
+                : t("தமிழ்நாடு வணிகர்களுக்கான அதிகாரப்பூர்வ உறுப்பினர் கோப்பகம். உங்கள் விபரங்களை சரிபார்க்கவும்.", "Official directory of Tamil Nadu Sangamam merchants. Search and verify registered memberships.")}
           </p>
 
           {/* Quick Metrics Grid */}
@@ -1555,94 +1555,114 @@ function MembersPage() {
                   {members.map((member) => (
                     <div
                       key={member.id}
-                      className="bg-white border border-slate-200 rounded-xl p-6 hover:shadow-md hover:border-primary/30 transition-all duration-300 flex flex-col justify-between hover:-translate-y-0.5 relative group overflow-hidden"
+                      className="bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-lg hover:border-primary/30 transition-all duration-300 hover:-translate-y-1 relative group"
                     >
-                      {/* Subtle golden/blue glow blur element */}
-                      <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full blur-2xl translate-x-1/4 -translate-y-1/4 pointer-events-none group-hover:bg-primary/10 transition duration-500" />
-
-                      {/* Status Pill in top right */}
-                      <div className="absolute top-5 right-5">
-                        <StatusPill status="active" label="ACTIVE" />
-                      </div>
-
-                      <div className="space-y-4 relative z-1">
-                        <div className="flex items-center gap-4">
-                          <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-amber-400 bg-slate-50 shrink-0 relative flex items-center justify-center shadow-sm">
-                            {member.selfie ? (
-                              <img
-                                src={member.selfie}
-                                alt={member.name}
-                                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                                onError={(e) => {
-                                  (e.target as HTMLImageElement).src = `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(member.name)}`;
-                                }}
-                              />
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center bg-primary/5 text-primary font-bold text-sm">
-                                {member.name.slice(0, 2).toUpperCase()}
-                              </div>
-                            )}
+                      {/* Header Section with Avatar and Status Badge */}
+                      <div className="relative bg-gradient-to-br from-primary/5 via-primary/10 to-primary/5 p-5 pb-4">
+                        <div className="flex items-start gap-3.5">
+                          {/* Avatar */}
+                          <div className="relative">
+                            <div className="w-16 h-16 rounded-xl overflow-hidden border-2 border-white bg-white shadow-md shrink-0 flex items-center justify-center">
+                              {member.selfie ? (
+                                <img
+                                  src={member.selfie}
+                                  alt={member.name}
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => {
+                                    (e.target as HTMLImageElement).src = `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(member.name)}`;
+                                  }}
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary to-primary/80 text-white font-bold text-lg">
+                                  {member.name.slice(0, 2).toUpperCase()}
+                                </div>
+                              )}
+                            </div>
+                            {/* Active Status Badge */}
+                            <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white flex items-center justify-center shadow-sm">
+                              <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                            </div>
                           </div>
-                          <div className="min-w-0 text-left">
-                            <h3 className="font-bold text-slate-800 text-sm truncate leading-tight group-hover:text-primary transition-colors">{member.name}</h3>
-                            <div className="inline-flex items-center gap-1 mt-1 px-2.5 py-0.5 rounded-md bg-amber-50 border border-amber-200 font-mono text-[9px] font-bold text-amber-700 tracking-wider shadow-xs">
-                              ID: {member.epic}
+
+                          {/* Name and EPIC */}
+                          <div className="flex-1 min-w-0 pt-1">
+                            <h3 className="font-bold text-slate-900 text-base leading-tight truncate group-hover:text-primary transition-colors">
+                              {member.name}
+                            </h3>
+                            <div className="flex items-center gap-1.5 mt-1.5">
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-primary/10 border border-primary/20 text-[10px] font-bold text-primary tracking-wide font-mono">
+                                {member.epic}
+                              </span>
+                              {member.bloodGroup && (
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-rose-50 border border-rose-200 text-[10px] font-bold text-rose-600 font-mono">
+                                  {member.bloodGroup}
+                                </span>
+                              )}
                             </div>
                           </div>
                         </div>
+                      </div>
 
-                        <div className="space-y-2 border-t border-slate-200 pt-4 text-xs">
-                          {member.shop && (
-                            <div className="bg-slate-50/50 p-2 rounded-md border border-slate-100 text-left flex justify-between items-center min-h-[28px]">
-                              <span className="text-slate-500 flex items-center gap-1.5 font-medium">
-                                <Store className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      {/* Details Section */}
+                      <div className="p-5 pt-4 space-y-2.5">
+                        {/* Shop */}
+                        {member.shop && (
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center shrink-0">
+                              <Store className="w-4 h-4 text-slate-600" />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <div className="text-[10px] text-slate-500 font-medium uppercase tracking-wide">
                                 {t("கடை", "Shop")}
-                              </span>
-                              <span className="font-bold text-slate-800 truncate max-w-[150px] text-right">{member.shop}</span>
+                              </div>
+                              <div className="text-sm font-semibold text-slate-900 truncate">
+                                {member.shop}
+                              </div>
                             </div>
-                          )}
-
-                          <div className="bg-slate-50/50 p-2 rounded-md border border-slate-100 text-left flex justify-between items-center min-h-[28px]">
-                            <span className="text-slate-500 flex items-center gap-1.5 font-medium">
-                              <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                              {t("கைபேசி", "Mobile")}
-                            </span>
-                            <span className="font-mono text-slate-700 font-semibold text-right">{member.mobile}</span>
                           </div>
+                        )}
 
-                          {(member.assembly || member.district) && (
-                            <div className="bg-slate-50/50 p-2 rounded-md border border-slate-100 text-left flex justify-between items-center min-h-[28px]">
-                              <span className="text-slate-500 flex items-center gap-1.5 font-medium">
-                                <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                                {t("வட்டாரம்", "Location")}
-                              </span>
-                              <span className="font-bold text-slate-800 text-right truncate max-w-[150px]">
-                                {[member.assembly, member.district].filter(Boolean).join(", ")}
-                              </span>
+                        {/* Mobile */}
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center shrink-0">
+                            <Phone className="w-4 h-4 text-slate-600" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="text-[10px] text-slate-500 font-medium uppercase tracking-wide">
+                              {t("கைபேசி", "Mobile")}
                             </div>
-                          )}
-
-                          {member.bloodGroup && (
-                            <div className="bg-slate-50/50 p-2 rounded-md border border-slate-100 text-left flex justify-between items-center min-h-[28px]">
-                              <span className="text-slate-500 flex items-center gap-1.5 font-medium">
-                                <Heart className="w-3.5 h-3.5 text-rose-500 shrink-0" />
-                                {t("இரத்த வகை", "Blood Group")}
-                              </span>
-                              <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-rose-50 border border-rose-200 text-[10px] font-bold text-rose-600 font-mono">
-                                {member.bloodGroup}
-                              </span>
+                            <div className="text-sm font-semibold text-slate-900 font-mono">
+                              +91 {member.mobile}
                             </div>
-                          )}
+                          </div>
                         </div>
+
+                        {/* Location */}
+                        {(member.assembly || member.district) && (
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center shrink-0">
+                              <MapPin className="w-4 h-4 text-slate-600" />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <div className="text-[10px] text-slate-500 font-medium uppercase tracking-wide">
+                                {t("வட்டாரம்", "Location")}
+                              </div>
+                              <div className="text-sm font-semibold text-slate-900 truncate">
+                                {[member.assembly, member.district].filter(Boolean).join(", ")}
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
 
-                      <div className="mt-6 border-t border-slate-200 pt-4 flex gap-2 relative z-1">
+                      {/* Action Button */}
+                      <div className="px-5 pb-5">
                         <Link
                           to="/voter-id"
                           search={{ epic: member.epic }}
-                          className="flex-1 bg-slate-50 hover:bg-primary hover:text-white border border-slate-200 hover:border-primary text-slate-600 font-bold py-2.5 rounded-md text-xs flex items-center justify-center gap-1.5 transition-all duration-200 cursor-pointer shadow-xs active:scale-[0.98] no-underline"
+                          className="w-full bg-white hover:bg-primary border-2 border-primary hover:border-primary text-primary hover:text-white font-bold py-3 rounded-lg text-sm flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md active:scale-[0.98] no-underline group/btn"
                         >
-                          <CreditCard className="w-3.5 h-3.5" />
+                          <CreditCard className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
                           <span>{t("அட்டை காண்க", "View ID Card")}</span>
                         </Link>
                       </div>
@@ -1667,72 +1687,111 @@ function MembersPage() {
                     return (
                       <div
                         key={org.id}
-                        className="bg-card border border-border rounded-md p-6 hover:shadow-xs hover:border-primary/20 transition-all duration-300 flex flex-col justify-between hover:-translate-y-0.5 relative group"
+                        className="bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-lg hover:border-primary/30 transition-all duration-300 hover:-translate-y-1 relative group"
                       >
-                        <div className="space-y-4">
-                          <div className="flex items-center gap-4">
-                            <div className={`w-14 h-14 rounded-full overflow-hidden border-2 bg-muted shrink-0 relative flex items-center justify-center shadow-xs transition-colors duration-300 ${isStateLevel ? "border-amber-400 bg-amber-50" : "border-primary bg-primary/5"
-                              }`}>
-                              <ShieldCheck className={`w-6 h-6 ${isStateLevel ? "text-amber-600" : "text-primary"}`} />
+                        {/* Header Section with Badge and Role */}
+                        <div className={`relative p-5 pb-4 ${isStateLevel ? "bg-gradient-to-br from-amber-50 via-amber-100/50 to-amber-50" : "bg-gradient-to-br from-primary/5 via-primary/10 to-primary/5"}`}>
+                          <div className="flex items-start gap-3.5">
+                            {/* Icon Badge */}
+                            <div className="relative">
+                              <div className={`w-16 h-16 rounded-xl overflow-hidden border-2 border-white shadow-md shrink-0 flex items-center justify-center ${isStateLevel ? "bg-gradient-to-br from-amber-400 to-amber-500" : "bg-gradient-to-br from-primary to-primary/80"}`}>
+                                <ShieldCheck className="w-8 h-8 text-white" />
+                              </div>
+                              {/* Status Badge */}
+                              <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white flex items-center justify-center shadow-sm">
+                                <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                              </div>
                             </div>
-                            <div className="min-w-0 text-left">
-                              <h3 className="font-bold text-foreground text-sm truncate leading-tight group-hover:text-primary transition-colors">{org.name}</h3>
-                              <div className={`inline-flex items-center gap-1 mt-1 px-2.5 py-0.5 rounded-md text-[9px] font-extrabold uppercase tracking-wider ${isStateLevel
-                                ? "bg-amber-50/80 border border-amber-200 text-amber-700"
-                                : "bg-primary/5 border border-primary/20 text-primary"
+
+                            {/* Name and Role */}
+                            <div className="flex-1 min-w-0 pt-1">
+                              <h3 className="font-bold text-slate-900 text-base leading-tight truncate group-hover:text-primary transition-colors">
+                                {org.name}
+                              </h3>
+                              <div className={`inline-flex items-center px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide mt-1.5 ${isStateLevel
+                                ? "bg-amber-100 border border-amber-300 text-amber-700"
+                                : "bg-primary/10 border border-primary/20 text-primary"
                                 }`}>
                                 {org.role || t("நிர்வாகி", "Organizer")}
                               </div>
                             </div>
                           </div>
-
-                          <div className="space-y-2 border-t border-border pt-4 text-xs">
-                            <div className="bg-muted/40 p-2 rounded-md border border-border/80 flex justify-between items-center min-h-[28px] text-left">
-                              <span className="text-muted-foreground flex items-center gap-1.5">
-                                <ShieldCheck className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                                {t("நிர்வாகி ஐடி", "Organizer ID")}
-                              </span>
-                              <span className="font-mono text-foreground text-right">{org.organizer_code}</span>
-                            </div>
-
-                            <div className="bg-muted/40 p-2 rounded-md border border-border/80 flex justify-between items-center min-h-[28px] text-left">
-                              <span className="text-muted-foreground flex items-center gap-1.5">
-                                <Phone className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                                {t("கைபேசி", "Mobile")}
-                              </span>
-                              <span className="font-mono text-foreground text-right">{org.mobile}</span>
-                            </div>
-
-                            {org.email && (
-                              <div className="bg-muted/40 p-2 rounded-md border border-border/80 flex justify-between items-center min-h-[28px] text-left">
-                                <span className="text-muted-foreground flex items-center gap-1.5">
-                                  <Mail className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                                  {t("மின்னஞ்சல்", "Email")}
-                                </span>
-                                <span className="text-foreground truncate max-w-[150px] text-right">{org.email}</span>
-                              </div>
-                            )}
-
-                            {(org.assembly || org.district) && (
-                              <div className="bg-muted/40 p-2 rounded-md border border-border/80 flex justify-between items-center min-h-[28px] text-left">
-                                <span className="text-muted-foreground flex items-center gap-1.5">
-                                  <MapPin className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                                  {t("வட்டாரம்", "Location")}
-                                </span>
-                                <span className="font-bold text-foreground text-right truncate max-w-[150px]">
-                                  {[org.assembly, org.district].filter(Boolean).join(", ")}
-                                </span>
-                              </div>
-                            )}
-                          </div>
                         </div>
 
-                        <div className="mt-6 border-t border-border pt-4 flex gap-2">
+                        {/* Details Section */}
+                        <div className="p-5 pt-4 space-y-2.5">
+                          {/* Organizer ID */}
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center shrink-0">
+                              <Tag className="w-4 h-4 text-slate-600" />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <div className="text-[10px] text-slate-500 font-medium uppercase tracking-wide">
+                                {t("நிர்வாகி ஐடி", "Organizer ID")}
+                              </div>
+                              <div className="text-sm font-semibold text-slate-900 font-mono">
+                                {org.organizer_code}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Mobile */}
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center shrink-0">
+                              <Phone className="w-4 h-4 text-slate-600" />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <div className="text-[10px] text-slate-500 font-medium uppercase tracking-wide">
+                                {t("கைபேசி", "Mobile")}
+                              </div>
+                              <div className="text-sm font-semibold text-slate-900 font-mono">
+                                +91 {org.mobile}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Email */}
+                          {org.email && (
+                            <div className="flex items-center gap-2.5">
+                              <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center shrink-0">
+                                <Mail className="w-4 h-4 text-slate-600" />
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <div className="text-[10px] text-slate-500 font-medium uppercase tracking-wide">
+                                  {t("மின்னஞ்சல்", "Email")}
+                                </div>
+                                <div className="text-sm font-semibold text-slate-900 truncate">
+                                  {org.email}
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Location */}
+                          {(org.assembly || org.district) && (
+                            <div className="flex items-center gap-2.5">
+                              <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center shrink-0">
+                                <MapPin className="w-4 h-4 text-slate-600" />
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <div className="text-[10px] text-slate-500 font-medium uppercase tracking-wide">
+                                  {t("வட்டாரம்", "Location")}
+                                </div>
+                                <div className="text-sm font-semibold text-slate-900 truncate">
+                                  {[org.assembly, org.district].filter(Boolean).join(", ")}
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Action Button */}
+                        <div className="px-5 pb-5">
                           <a
                             href={`tel:${org.mobile}`}
-                            className="flex-1 bg-muted/80 hover:bg-primary hover:text-white border border-border hover:border-primary text-muted-foreground font-bold py-2.5 rounded-md text-xs flex items-center justify-center gap-1.5 transition-all duration-205 cursor-pointer shadow-xs active:scale-[0.98]"
+                            className="w-full bg-white hover:bg-primary border-2 border-primary hover:border-primary text-primary hover:text-white font-bold py-3 rounded-lg text-sm flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md active:scale-[0.98] group/btn"
                           >
-                            <Phone className="w-3.5 h-3.5" />
+                            <Phone className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
                             <span>{t("அழைக்க", "Call Organizer")}</span>
                           </a>
                         </div>

@@ -18,11 +18,19 @@ export function LoadingPage() {
           <div className="absolute inset-4 rounded-full border border-gold/15 bg-gold/5 blur-md animate-pulse" aria-hidden="true" />
           
           {/* Logo with smooth infinite breathe-premium (no rotation) */}
-          <img
-            src={loadingLogo}
-            alt="TNVS Logo"
-            className="w-52 h-52 object-contain relative z-10 filter drop-shadow-[0_0_16px_rgba(255,255,255,0.2)]"
-          />
+          <picture>
+            <source type="image/avif" srcSet="/assets/loading-logo.avif 200w, /assets/loading-logo@2x.avif 400w" />
+            <source type="image/webp" srcSet="/assets/loading-logo.webp 200w, /assets/loading-logo@2x.webp 400w" />
+            <img
+              src={loadingLogo}
+              alt="TNVS Logo"
+              className="w-52 h-52 object-contain relative z-10 filter drop-shadow-[0_0_16px_rgba(255,255,255,0.2)]"
+              width="208"
+              height="208"
+              loading="eager"
+              decoding="sync"
+            />
+          </picture>
         </div>
 
         {/* Loading Text */}

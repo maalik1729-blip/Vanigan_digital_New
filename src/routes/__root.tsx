@@ -16,6 +16,8 @@ import { Toaster } from "sonner";
 import { LanguageProvider } from "@/hooks/useLanguage";
 import { ThemeProvider } from "@/hooks/useTheme";
 
+import { logger } from "@/lib/logger";
+
 function NotFoundComponent() {
   return (
     <div className="flex min-h-[70vh] items-center justify-center px-4">
@@ -32,7 +34,7 @@ function NotFoundComponent() {
 }
 
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
-  console.error(error);
+  logger.error("Route error:", error);
   const router = useRouter();
   return (
     <div className="flex min-h-[70vh] items-center justify-center px-4">
@@ -56,10 +58,23 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "Tamil Nadu Vanigargalin Sangamam — Trader Membership Portal" },
       { name: "description", content: "Official portal for Tamil Nadu Vanigargalin Sangamam. Apply for membership, download certificates, and access business support." },
       { name: "theme-color", content: "#1e3a8a" },
+      // Security headers
+      { httpEquiv: "Content-Security-Policy", content: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https: blob:; connect-src 'self' https://vanigan-app-automation-5il0.onrender.com https://api.qrserver.com;" },
+      { httpEquiv: "X-Content-Type-Options", content: "nosniff" },
+      { httpEquiv: "X-Frame-Options", content: "DENY" },
+      { httpEquiv: "Referrer-Policy", content: "strict-origin-when-cross-origin" },
     ],
     links: [
+      // Preconnect to external APIs for faster requests
+      { rel: "preconnect", href: "https://vanigan-app-automation-5il0.onrender.com" },
+      { rel: "dns-prefetch", href: "https://api.qrserver.com" },
+      // Preconnect to fonts
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      // Preload critical images for faster LCP
+      { rel: "preload", href: "/assets/loading-logo.avif", as: "image", type: "image/avif" },
+      { rel: "preload", href: "/assets/temple-logo.avif", as: "image", type: "image/avif" },
+      // Font with optimized display strategy
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Noto+Serif+Tamil:wght@400;500;600&family=Noto+Sans+Tamil:wght@400;500;600&family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" },
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.png?v=2", type: "image/png" },
@@ -121,8 +136,12 @@ function RootInner() {
     if (typeof window !== "undefined" && "serviceWorker" in navigator) {
       window.addEventListener("load", () => {
         navigator.serviceWorker.register("/sw.js")
-          .then((reg) => console.log("Service Worker registered successfully with scope:", reg.scope))
-          .catch((err) => console.error("Service Worker registration failed:", err));
+          .then((reg) => {
+            logger.log("Service Worker registered successfully with scope:", reg.scope);
+          })
+          .catch((err) => {
+            logger.error("Service Worker registration failed:", err);
+          });
       });
     }
   }, []);

@@ -44,19 +44,19 @@ const stats = [
   { v: "92.4%",      l: "Profiles Completed",  t: "விவரங்கள் நிரப்பப்பட்டவை" },
 ];
 
-// WhatsApp bot quick-action flow icons from vanigan.digital
+// WhatsApp bot quick-action flow icons from vanigan.digital (optimized WebP)
 const FLOW_ACTIONS = [
-  { img: "/flow-images/flow_register_1775026021.png",         label: "Register",        labelTa: "பதிவு",          to: "/membership" },
-  { img: "/flow-images/flow_view_card_1775026089.png",        label: "Get ID Card",     labelTa: "அட்டை பெறு",     to: "/voter-id" },
-  { img: "/flow-images/flow_how_to_register_1775026438.png",  label: "How to Register", labelTa: "எப்படி பதிவு?",   to: "/membership" },
-  { img: "/flow-images/flow_refer_friend_1775026106.png",     label: "Refer a Friend",  labelTa: "நண்பரை அழை",    to: "/membership" },
-  { img: "/flow-images/flow_become_organizer_1775026124.png", label: "Be an Organizer", labelTa: "நிர்வாகி ஆகு",   to: "/members" },
-  { img: "/flow-images/flow_your_members_1775026138.png",     label: "Your Members",    labelTa: "உறுப்பினர்கள்",  to: "/members" },
-  { img: "/flow-images/flow_request_loan_1775026153.png",     label: "Request Loan",    labelTa: "கடன் கோரிக்கை", to: "/members" },
-  { img: "/flow-images/flow_wings_list_1775026034.png",       label: "Wings",           labelTa: "பிரிவுகள்",       to: "/wings" },
-  { img: "/flow-images/flow_website_1775026047.png",          label: "Website",         labelTa: "இணையதளம்",       to: "/" },
-  { img: "/flow-images/flow_download_1775026063.png",         label: "Download",        labelTa: "பதிவிறக்கம்",    to: "/voter-id" },
-  { img: "/flow-images/flow_help_support_1775026075.png",     label: "Help & Support",  labelTa: "உதவி",            to: "/assistant" },
+  { img: "/flow-images/flow_register_1775026021.webp",         label: "Register",        labelTa: "பதிவு",          to: "/membership" },
+  { img: "/flow-images/flow_view_card_1775026089.webp",        label: "Get ID Card",     labelTa: "அட்டை பெறு",     to: "/voter-id" },
+  { img: "/flow-images/flow_how_to_register_1775026438.webp",  label: "How to Register", labelTa: "எப்படி பதிவு?",   to: "/membership" },
+  { img: "/flow-images/flow_refer_friend_1775026106.webp",     label: "Refer a Friend",  labelTa: "நண்பரை அழை",    to: "/membership" },
+  { img: "/flow-images/flow_become_organizer_1775026124.webp", label: "Be an Organizer", labelTa: "நிர்வாகி ஆகு",   to: "/members" },
+  { img: "/flow-images/flow_your_members_1775026138.webp",     label: "Your Members",    labelTa: "உறுப்பினர்கள்",  to: "/members" },
+  { img: "/flow-images/flow_request_loan_1775026153.webp",     label: "Request Loan",    labelTa: "கடன் கோரிக்கை", to: "/members" },
+  { img: "/flow-images/flow_wings_list_1775026034.webp",       label: "Wings",           labelTa: "பிரிவுகள்",       to: "/wings" },
+  { img: "/flow-images/flow_website_1775026047.webp",          label: "Website",         labelTa: "இணையதளம்",       to: "/" },
+  { img: "/flow-images/flow_download_1775026063.webp",         label: "Download",        labelTa: "பதிவிறக்கம்",    to: "/voter-id" },
+  { img: "/flow-images/flow_help_support_1775026075.webp",     label: "Help & Support",  labelTa: "உதவி",            to: "/assistant" },
 ];
 
 const faqs = [
@@ -302,13 +302,19 @@ function Home() {
           </div>
 
           <div className="lg:col-span-5 flex items-center justify-center animate-fade-in">
-            <img
-              src={templeLogo}
-              alt="Tamil Nadu Vanigargalin Sangamam emblem"
-              className="w-full max-w-[180px] sm:max-w-[320px] md:max-w-[360px] lg:max-w-[400px] h-auto object-contain mx-auto"
-              width={400}
-              height={400}
-            />
+            <picture>
+              <source type="image/avif" srcSet="/assets/temple-logo.avif 400w, /assets/temple-logo@2x.avif 800w" />
+              <source type="image/webp" srcSet="/assets/temple-logo.webp 400w, /assets/temple-logo@2x.webp 800w" />
+              <img
+                src={templeLogo}
+                alt="Tamil Nadu Vanigargalin Sangamam emblem"
+                className="w-full max-w-[180px] sm:max-w-[320px] md:max-w-[360px] lg:max-w-[400px] h-auto object-contain mx-auto"
+                width="400"
+                height="400"
+                loading="eager"
+                decoding="async"
+              />
+            </picture>
           </div>
         </div>
       </section>
@@ -387,13 +393,18 @@ function Home() {
       {/* QUICK ACTIONS — WhatsApp Bot Flow Icons */}
       <Section className="py-14 border-t border-border bg-linear-to-br from-slate-50 to-white">
         <ScrollReveal direction="up" blur className="text-center mb-10">
-          {/* Welcome banner from admin flow images */}
+          {/* Welcome banner from admin flow images (optimized) */}
           <div className="mb-6 rounded-md overflow-hidden max-w-3xl mx-auto shadow-xs">
-            <img
-              src="/flow-images/flow_welcome_banner_1775048805.jpg"
-              alt="Vanigan Digital - Official TNVS Portal"
-              className="w-full object-cover"
-            />
+            <picture>
+              <source type="image/webp" srcSet="/flow-images/flow_welcome_banner_1775048805.webp" />
+              <img
+                src="/flow-images/flow_welcome_banner_1775048805.jpg"
+                alt="Vanigan Digital - Official TNVS Portal"
+                className="w-full object-cover"
+                loading="lazy"
+                decoding="async"
+              />
+            </picture>
           </div>
           <SectionLabel>{t("விரைவு சேவைகள்", "Quick Actions")}</SectionLabel>
           <h2 className="mt-3 font-display text-2xl md:text-3xl font-semibold text-ink">

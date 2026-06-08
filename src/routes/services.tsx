@@ -185,7 +185,7 @@ function ServicesPage() {
             {t("அனைத்து வணிகர்களுக்காகவும், அனைத்து மாவட்டங்களிலும்.", "Built for every vanigar, across every district.")}
           </h1>
           <p className="mt-3 text-muted-foreground max-w-2xl font-tamil text-sm sm:text-base leading-relaxed">
-            {t("தமிழ்நாடு முழுவதும் உள்ள அனைத்து வியாபாரிகளின் மேம்பாட்டிற்கான சங்க உத்தியோகபூர்வ சேவைகள் — ஒரே இடத்தில்.", "Official Sangam services built to advocate and support small-to-large merchants across Tamil Nadu.")}
+            {t("தமிழ்நாடு முழுவதும் உள்ள அனைத்து வியாபாரிகளின் மேம்பாட்டிற்கான சங்க உத்தியோகபூர்வ சேவைகள் — ஒரே இடத்தில்.", "Official Sangamam services built to advocate and support small-to-large merchants across Tamil Nadu.")}
           </p>
         </div>
       </section>

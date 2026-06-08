@@ -333,7 +333,9 @@ function Membership() {
             }
           })
           .catch((err) => {
-            console.error("Camera access error:", err);
+            if (import.meta.env.DEV) {
+              console.error("Camera access error:", err);
+            }
             setCameraError(true);
           });
       } else {
@@ -678,7 +680,9 @@ function Membership() {
         try {
           return await compressAndResizeImage(f);
         } catch (err) {
-          console.warn("Image compression failed, falling back to raw reader:", err);
+          if (import.meta.env.DEV) {
+            console.warn("Image compression failed, falling back to raw reader:", err);
+          }
           if (typeof f === "string") return f;
           return new Promise((resolve) => {
             const r = new FileReader();
@@ -719,7 +723,9 @@ function Membership() {
 
         if (!bizRes.ok) {
           const errData = await bizRes.json().catch(() => ({}));
-          console.warn("Failed to add business automatically:", errData.error || bizRes.statusText);
+          if (import.meta.env.DEV) {
+            console.warn("Failed to add business automatically:", errData.error || bizRes.statusText);
+          }
         } else {
           toast.success(
             language === "ta"

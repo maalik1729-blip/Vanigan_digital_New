@@ -4,9 +4,10 @@ import { ArrowRight } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { MockupCard } from "./MockupCard";
 
-import trader1 from "@/assets/trader1.png";
-import trader2 from "@/assets/trader2.png";
-import trader3 from "@/assets/trader3.png";
+// Optimized trader images (using path for picture element)
+const trader1Path = "/assets/trader1";
+const trader2Path = "/assets/trader2";
+const trader3Path = "/assets/trader3";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -41,9 +42,9 @@ export function StackedServices({ services }: StackedServicesProps) {
   // Dynamically assign appropriate illustration or photograph to each service card
   const getCardImage = (idx: number, to: string) => {
     if (to === "/voter-id") return "mockup";
-    if (idx === 0) return trader3;
-    if (idx === 2) return trader1;
-    return trader2;
+    if (idx === 0) return trader3Path;
+    if (idx === 2) return trader1Path;
+    return trader2Path;
   };
 
   return (
@@ -122,13 +123,25 @@ export function StackedServices({ services }: StackedServicesProps) {
                     </div>
                   </div>
                 ) : (
-                  <img
-                    src={getCardImage(idx, s.to) as string}
-                    alt={s.e}
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100"
-                  />
+                  <picture>
+                    <source 
+                      type="image/avif" 
+                      srcSet={`${getCardImage(idx, s.to)}.avif 409w, ${getCardImage(idx, s.to)}@2x.avif 818w`} 
+                    />
+                    <source 
+                      type="image/webp" 
+                      srcSet={`${getCardImage(idx, s.to)}.webp 409w, ${getCardImage(idx, s.to)}@2x.webp 818w`} 
+                    />
+                    <img
+                      src={`${getCardImage(idx, s.to)}.png`}
+                      alt={s.e}
+                      loading="lazy"
+                      decoding="async"
+                      width="409"
+                      height="409"
+                      className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100"
+                    />
+                  </picture>
                 )}
               </div>
             </Link>

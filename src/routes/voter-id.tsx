@@ -110,7 +110,7 @@ function SecureDownloadPage() {
         toast.error(language === "ta" ? "சரிபார்க்க முடியவில்லை. மீண்டும் முயலவும்." : "Could not verify details. Please try again.");
       }
     } catch (err) {
-      console.error("Database lookup error:", err);
+      import('@/lib/logger').then(({ logger }) => logger.error("Database lookup error:", err));
       toast.error(language === "ta" ? "சேவையகத்தை அணுக முடியவில்லை. மீண்டும் முயலவும்." : "Unable to reach verification server. Please try again.");
     } finally {
       setIsVerifying(false);

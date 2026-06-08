@@ -9,9 +9,11 @@ import {
   CarouselNext,
   type CarouselApi,
 } from "@/components/ui/carousel";
-import trader1 from "@/assets/trader1.png";
-import trader2 from "@/assets/trader2.png";
-import trader3 from "@/assets/trader3.png";
+
+// Use optimized image paths (WebP/AVIF with fallback)
+const trader1Path = "/assets/trader1";
+const trader2Path = "/assets/trader2";
+const trader3Path = "/assets/trader3";
 
 const TESTIMONIALS = [
   {
@@ -22,7 +24,7 @@ const TESTIMONIALS = [
     roleTa: "மளிகைக் கடை உரிமையாளர்",
     location: "Mylapore, Chennai",
     locationTa: "மயிலாப்பூர், சென்னை",
-    image: trader1,
+    image: trader1Path,
     text: "The digital ID card and certificate give instant credibility. It was extremely helpful when applying for my business expansion loan.",
     textTa: "டிஜிட்டல் அடையாள அட்டை மற்றும் சான்றிதழ் உடனடி அங்கீகாரத்தை வழங்குகிறது. கடன் விண்ணப்பத்திற்கு இது எனக்கு மிகவும் உதவியாக இருந்தது.",
     rating: 5,
@@ -35,7 +37,7 @@ const TESTIMONIALS = [
     roleTa: "ஜவுளி வியாபாரி",
     location: "Nelpettai, Madurai",
     locationTa: "நெல்பேட்டை, மதுரை",
-    image: trader2,
+    image: trader2Path,
     text: "The association's welfare schemes and health insurance are a huge safety net for small merchants like us. Registration took only 5 minutes.",
     textTa: "சங்கத்தின் நலத்திட்டங்கள் மற்றும் மருத்துவக் காப்பீடு எங்களைப் போன்ற சிறு வணிகர்களுக்கு ஒரு பெரிய பாதுகாப்பு வளையமாகும். 5 நிமிடங்களில் பதிவு செய்ய முடிந்தது.",
     rating: 5,
@@ -48,7 +50,7 @@ const TESTIMONIALS = [
     roleTa: "ஹார்டுவேர் மற்றும் கருவிகள் வியாபாரி",
     location: "Gandhipuram, Coimbatore",
     locationTa: "காந்திபுரம், கோயம்புத்தூர்",
-    image: trader3,
+    image: trader3Path,
     text: "I registered online and got my stamped certificate instantly. The government recognition and transparency in TNVS is outstanding.",
     textTa: "நான் ஆன்லைனில் பதிவு செய்து, எனது முத்திரையிடப்பட்ட சான்றிதழை உடனடியாகப் பெற்றேன். TNVS-ன் அரசு அங்கீகாரம் மற்றும் வெளிப்படைத்தன்மை சிறப்பானது.",
     rating: 5,
@@ -107,13 +109,25 @@ export function TestimonialCarousel() {
                 {/* Profile block */}
                 <div className="flex items-center gap-4 pt-4 border-t border-slate-50">
                   <div className="relative">
-                    <img
-                      src={t.image}
-                      alt={language === "ta" ? t.nameTa : t.name}
-                      className="w-12 h-12 rounded-full object-cover border-2 border-primary/10 shadow-sm"
-                      loading="lazy"
-                      decoding="async"
-                    />
+                    <picture>
+                      <source 
+                        type="image/avif" 
+                        srcSet={`${t.image}.avif 409w, ${t.image}@2x.avif 818w`} 
+                      />
+                      <source 
+                        type="image/webp" 
+                        srcSet={`${t.image}.webp 409w, ${t.image}@2x.webp 818w`} 
+                      />
+                      <img
+                        src={`${t.image}.png`}
+                        alt={language === "ta" ? t.nameTa : t.name}
+                        className="w-12 h-12 rounded-full object-cover border-2 border-primary/10 shadow-sm"
+                        loading="lazy"
+                        decoding="async"
+                        width="48"
+                        height="48"
+                      />
+                    </picture>
                     <div className="absolute -bottom-1 -right-1 bg-gold text-white p-0.5 rounded-full shadow-sm">
                       <Award className="w-3 h-3 text-gold-foreground" />
                     </div>
