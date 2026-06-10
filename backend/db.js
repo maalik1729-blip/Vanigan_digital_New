@@ -14,6 +14,7 @@ function getPool() {
       charset:  "utf8mb4",
       waitForConnections: true,
       connectionLimit: 10,
+      ssl: process.env.DB_HOST !== "127.0.0.1" ? { rejectUnauthorized: false } : undefined,
     });
   }
   return pool;
