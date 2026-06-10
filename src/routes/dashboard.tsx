@@ -148,9 +148,9 @@ function Dashboard() {
   useEffect(() => {
     if (dashboardTab !== "directory") return;
     if (dirMembersCount !== null) return; // already fetched
-    fetch("/api/public/members?limit=1").then(r => r.json()).then(d => setDirMembersCount(d.total ?? null)).catch(() => {});
-    fetch("/api/public/organizer").then(r => r.json()).then(d => setDirOrganizersCount(d.organizers?.length ?? null)).catch(() => {});
-    fetch("/api/public/business?limit=1").then(r => r.json()).then(d => setDirBusinessesCount(d.total ?? null)).catch(() => {});
+    fetch("/api/public/members?limit=1").then(r => { if (!r.ok) throw new Error(); return r.json(); }).then(d => setDirMembersCount(typeof d.total === "number" ? d.total : null)).catch(() => setDirMembersCount(null));
+    fetch("/api/public/organizer").then(r => { if (!r.ok) throw new Error(); return r.json(); }).then(d => setDirOrganizersCount(typeof d.organizers?.length === "number" ? d.organizers.length : null)).catch(() => setDirOrganizersCount(null));
+    fetch("/api/public/business?limit=1").then(r => { if (!r.ok) throw new Error(); return r.json(); }).then(d => setDirBusinessesCount(typeof d.total === "number" ? d.total : null)).catch(() => setDirBusinessesCount(null));
   }, [dashboardTab]);
 
   useEffect(() => {

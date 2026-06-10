@@ -587,9 +587,9 @@ function MembersPage() {
 
   useEffect(() => {
     fetch("/api/public/members?limit=1")
-      .then(res => res.json())
-      .then(data => setDbMembersCount(data.total))
-      .catch(err => console.warn("Failed to fetch total members count:", err));
+      .then(res => { if (!res.ok) throw new Error("API error"); return res.json(); })
+      .then(data => setDbMembersCount(typeof data.total === "number" ? data.total : null))
+      .catch(() => setDbMembersCount(null));
   }, [refreshCount]);
 
   const [memberForm, setMemberForm] = useState({
