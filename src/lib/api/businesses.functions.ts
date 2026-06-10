@@ -1,4 +1,4 @@
-const API = import.meta.env.VITE_API_BASE_URL ?? "";
+const API = "";
 
 export async function getBusinesses() {
   const res = await fetch(`${API}/api/public/business?limit=6`);
