@@ -335,20 +335,8 @@ const searchSchema = z.object({
   page:        z.coerce.number().optional(),
 });
 
-export const Route = createFileRoute("/business/")({
+export const Route = createFileRoute("/businesses")({
   validateSearch: searchSchema,
-  beforeLoad: ({ search }) => {
-    throw redirect({
-      to: "/businesses",
-      search: {
-        category: search.category,
-        subCategory: search.subCategory,
-        search: search.search,
-        district: search.district,
-        page: search.page,
-      },
-    });
-  },
   component: BusinessesPage,
 });
 
@@ -1194,7 +1182,7 @@ async function fetchBusinesses(params: {
 
 // ─── Main Page Component ──────────────────────────────────────────────────────
 function BusinessesPage() {
-  const navigate = useNavigate({ from: "/business" });
+  const navigate = useNavigate({ from: "/businesses" });
   const search = Route.useSearch();
   const { language } = useLanguage();
 
@@ -1463,24 +1451,24 @@ function BusinessesPage() {
           {/* Stats Cards Dashboard Component */}
           {stats && (
             <div className="grid grid-cols-3 gap-3 sm:gap-6 mt-8 max-w-2xl bg-primary/5 backdrop-blur-md border border-gold/15 hover:border-gold/30 rounded-md p-4 transition-all duration-300">
-              <div className="text-center sm:text-left">
-                <p className="text-xs text-white/60 font-semibold uppercase tracking-wider mb-1 font-Tamil">
+              <div className="min-w-0 text-center sm:text-left">
+                <p className="text-[10px] sm:text-xs text-white/60 font-semibold uppercase tracking-wide mb-1 font-Tamil truncate">
                   {t("மொத்த வணிகங்கள்", "Total Businesses")}
                 </p>
                 <p className="text-xl sm:text-2xl font-bold text-gold font-sans tracking-tight">
                   {stats.totalBusinesses.toLocaleString()}
                 </p>
               </div>
-              <div className="text-center sm:text-left border-l border-white/10 pl-3 sm:pl-6">
-                <p className="text-xs text-white/60 font-semibold uppercase tracking-wider mb-1 font-Tamil">
+              <div className="min-w-0 text-center sm:text-left border-l border-white/10 pl-3 sm:pl-6">
+                <p className="text-[10px] sm:text-xs text-white/60 font-semibold uppercase tracking-wide mb-1 font-Tamil truncate">
                   {t("பிரிவுகள்", "Categories")}
                 </p>
                 <p className="text-xl sm:text-2xl font-bold text-gold font-sans tracking-tight">
                   {stats.totalCategories}
                 </p>
               </div>
-              <div className="text-center sm:text-left border-l border-white/10 pl-3 sm:pl-6">
-                <p className="text-xs text-white/60 font-semibold uppercase tracking-wider mb-1 font-Tamil">
+              <div className="min-w-0 text-center sm:text-left border-l border-white/10 pl-3 sm:pl-6">
+                <p className="text-[10px] sm:text-xs text-white/60 font-semibold uppercase tracking-wide mb-1 font-Tamil truncate">
                   {t("துணைப்பிரிவுகள்", "Sub-categories")}
                 </p>
                 <p className="text-xl sm:text-2xl font-bold text-gold font-sans tracking-tight">
@@ -1836,7 +1824,16 @@ function BusinessList({
   );
 }
 
-// ─── Grid Card ────────────────────────────────────────────────────────────────
+// ─── Business Grid Card ────────────────────────────────────────────────────────
+// ── Privacy masking helper ────────────────────────────────────────────────────
+function maskPhone(phone: string): string {
+  if (!phone) return "—";
+  const digits = phone.replace(/\D/g, "");
+  if (digits.length < 4) return "••••••••••";
+  return digits.slice(0, 2) + "•".repeat(digits.length - 4) + digits.slice(-2);
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 function BusinessGridCard({ business: b, t }: { business: Business; t: (ta: string, en: string) => string }) {
   const [imgError, setImgError] = useState(false);
   const img = imgError ? getCategoryMeta(b.category || "").image : getBusinessImage(b);
@@ -1902,7 +1899,7 @@ function BusinessGridCard({ business: b, t }: { business: Business; t: (ta: stri
           {b.phone && (
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <Phone className="w-3.5 h-3.5 shrink-0 text-muted-foreground" />
-              <span>{b.phone}</span>
+              <span>{maskPhone(b.phone)}</span>
             </div>
           )}
         </div>
@@ -1984,7 +1981,7 @@ function BusinessListCard({ business: b, t }: { business: Business; t: (ta: stri
           {b.phone && (
             <div className="flex items-center gap-1 text-xs text-muted-foreground">
               <Phone className="w-3 h-3 shrink-0" />
-              <span>{b.phone}</span>
+              <span>{maskPhone(b.phone)}</span>
             </div>
           )}
           {b.email && (

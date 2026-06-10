@@ -13,7 +13,7 @@ const searchSchema = z.object({
   assembly:    z.string().optional(),
 });
 
-export const Route = createFileRoute("/organizer")({
+export const Route = createFileRoute("/organizers")({
   validateSearch: searchSchema,
   head: () => ({
     meta: [
@@ -36,6 +36,19 @@ interface Organizer {
   status: string;
   created_at: string;
 }
+
+// ── Privacy masking helpers ───────────────────────────────────────────────────
+function maskMobile(mobile: string): string {
+  if (!mobile) return "—";
+  const digits = mobile.replace(/\D/g, "");
+  if (digits.length < 4) return "••••••••••";
+  return digits.slice(0, 2) + "•".repeat(digits.length - 4) + digits.slice(-2);
+}
+function maskOrgCode(code: string): string {
+  if (!code) return "—";
+  return code.slice(0, 4) + "•".repeat(Math.max(0, code.length - 4));
+}
+// ─────────────────────────────────────────────────────────────────────────────
 
 function OrganizerPage() {
   const { t, language } = useLanguage();
@@ -254,14 +267,14 @@ function OrganizerPage() {
                   <div className="space-y-2 border-t border-border pt-3.5 text-xs text-left">
                     <div className="flex justify-between items-center gap-2">
                       <span className="text-muted-foreground shrink-0">{t("நிர்வாகி ஐடி", "Organizer ID")}</span>
-                      <span className="font-mono font-bold text-foreground truncate">{org.organizer_code}</span>
+                      <span className="font-mono font-bold text-foreground truncate">{maskOrgCode(org.organizer_code)}</span>
                     </div>
 
                     <div className="flex justify-between items-center gap-2">
                       <span className="text-muted-foreground shrink-0">{t("கைபேசி", "Mobile")}</span>
                       <span className="font-mono text-foreground flex items-center gap-1">
                         <Phone className="w-3 h-3 text-muted-foreground" />
-                        {org.mobile}
+                        {maskMobile(org.mobile)}
                       </span>
                     </div>
 
