@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { z } from "zod";
 import {
@@ -25,6 +25,30 @@ const searchSchema = z.object({
 
 export const Route = createFileRoute("/members")({
   validateSearch: searchSchema,
+  beforeLoad: ({ search }) => {
+    if (search.tab === "businesses") {
+      throw redirect({
+        to: "/businesses",
+        search: {
+          category: search.category,
+          subCategory: search.subCategory,
+          search: search.search,
+          district: search.district,
+          page: search.page,
+        },
+      });
+    }
+    if (search.tab === "organizers") {
+      throw redirect({
+        to: "/organizers",
+        search: {
+          search: search.search,
+          district: search.district,
+          assembly: search.assembly,
+        },
+      });
+    }
+  },
   head: () => ({
     meta: [
       { title: "உறுப்பினர் பட்டியல் — Members Directory · TNVS" },
@@ -488,6 +512,46 @@ function getPageNumbers(currentPage: number, totalPages: number) {
   return uniquePages;
 }
 
+// ── Privacy masking helpers ───────────────────────────────────────────────────
+// EPIC: show first 3 chars + mask the rest  e.g. "ABC1234567" → "ABC•••••••"
+function maskEpic(epic: string): string {
+  if (!epic) return "—";
+  const visible = epic.slice(0, 3);
+  const masked = "•".repeat(Math.max(0, epic.length - 3));
+  return visible + masked;
+}
+
+// Mobile: show first 2 digits + mask middle 6 + show last 2  e.g. "9876543210" → "98••••••10"
+function maskMobile(mobile: string): string {
+  if (!mobile) return "—";
+  const digits = mobile.replace(/\D/g, "");
+  if (digits.length < 4) return "••••••••••";
+  const first = digits.slice(0, 2);
+  const last  = digits.slice(-2);
+  const mid   = "•".repeat(Math.max(0, digits.length - 4));
+  return first + mid + last;
+}
+
+// Phone (business): show first 2 digits + mask middle + show last 2
+function maskPhone(phone: string): string {
+  if (!phone) return "—";
+  const digits = phone.replace(/\D/g, "");
+  if (digits.length < 4) return "••••••••••";
+  const first = digits.slice(0, 2);
+  const last  = digits.slice(-2);
+  const mid   = "•".repeat(Math.max(0, digits.length - 4));
+  return first + mid + last;
+}
+
+// Organizer code: show first 4 chars + mask rest
+function maskOrgCode(code: string): string {
+  if (!code) return "—";
+  const visible = code.slice(0, 4);
+  const masked  = "•".repeat(Math.max(0, code.length - 4));
+  return visible + masked;
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 function MembersPage() {
   const { t } = useLanguage();
   const searchParams = Route.useSearch();
@@ -511,7 +575,7 @@ function MembersPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const tab = searchParams.tab || "members";
+  const [tab] = useState<"members" | "organizers" | "businesses">("members");
 
   // Form modals and creation states
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -520,24 +584,12 @@ function MembersPage() {
   const [refreshCount, setRefreshCount] = useState(0);
 
   const [dbMembersCount, setDbMembersCount] = useState<number | null>(null);
-  const [dbOrganizersCount, setDbOrganizersCount] = useState<number | null>(null);
-  const [dbBusinessesCount, setDbBusinessesCount] = useState<number | null>(null);
 
   useEffect(() => {
     fetch("/api/public/members?limit=1")
       .then(res => res.json())
       .then(data => setDbMembersCount(data.total))
       .catch(err => console.warn("Failed to fetch total members count:", err));
-
-    fetch("/api/public/organizer")
-      .then(res => res.json())
-      .then(data => setDbOrganizersCount(data.organizers?.length || 0))
-      .catch(err => console.warn("Failed to fetch total organizers count:", err));
-
-    fetch("/api/public/business?limit=1")
-      .then(res => res.json())
-      .then(data => setDbBusinessesCount(data.total))
-      .catch(err => console.warn("Failed to fetch total businesses count:", err));
   }, [refreshCount]);
 
   const [memberForm, setMemberForm] = useState({
@@ -1298,16 +1350,30 @@ function MembersPage() {
 
           {/* Quick Metrics Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 max-w-3xl">
-            <div className="bg-muted/40 backdrop-blur-xs rounded-md border border-border p-4 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-md bg-primary/10 text-primary flex items-center justify-center shrink-0">
+            <div className="bg-muted/40 backdrop-blur-xs rounded-md border border-primary/30 bg-primary/5 p-4 flex items-center gap-3">
+              <div className="w-10 h-10 rounded-md bg-primary text-white flex items-center justify-center shrink-0">
                 <Users className="w-5 h-5" />
               </div>
               <div className="text-left min-w-0">
                 <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider font-mono truncate">
-                  {t("உறுப்பினர்கள்", "General Members")}
+                  {t("பதிவு உறுப்பினர்கள்", "Registered Members")}
                 </div>
                 <div className="text-sm font-black text-foreground mt-0.5 font-mono">
-                  {dbMembersCount !== null ? dbMembersCount.toLocaleString() : "290"}
+                  {dbMembersCount !== null ? dbMembersCount.toLocaleString() : "—"}
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-muted/40 backdrop-blur-xs rounded-md border border-border p-4 flex items-center gap-3">
+              <div className="w-10 h-10 rounded-md bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                <MapPin className="w-5 h-5" />
+              </div>
+              <div className="text-left min-w-0">
+                <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider font-mono truncate">
+                  {t("மாவட்டங்கள்", "Districts Covered")}
+                </div>
+                <div className="text-sm font-black text-foreground mt-0.5 font-mono">
+                  38
                 </div>
               </div>
             </div>
@@ -1318,24 +1384,10 @@ function MembersPage() {
               </div>
               <div className="text-left min-w-0">
                 <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider font-mono truncate">
-                  {t("நிர்வாகிகள்", "Official Organizers")}
+                  {t("சரிபார்க்கப்பட்டவர்கள்", "Verified Members")}
                 </div>
                 <div className="text-sm font-black text-foreground mt-0.5 font-mono">
-                  {dbOrganizersCount !== null ? dbOrganizersCount.toLocaleString() : "7"}
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-muted/40 backdrop-blur-xs rounded-md border border-border p-4 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-md bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                <Store className="w-5 h-5" />
-              </div>
-              <div className="text-left min-w-0">
-                <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider font-mono truncate">
-                  {t("வணிகர்கள்", "Listed Businesses")}
-                </div>
-                <div className="text-sm font-black text-foreground mt-0.5 font-mono">
-                  {dbBusinessesCount !== null ? dbBusinessesCount.toLocaleString() : "18,429"}
+                  {dbMembersCount !== null ? dbMembersCount.toLocaleString() : "—"}
                 </div>
               </div>
             </div>
@@ -1346,41 +1398,17 @@ function MembersPage() {
       {/* MEMBER SEARCH & LIST SECTION */}
       <Section className="py-12">
         <div className="w-full">
-          {/* TAB BAR & DYNAMIC ADD BUTTON */}
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-            <div className="bg-muted backdrop-blur-xs p-1.5 rounded-md inline-flex gap-1.5 border border-border max-w-full overflow-x-auto scrollbar-none">
-              <button
-                onClick={() => handleTabChange("members")}
-                className={`px-4 sm:px-5 py-2.5 rounded-md text-xs font-bold transition-all duration-200 flex items-center gap-2 cursor-pointer whitespace-nowrap ${tab === "members"
-                  ? "bg-card text-primary shadow-xs border border-border/30"
-                  : "text-muted-foreground hover:text-foreground hover:bg-card/40"
-                  }`}
-              >
-                <User className="w-3.5 h-3.5" />
-                <span>{t("உறுப்பினர்கள்", "General Members")}</span>
-              </button>
-              <button
-                onClick={() => handleTabChange("organizers")}
-                className={`px-4 sm:px-5 py-2.5 rounded-md text-xs font-bold transition-all duration-200 flex items-center gap-2 cursor-pointer whitespace-nowrap ${tab === "organizers"
-                  ? "bg-card text-primary shadow-xs border border-border/30"
-                  : "text-muted-foreground hover:text-foreground hover:bg-card/40"
-                  }`}
-              >
-                <Shield className="w-3.5 h-3.5" />
-                <span>{t("நிர்வாகிகள்", "Official Organizers")}</span>
-              </button>
-              <button
-                onClick={() => handleTabChange("businesses")}
-                className={`px-4 sm:px-5 py-2.5 rounded-md text-xs font-bold transition-all duration-200 flex items-center gap-2 cursor-pointer whitespace-nowrap ${tab === "businesses"
-                  ? "bg-card text-primary shadow-xs border border-border/30"
-                  : "text-muted-foreground hover:text-foreground hover:bg-card/40"
-                  }`}
-              >
-                <Store className="w-3.5 h-3.5" />
-                <span>{t("வணிகர்கள்", "Business Directory")}</span>
-              </button>
+          {/* HEADING & DYNAMIC ADD BUTTON */}
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 w-full border-b border-border pb-4">
+            <div>
+              <h2 className="font-display font-bold text-lg text-foreground text-left">
+                {tab === "organizers"
+                  ? t("நிர்வாகிகள் பட்டியல்", "Sangamam Registered Organizers")
+                  : tab === "businesses"
+                    ? t("வணிகர்கள் பட்டியல்", "Sangamam Registered Businesses")
+                    : t("உறுப்பினர்கள்", "Sangamam Registered Members")}
+              </h2>
             </div>
-
             {tab === "businesses" ? (
               <Link
                 to="/business/new"
@@ -1558,7 +1586,7 @@ function MembersPage() {
                       className="bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-lg hover:border-primary/30 transition-all duration-300 hover:-translate-y-1 relative group"
                     >
                       {/* Header Section with Avatar and Status Badge */}
-                      <div className="relative bg-gradient-to-br from-primary/5 via-primary/10 to-primary/5 p-5 pb-4">
+                      <div className="relative bg-linear-to-br from-primary/5 via-primary/10 to-primary/5 p-5 pb-4">
                         <div className="flex items-start gap-3.5">
                           {/* Avatar */}
                           <div className="relative">
@@ -1573,7 +1601,7 @@ function MembersPage() {
                                   }}
                                 />
                               ) : (
-                                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary to-primary/80 text-white font-bold text-lg">
+                                <div className="w-full h-full flex items-center justify-center bg-linear-to-br from-primary to-primary/80 text-white font-bold text-lg">
                                   {member.name.slice(0, 2).toUpperCase()}
                                 </div>
                               )}
@@ -1591,7 +1619,7 @@ function MembersPage() {
                             </h3>
                             <div className="flex items-center gap-1.5 mt-1.5">
                               <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-primary/10 border border-primary/20 text-[10px] font-bold text-primary tracking-wide font-mono">
-                                {member.epic}
+                                {maskEpic(member.epic)}
                               </span>
                               {member.bloodGroup && (
                                 <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-rose-50 border border-rose-200 text-[10px] font-bold text-rose-600 font-mono">
@@ -1632,7 +1660,7 @@ function MembersPage() {
                               {t("கைபேசி", "Mobile")}
                             </div>
                             <div className="text-sm font-semibold text-slate-900 font-mono">
-                              +91 {member.mobile}
+                              +91 {maskMobile(member.mobile)}
                             </div>
                           </div>
                         </div>
@@ -1656,16 +1684,7 @@ function MembersPage() {
                       </div>
 
                       {/* Action Button */}
-                      <div className="px-5 pb-5">
-                        <Link
-                          to="/voter-id"
-                          search={{ epic: member.epic }}
-                          className="w-full bg-white hover:bg-primary border-2 border-primary hover:border-primary text-primary hover:text-white font-bold py-3 rounded-lg text-sm flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md active:scale-[0.98] no-underline group/btn"
-                        >
-                          <CreditCard className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
-                          <span>{t("அட்டை காண்க", "View ID Card")}</span>
-                        </Link>
-                      </div>
+
                     </div>
                   ))}
                 </div>
@@ -1690,11 +1709,11 @@ function MembersPage() {
                         className="bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-lg hover:border-primary/30 transition-all duration-300 hover:-translate-y-1 relative group"
                       >
                         {/* Header Section with Badge and Role */}
-                        <div className={`relative p-5 pb-4 ${isStateLevel ? "bg-gradient-to-br from-amber-50 via-amber-100/50 to-amber-50" : "bg-gradient-to-br from-primary/5 via-primary/10 to-primary/5"}`}>
+                        <div className={`relative p-5 pb-4 ${isStateLevel ? "bg-linear-to-br from-amber-50 via-amber-100/50 to-amber-50" : "bg-linear-to-br from-primary/5 via-primary/10 to-primary/5"}`}>
                           <div className="flex items-start gap-3.5">
                             {/* Icon Badge */}
                             <div className="relative">
-                              <div className={`w-16 h-16 rounded-xl overflow-hidden border-2 border-white shadow-md shrink-0 flex items-center justify-center ${isStateLevel ? "bg-gradient-to-br from-amber-400 to-amber-500" : "bg-gradient-to-br from-primary to-primary/80"}`}>
+                              <div className={`w-16 h-16 rounded-xl overflow-hidden border-2 border-white shadow-md shrink-0 flex items-center justify-center ${isStateLevel ? "bg-linear-to-br from-amber-400 to-amber-500" : "bg-linear-to-br from-primary to-primary/80"}`}>
                                 <ShieldCheck className="w-8 h-8 text-white" />
                               </div>
                               {/* Status Badge */}
@@ -1730,7 +1749,7 @@ function MembersPage() {
                                 {t("நிர்வாகி ஐடி", "Organizer ID")}
                               </div>
                               <div className="text-sm font-semibold text-slate-900 font-mono">
-                                {org.organizer_code}
+                                {maskOrgCode(org.organizer_code)}
                               </div>
                             </div>
                           </div>
@@ -1745,7 +1764,7 @@ function MembersPage() {
                                 {t("கைபேசி", "Mobile")}
                               </div>
                               <div className="text-sm font-semibold text-slate-900 font-mono">
-                                +91 {org.mobile}
+                                +91 {maskMobile(org.mobile)}
                               </div>
                             </div>
                           </div>
@@ -2017,7 +2036,7 @@ function MembersPage() {
                                           <Phone className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
                                           {t("கைபேசி", "Phone")}
                                         </span>
-                                        <span className="font-mono text-foreground text-right">{biz.phone}</span>
+                                        <span className="font-mono text-foreground text-right">{maskPhone(biz.phone)}</span>
                                       </div>
                                     )}
 

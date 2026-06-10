@@ -650,6 +650,13 @@ function getBusinessImage(b: Business): string {
   return pool[hash % pool.length];
 }
 
+function maskPhone(phone: string): string {
+  if (!phone) return "—";
+  const digits = phone.replace(/\D/g, "");
+  if (digits.length < 4) return "••••••••••";
+  return digits.slice(0, 2) + "•".repeat(digits.length - 4) + digits.slice(-2);
+}
+
 function BusinessDetailPage() {
   const { id } = Route.useParams();
   const { language } = useLanguage();
@@ -973,7 +980,7 @@ function BusinessDetailPage() {
                       <div className="text-[10px] text-green-600 font-semibold uppercase tracking-wide">
                         {t("தொலைபேசி", "Phone")}
                       </div>
-                      <div className="text-sm font-semibold text-foreground">{business.phone}</div>
+                      <div className="text-sm font-semibold text-foreground">{maskPhone(business.phone)}</div>
                     </div>
                   </a>
                 )}
@@ -991,7 +998,7 @@ function BusinessDetailPage() {
                       <div className="text-[10px] text-emerald-600 font-semibold uppercase tracking-wide">
                         {t("மாற்று தொலைபேசி", "Alt. Phone")}
                       </div>
-                      <div className="text-sm font-semibold text-foreground">{business.phone2}</div>
+                      <div className="text-sm font-semibold text-foreground">{maskPhone(business.phone2)}</div>
                     </div>
                   </a>
                 )}

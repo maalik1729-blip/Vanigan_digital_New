@@ -5,8 +5,9 @@ import {
   Download, FileText, CreditCard, Bell, ChevronRight, ShieldCheck,
   LogOut, ArrowLeft, Copy, Award, Users, Smartphone, Play,
   CheckCircle2, UserPlus, Sparkles, Clock, AlertCircle,
-  Coins, Store, Rocket, ArrowRight, X,
-  TrendingUp, BarChart3, PieChart as PieIcon, ArrowUpDown, MapPin, Globe, HeartPulse, ArrowUpRight, Search
+  Coins, Store, Rocket, ArrowRight, X, User, Shield,
+  TrendingUp, BarChart3, PieChart as PieIcon, ArrowUpDown, MapPin, Globe, HeartPulse, ArrowUpRight, Search,
+  Phone, Mail, Tag, Building2, Star, Loader2
 } from "lucide-react";
 import {
   growthData, wingMetrics, districtStats, loanDistribution
@@ -17,7 +18,6 @@ import { getSession, clearSession } from "@/lib/session";
 import { LoginPrompt } from "@/components/LoginPrompt";
 import { useLanguage } from "@/hooks/useLanguage";
 import { Breadcrumb } from "@/components/Breadcrumb";
-import { DemoModeBanner } from "@/components/DemoModeBanner";
 import { ActivityCard } from "@/components/ActivityCard";
 import { StatusPill } from "@/components/StatusPill";
 import { EmptyState } from "@/components/EmptyState";
@@ -71,7 +71,8 @@ function Dashboard() {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
   const [epicId, setEpicId] = useState<string | null>(() => getSession());
-  const [dashboardTab, setDashboardTab] = useState<"overview" | "loans" | "recruiter" | "tools">("overview");
+  const [dashboardTab, setDashboardTab] = useState<"overview" | "directory" | "loans" | "recruiter" | "tools">("overview");
+  const [directoryTab, setDirectoryTab] = useState<"general" | "organizers" | "business">("general");
 
   const [dbProfile, setDbProfile] = useState<any>(null);
   const [isLoadingProfile, setIsLoadingProfile] = useState(false);
@@ -127,6 +128,85 @@ function Dashboard() {
       wing: "Retail"
     };
   }, [epicId, dbProfile]);
+
+  // Directory Tab Data State
+  const [dirSearchInput, setDirSearchInput] = useState("");
+  const [dirDistrictInput, setDirDistrictInput] = useState("");
+  const [dirAssemblyInput, setDirAssemblyInput] = useState("");
+  
+  const [dirSearch, setDirSearch] = useState("");
+  const [dirDistrict, setDirDistrict] = useState("");
+  const [dirAssembly, setDirAssembly] = useState("");
+  
+  const [dirLoading, setDirLoading] = useState(false);
+  const [dirResults, setDirResults] = useState<any[]>([]);
+  const [dirMembersCount, setDirMembersCount] = useState<number | null>(null);
+  const [dirOrganizersCount, setDirOrganizersCount] = useState<number | null>(null);
+  const [dirBusinessesCount, setDirBusinessesCount] = useState<number | null>(null);
+
+  // Fetch counts once when directory tab is first opened
+  useEffect(() => {
+    if (dashboardTab !== "directory") return;
+    if (dirMembersCount !== null) return; // already fetched
+    fetch("/api/public/members?limit=1").then(r => r.json()).then(d => setDirMembersCount(d.total ?? null)).catch(() => {});
+    fetch("/api/public/organizer").then(r => r.json()).then(d => setDirOrganizersCount(d.organizers?.length ?? null)).catch(() => {});
+    fetch("/api/public/business?limit=1").then(r => r.json()).then(d => setDirBusinessesCount(d.total ?? null)).catch(() => {});
+  }, [dashboardTab]);
+
+  useEffect(() => {
+    if (dashboardTab !== "directory") return;
+    let active = true;
+    setDirLoading(true);
+
+    const fetchRecords = async () => {
+      try {
+        let url = "";
+        if (directoryTab === "general") {
+          url = `/api/public/members?limit=50&search=${encodeURIComponent(dirSearch)}&district=${encodeURIComponent(dirDistrict)}`;
+        } else if (directoryTab === "business") {
+          url = `/api/public/business?limit=50&search=${encodeURIComponent(dirSearch)}&district=${encodeURIComponent(dirDistrict)}`;
+        } else if (directoryTab === "organizers") {
+          url = `/api/public/organizer`;
+        }
+
+        const res = await fetch(url);
+        const data = await res.json();
+        
+        if (!active) return;
+
+        let results = [];
+        if (directoryTab === "general") results = data.members || [];
+        else if (directoryTab === "business") results = data.businesses || [];
+        else if (directoryTab === "organizers") {
+          results = data.organizers || [];
+          if (dirSearch) {
+             const s = dirSearch.toLowerCase();
+             results = results.filter((o: any) => o.name?.toLowerCase().includes(s) || o.mobile?.includes(s));
+          }
+          if (dirDistrict) {
+             const d = dirDistrict.toLowerCase();
+             results = results.filter((o: any) => o.district?.toLowerCase().includes(d));
+          }
+        }
+        setDirResults(results);
+      } catch (err) {
+        console.error("Failed to fetch directory records:", err);
+      } finally {
+        if (active) setDirLoading(false);
+      }
+    };
+
+    fetchRecords();
+
+    return () => { active = false; };
+  }, [dashboardTab, directoryTab, dirSearch, dirDistrict, dirAssembly]);
+
+  const handleDirFilter = () => {
+    setDirSearch(dirSearchInput);
+    setDirDistrict(dirDistrictInput);
+    setDirAssembly(dirAssemblyInput);
+  };
+
 
   // Subsidized Loan Gated States
   const [showLoanCategories, setShowLoanCategories] = useState(true);
@@ -474,10 +554,6 @@ function Dashboard() {
       <section className="border-b border-border bg-card">
         <div className="max-w-7xl mx-auto px-5 sm:px-6 py-8 w-full">
 
-          {/* Demo Mode Banner — full width, top of page */}
-          <div className="mb-5">
-            <DemoModeBanner />
-          </div>
 
           <Breadcrumb
             items={[
@@ -530,7 +606,8 @@ function Dashboard() {
               { id: "overview", label: "Overview", labelTa: "முன்னோட்டம்", icon: Store },
               { id: "loans", label: "Business Loans", labelTa: "வணிகக் கடன்கள்", icon: Coins },
               { id: "recruiter", label: "Recruiter Hub", labelTa: "ஒருங்கிணைப்பாளர்", icon: Users },
-              { id: "tools", label: "Tools & Apps", labelTa: "டிஜிட்டல் சேவைகள்", icon: Smartphone }
+              { id: "tools", label: "Tools & Apps", labelTa: "டிஜிட்டல் சேவைகள்", icon: Smartphone },
+              { id: "directory", label: "Directory", labelTa: "பட்டியல்", icon: Search }
             ].map((tab) => {
               const TabIcon = tab.icon;
               const active = dashboardTab === tab.id;
@@ -1887,6 +1964,479 @@ function Dashboard() {
               </div>
             )}
 
+            {/* ─── TAB 5: Directory ─── */}
+            {dashboardTab === "directory" && (
+              <div className="space-y-0 text-left">
+
+                {/* ── Metrics Header (mirrors /members header) ── */}
+                <div className="bg-card border-b border-border pb-8 mb-8">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+                    <div>
+                      <p className="text-[10px] font-bold text-primary uppercase tracking-widest font-mono mb-1">
+                        {directoryTab === "organizers"
+                          ? t("நிர்வாகிகள் பட்டியல்", "Organizers Directory")
+                          : directoryTab === "business"
+                            ? t("வணிகர்கள் பட்டியல்", "Business Directory")
+                            : t("உறுப்பினர் பட்டியல்", "Members Directory")}
+                      </p>
+                      <h2 className="font-display text-2xl font-extrabold text-foreground tracking-tight">
+                        {directoryTab === "organizers"
+                          ? t("சங்க நிர்வாகிகள்", "Sangamam Executive Organizers")
+                          : directoryTab === "business"
+                            ? t("பதிவுசெய்யப்பட்ட வணிகங்கள்", "Registered Local Businesses")
+                            : t("பதிவுசெய்யப்பட்ட உறுப்பினர்கள்", "Registered Sangamam Members")}
+                      </h2>
+                      <p className="mt-1 text-sm text-muted-foreground font-tamil max-w-xl leading-relaxed">
+                        {directoryTab === "organizers"
+                          ? t("தமிழ்நாடு வணிகர்கள் சங்கத்தின் பொறுப்புள்ள மாநில, மாவட்ட மற்றும் வட்டார நிர்வாகிகள் பட்டியல்.", "Directory of State, District, and Assembly level executive organizers and office bearers.")
+                          : directoryTab === "business"
+                            ? t("அதிகாரப்பூர்வமாக பதிவுசெய்யப்பட்ட வணிகங்கள், கடைகள் மற்றும் சேவை வழங்குநர்கள் பட்டியல்.", "Explore verified local shops, services, and wholesale businesses across Tamil Nadu.")
+                            : t("தமிழ்நாடு வணிகர்களுக்கான அதிகாரப்பூர்வ உறுப்பினர் கோப்பகம். உங்கள் விபரங்களை சரிபார்க்கவும்.", "Official directory of Tamil Nadu Sangamam merchants. Search and verify registered memberships.")}
+                      </p>
+                    </div>
+                    <Link
+                      to={directoryTab === "business" ? "/businesses" : directoryTab === "organizers" ? "/organizers" : "/members"}
+                      className="flex items-center gap-1.5 text-xs font-bold text-primary hover:underline shrink-0"
+                    >
+                      {t("முழு பட்டியல்", "Full Directory")}
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
+                  </div>
+
+                  {/* Quick Metrics Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl">
+                    <button
+                      type="button"
+                      onClick={() => setDirectoryTab("general")}
+                      className={`bg-muted/40 backdrop-blur-xs rounded-md border p-4 flex items-center gap-3 text-left transition-all cursor-pointer hover:border-primary/40 ${directoryTab === "general" ? "border-primary/60 bg-primary/5" : "border-border"}`}
+                    >
+                      <div className={`w-10 h-10 rounded-md flex items-center justify-center shrink-0 ${directoryTab === "general" ? "bg-primary text-white" : "bg-primary/10 text-primary"}`}>
+                        <Users className="w-5 h-5" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider font-mono truncate">
+                          {t("உறுப்பினர்கள்", "General Members")}
+                        </div>
+                        <div className="text-sm font-black text-foreground mt-0.5 font-mono">
+                          {dirMembersCount !== null ? dirMembersCount.toLocaleString() : "—"}
+                        </div>
+                      </div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setDirectoryTab("organizers")}
+                      className={`bg-muted/40 backdrop-blur-xs rounded-md border p-4 flex items-center gap-3 text-left transition-all cursor-pointer hover:border-primary/40 ${directoryTab === "organizers" ? "border-primary/60 bg-primary/5" : "border-border"}`}
+                    >
+                      <div className={`w-10 h-10 rounded-md flex items-center justify-center shrink-0 ${directoryTab === "organizers" ? "bg-primary text-white" : "bg-primary/10 text-primary"}`}>
+                        <ShieldCheck className="w-5 h-5" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider font-mono truncate">
+                          {t("நிர்வாகிகள்", "Official Organizers")}
+                        </div>
+                        <div className="text-sm font-black text-foreground mt-0.5 font-mono">
+                          {dirOrganizersCount !== null ? dirOrganizersCount.toLocaleString() : "—"}
+                        </div>
+                      </div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setDirectoryTab("business")}
+                      className={`bg-muted/40 backdrop-blur-xs rounded-md border p-4 flex items-center gap-3 text-left transition-all cursor-pointer hover:border-primary/40 ${directoryTab === "business" ? "border-primary/60 bg-primary/5" : "border-border"}`}
+                    >
+                      <div className={`w-10 h-10 rounded-md flex items-center justify-center shrink-0 ${directoryTab === "business" ? "bg-primary text-white" : "bg-primary/10 text-primary"}`}>
+                        <Store className="w-5 h-5" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider font-mono truncate">
+                          {t("வணிகர்கள்", "Listed Businesses")}
+                        </div>
+                        <div className="text-sm font-black text-foreground mt-0.5 font-mono">
+                          {dirBusinessesCount !== null ? dirBusinessesCount.toLocaleString() : "—"}
+                        </div>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+
+                {/* ── List Section (mirrors /members search + list) ── */}
+                <div className="w-full">
+
+                  {/* Heading + action button */}
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 border-b border-border pb-4">
+                    <h2 className="font-display font-bold text-lg text-foreground">
+                      {directoryTab === "organizers"
+                        ? t("நிர்வாகிகள் பட்டியல்", "Sangamam Registered Organizers")
+                        : directoryTab === "business"
+                          ? t("வணிகர்கள் பட்டியல்", "Sangamam Registered Businesses")
+                          : t("உறுப்பினர்கள்", "Sangamam Registered Members")}
+                    </h2>
+                    <Link
+                      to={directoryTab === "business" ? "/businesses" : directoryTab === "organizers" ? "/organizers" : "/members"}
+                      className="bg-primary hover:bg-primary/95 text-white font-bold py-2.5 px-5 rounded-md text-xs transition duration-200 flex items-center justify-center gap-2 shadow-xs active:scale-95 no-underline shrink-0"
+                    >
+                      <ArrowRight className="w-3.5 h-3.5" />
+                      <span>
+                        {directoryTab === "organizers"
+                          ? t("அனைத்து நிர்வாகிகள்", "All Organizers")
+                          : directoryTab === "business"
+                            ? t("அனைத்து வணிகர்கள்", "All Businesses")
+                            : t("அனைத்து உறுப்பினர்கள்", "All Members")}
+                      </span>
+                    </Link>
+                  </div>
+
+                  {/* Search & Filter Form */}
+                  <div className="bg-card rounded-md border border-border p-6 shadow-xs mb-8">
+                    <form
+                      onSubmit={(e) => { e.preventDefault(); handleDirFilter(); }}
+                      className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end"
+                    >
+                      <div className="md:col-span-5 space-y-1.5 text-left">
+                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block font-mono">
+                          {directoryTab === "organizers"
+                            ? t("நிர்வாகி தேடல்", "Search Organizers")
+                            : directoryTab === "business"
+                              ? t("வணிக தேடல்", "Search Businesses")
+                              : t("தேடல்", "Search Keyword")}
+                        </label>
+                        <div className="relative">
+                          <Search className="absolute left-3.5 top-3.5 w-4 h-4 text-muted-foreground" />
+                          <input
+                            type="text"
+                            placeholder={
+                              directoryTab === "organizers"
+                                ? t("நிர்வாகி பெயர், பதவி மூலம் தேடுக...", "Search by name, role...")
+                                : directoryTab === "business"
+                                  ? t("வணிகப் பெயர், வகை மூலம் தேடுக...", "Search by business name, category...")
+                                  : t("பெயர், EPIC ID, போன் மூலம் தேடுக...", "Search by name, ID, phone...")
+                            }
+                            value={dirSearchInput}
+                            onChange={e => setDirSearchInput(e.target.value)}
+                            className="input-base text-xs pl-12!"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="md:col-span-3 space-y-1.5 text-left">
+                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block font-mono">
+                          {t("மாவட்டம்", "District")}
+                        </label>
+                        <input
+                          type="text"
+                          placeholder={t("எ.கா. Chennai", "e.g. Chennai")}
+                          value={dirDistrictInput}
+                          onChange={e => setDirDistrictInput(e.target.value)}
+                          className="input-base text-xs"
+                        />
+                      </div>
+
+                      <div className="md:col-span-2 space-y-1.5 text-left">
+                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block font-mono">
+                          {t("தொகுதி", "Assembly")}
+                        </label>
+                        <input
+                          type="text"
+                          placeholder={t("எ.கா. Mylapore", "e.g. Mylapore")}
+                          value={dirAssemblyInput}
+                          onChange={e => setDirAssemblyInput(e.target.value)}
+                          className="input-base text-xs"
+                        />
+                      </div>
+
+                      <div className="md:col-span-2 flex gap-2 w-full shrink-0">
+                        <button
+                          type="submit"
+                          className="flex-1 bg-primary hover:bg-primary/95 text-white font-bold py-3 px-6 rounded-md text-xs transition active:scale-95 shadow-xs cursor-pointer min-h-[44px] border-none"
+                        >
+                          {t("தேடுக", "Filter")}
+                        </button>
+                        {(dirSearch || dirDistrict || dirAssembly) && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setDirSearchInput(""); setDirDistrictInput(""); setDirAssemblyInput("");
+                              setDirSearch(""); setDirDistrict(""); setDirAssembly("");
+                            }}
+                            className="bg-muted hover:bg-muted text-muted-foreground font-bold py-3 px-4 rounded-md text-xs transition cursor-pointer border border-border min-h-[44px]"
+                          >
+                            {t("ரத்து", "Reset")}
+                          </button>
+                        )}
+                      </div>
+                    </form>
+                  </div>
+
+                  {/* Loading */}
+                  {dirLoading ? (
+                    <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
+                      <Loader2 className="w-8 h-8 text-primary animate-spin mb-4" />
+                      <p className="text-sm font-semibold">
+                        {directoryTab === "organizers"
+                          ? t("நிர்வாகிகள் விபரம் ஏற்றப்படுகிறது...", "Loading organizers...")
+                          : directoryTab === "business"
+                            ? t("வணிகங்கள் விபரம் ஏற்றப்படுகிறது...", "Loading businesses...")
+                            : t("உறுப்பினர்கள் விபரம் ஏற்றப்படுகிறது...", "Loading members...")}
+                      </p>
+                    </div>
+
+                  ) : dirResults.length === 0 ? (
+                    <div className="max-w-md mx-auto bg-card border border-border rounded-md p-8 text-center shadow-xs">
+                      <div className="w-12 h-12 rounded-full bg-muted text-muted-foreground flex items-center justify-center mx-auto mb-4 border border-border">
+                        {directoryTab === "organizers" ? <ShieldCheck className="w-5 h-5" /> : directoryTab === "business" ? <Building2 className="w-5 h-5" /> : <User className="w-5 h-5" />}
+                      </div>
+                      <h3 className="text-base font-bold text-foreground">
+                        {directoryTab === "organizers"
+                          ? t("நிர்வாகிகள் யாரும் இல்லை", "No Organizers Found")
+                          : directoryTab === "business"
+                            ? t("வணிகங்கள் எதுவும் இல்லை", "No Businesses Found")
+                            : t("உறுப்பினர்கள் யாரும் இல்லை", "No Members Found")}
+                      </h3>
+                      <p className="text-xs text-muted-foreground mt-2 leading-relaxed font-tamil">
+                        {t("வழங்கப்பட்ட தேடல் நிபந்தனைகளுக்குப் பொருந்தும் முடிவுகள் எதுவும் இல்லை.", "No matching records found. Try adjusting your search.")}
+                      </p>
+                    </div>
+
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+
+                      {/* ── Members cards ── */}
+                      {directoryTab === "general" && dirResults.map((member: any, i: number) => (
+                        <div
+                          key={member.id ?? member.epic ?? i}
+                          className="bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-lg hover:border-primary/30 transition-all duration-300 hover:-translate-y-1 relative group"
+                        >
+                          {/* Header */}
+                          <div className="relative bg-linear-to-br from-primary/5 via-primary/10 to-primary/5 p-5 pb-4">
+                            <div className="flex items-start gap-3.5">
+                              <div className="relative">
+                                <div className="w-16 h-16 rounded-xl overflow-hidden border-2 border-white bg-white shadow-md shrink-0 flex items-center justify-center">
+                                  {member.selfie ? (
+                                    <img src={member.selfie} alt={member.name} className="w-full h-full object-cover"
+                                      onError={(e) => { (e.target as HTMLImageElement).src = `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(member.name)}`; }} />
+                                  ) : (
+                                    <div className="w-full h-full flex items-center justify-center bg-linear-to-br from-primary to-primary/80 text-white font-bold text-lg">
+                                      {(member.name || "?").slice(0, 2).toUpperCase()}
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white flex items-center justify-center shadow-sm">
+                                  <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
+                                </div>
+                              </div>
+                              <div className="flex-1 min-w-0 pt-1">
+                                <h3 className="font-bold text-slate-900 text-base leading-tight truncate group-hover:text-primary transition-colors">{member.name}</h3>
+                                <div className="flex items-center gap-1.5 mt-1.5">
+                                  <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-primary/10 border border-primary/20 text-[10px] font-bold text-primary tracking-wide font-mono">{member.epic}</span>
+                                  {member.bloodGroup && (
+                                    <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-rose-50 border border-rose-200 text-[10px] font-bold text-rose-600 font-mono">{member.bloodGroup}</span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          {/* Details */}
+                          <div className="p-5 pt-4 space-y-2.5">
+                            {member.shop && (
+                              <div className="flex items-center gap-2.5">
+                                <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center shrink-0"><Store className="w-4 h-4 text-slate-600" /></div>
+                                <div className="min-w-0 flex-1">
+                                  <div className="text-[10px] text-slate-500 font-medium uppercase tracking-wide">{t("கடை", "Shop")}</div>
+                                  <div className="text-sm font-semibold text-slate-900 truncate">{member.shop}</div>
+                                </div>
+                              </div>
+                            )}
+                            {member.mobile && (
+                              <div className="flex items-center gap-2.5">
+                                <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center shrink-0"><Phone className="w-4 h-4 text-slate-600" /></div>
+                                <div className="min-w-0 flex-1">
+                                  <div className="text-[10px] text-slate-500 font-medium uppercase tracking-wide">{t("கைபேசி", "Mobile")}</div>
+                                  <div className="text-sm font-semibold text-slate-900 font-mono">+91 {member.mobile}</div>
+                                </div>
+                              </div>
+                            )}
+                            {(member.assembly || member.district) && (
+                              <div className="flex items-center gap-2.5">
+                                <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center shrink-0"><MapPin className="w-4 h-4 text-slate-600" /></div>
+                                <div className="min-w-0 flex-1">
+                                  <div className="text-[10px] text-slate-500 font-medium uppercase tracking-wide">{t("வட்டாரம்", "Location")}</div>
+                                  <div className="text-sm font-semibold text-slate-900 truncate">{[member.assembly, member.district].filter(Boolean).join(", ")}</div>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                          {/* Action */}
+                          <div className="px-5 pb-5">
+                            <Link
+                              to="/voter-id"
+                              search={{ epic: member.epic }}
+                              className="w-full bg-white hover:bg-primary border-2 border-primary hover:border-primary text-primary hover:text-white font-bold py-3 rounded-lg text-sm flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md active:scale-[0.98] no-underline group/btn"
+                            >
+                              <CreditCard className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
+                              <span>{t("அட்டை காண்க", "View ID Card")}</span>
+                            </Link>
+                          </div>
+                        </div>
+                      ))}
+
+                      {/* ── Organizer cards ── */}
+                      {directoryTab === "organizers" && dirResults.map((org: any, i: number) => {
+                        const isStateLevel = org.role && (
+                          org.role.toLowerCase().includes("state") ||
+                          org.role.toLowerCase().includes("president") ||
+                          org.role.toLowerCase().includes("leader") ||
+                          org.role.toLowerCase().includes("secretary") ||
+                          org.role.toLowerCase().includes("coordinator") ||
+                          org.role.toLowerCase().includes("treasurer")
+                        );
+                        return (
+                          <div
+                            key={org.id ?? i}
+                            className="bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-lg hover:border-primary/30 transition-all duration-300 hover:-translate-y-1 relative group"
+                          >
+                            <div className={`relative p-5 pb-4 ${isStateLevel ? "bg-linear-to-br from-amber-50 via-amber-100/50 to-amber-50" : "bg-linear-to-br from-primary/5 via-primary/10 to-primary/5"}`}>
+                              <div className="flex items-start gap-3.5">
+                                <div className="relative">
+                                  <div className={`w-16 h-16 rounded-xl overflow-hidden border-2 border-white shadow-md shrink-0 flex items-center justify-center ${isStateLevel ? "bg-linear-to-br from-amber-400 to-amber-500" : "bg-linear-to-br from-primary to-primary/80"}`}>
+                                    <ShieldCheck className="w-8 h-8 text-white" />
+                                  </div>
+                                  <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white flex items-center justify-center shadow-sm">
+                                    <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
+                                  </div>
+                                </div>
+                                <div className="flex-1 min-w-0 pt-1">
+                                  <h3 className="font-bold text-slate-900 text-base leading-tight truncate group-hover:text-primary transition-colors">{org.name}</h3>
+                                  <div className={`inline-flex items-center px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide mt-1.5 ${isStateLevel ? "bg-amber-100 border border-amber-300 text-amber-700" : "bg-primary/10 border border-primary/20 text-primary"}`}>
+                                    {org.role || t("நிர்வாகி", "Organizer")}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="p-5 pt-4 space-y-2.5">
+                              {org.organizer_code && (
+                                <div className="flex items-center gap-2.5">
+                                  <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center shrink-0"><Tag className="w-4 h-4 text-slate-600" /></div>
+                                  <div className="min-w-0 flex-1">
+                                    <div className="text-[10px] text-slate-500 font-medium uppercase tracking-wide">{t("நிர்வாகி ஐடி", "Organizer ID")}</div>
+                                    <div className="text-sm font-semibold text-slate-900 font-mono">{org.organizer_code}</div>
+                                  </div>
+                                </div>
+                              )}
+                              {org.mobile && (
+                                <div className="flex items-center gap-2.5">
+                                  <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center shrink-0"><Phone className="w-4 h-4 text-slate-600" /></div>
+                                  <div className="min-w-0 flex-1">
+                                    <div className="text-[10px] text-slate-500 font-medium uppercase tracking-wide">{t("கைபேசி", "Mobile")}</div>
+                                    <div className="text-sm font-semibold text-slate-900 font-mono">+91 {org.mobile}</div>
+                                  </div>
+                                </div>
+                              )}
+                              {org.email && (
+                                <div className="flex items-center gap-2.5">
+                                  <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center shrink-0"><Mail className="w-4 h-4 text-slate-600" /></div>
+                                  <div className="min-w-0 flex-1">
+                                    <div className="text-[10px] text-slate-500 font-medium uppercase tracking-wide">{t("மின்னஞ்சல்", "Email")}</div>
+                                    <div className="text-sm font-semibold text-slate-900 truncate">{org.email}</div>
+                                  </div>
+                                </div>
+                              )}
+                              {(org.assembly || org.district) && (
+                                <div className="flex items-center gap-2.5">
+                                  <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center shrink-0"><MapPin className="w-4 h-4 text-slate-600" /></div>
+                                  <div className="min-w-0 flex-1">
+                                    <div className="text-[10px] text-slate-500 font-medium uppercase tracking-wide">{t("வட்டாரம்", "Location")}</div>
+                                    <div className="text-sm font-semibold text-slate-900 truncate">{[org.assembly, org.district].filter(Boolean).join(", ")}</div>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                            <div className="px-5 pb-5">
+                              <a
+                                href={`tel:${org.mobile}`}
+                                className="w-full bg-white hover:bg-primary border-2 border-primary hover:border-primary text-primary hover:text-white font-bold py-3 rounded-lg text-sm flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md active:scale-[0.98] group/btn"
+                              >
+                                <Phone className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
+                                <span>{t("அழைக்க", "Call Organizer")}</span>
+                              </a>
+                            </div>
+                          </div>
+                        );
+                      })}
+
+                      {/* ── Business cards ── */}
+                      {directoryTab === "business" && dirResults.map((biz: any, i: number) => {
+                        const defaultImg = "https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=600&q=75&fit=crop&auto=format";
+                        const bizImg = biz.imageUrl || biz.image || biz.img || biz.coverImage || defaultImg;
+                        return (
+                          <div
+                            key={biz._id ?? i}
+                            className="bg-card border border-border rounded-md p-6 hover:shadow-xs hover:border-primary/20 transition-all duration-300 flex flex-col justify-between hover:-translate-y-0.5 relative group overflow-hidden"
+                          >
+                            <div className="space-y-4">
+                              <div className="flex items-center gap-4">
+                                <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-primary/20 bg-muted shrink-0 relative flex items-center justify-center shadow-xs">
+                                  <img src={bizImg} alt={biz.name} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                    onError={(e) => { (e.target as HTMLImageElement).src = defaultImg; }} />
+                                </div>
+                                <div className="min-w-0 text-left">
+                                  <div className="flex items-center gap-1.5 max-w-full">
+                                    <h3 className="font-bold text-foreground text-sm truncate leading-tight group-hover:text-primary transition-colors">{biz.name}</h3>
+                                    <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
+                                  </div>
+                                  <div className="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded-md bg-muted border border-border font-mono text-[9px] font-bold text-muted-foreground tracking-wider">
+                                    {biz.listingCode || (biz._id ? `ID: ${biz._id.slice(-6).toUpperCase()}` : "—")}
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="space-y-2 border-t border-border pt-4 text-xs">
+                                {biz.category && (
+                                  <div className="bg-muted/40 p-2 rounded-md border border-border/80 flex justify-between items-center min-h-[28px]">
+                                    <span className="text-muted-foreground flex items-center gap-1.5"><Tag className="w-3.5 h-3.5 shrink-0" />{t("வகை", "Category")}</span>
+                                    <span className="font-bold text-primary bg-primary/5 px-2 py-0.5 rounded-md text-[10px] truncate max-w-[150px] text-right">{biz.subCategory || biz.category}</span>
+                                  </div>
+                                )}
+                                {biz.phone && (
+                                  <div className="bg-muted/40 p-2 rounded-md border border-border/80 flex justify-between items-center min-h-[28px]">
+                                    <span className="text-muted-foreground flex items-center gap-1.5"><Phone className="w-3.5 h-3.5 shrink-0" />{t("கைபேசி", "Phone")}</span>
+                                    <span className="font-mono text-foreground text-right">{biz.phone}</span>
+                                  </div>
+                                )}
+                                {(biz.city || biz.district) && (
+                                  <div className="bg-muted/40 p-2 rounded-md border border-border/80 flex justify-between items-center min-h-[28px]">
+                                    <span className="text-muted-foreground flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5 shrink-0" />{t("நகரம்", "Location")}</span>
+                                    <span className="font-bold text-foreground text-right truncate max-w-[150px]">{[biz.city, biz.district].filter(Boolean).join(", ")}</span>
+                                  </div>
+                                )}
+                                {biz.avgRating !== undefined && biz.avgRating > 0 && (
+                                  <div className="bg-muted/40 p-2 rounded-md border border-border/80 flex justify-between items-center min-h-[28px]">
+                                    <span className="text-muted-foreground flex items-center gap-1.5"><Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500 shrink-0" />{t("மதிப்பீடு", "Rating")}</span>
+                                    <span className="font-bold text-foreground text-right">{biz.avgRating.toFixed(1)} ★ ({biz.reviewCount || 0})</span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                            <div className="mt-6 border-t border-border pt-4">
+                              <Link
+                                to="/business/$id"
+                                params={{ id: biz._id }}
+                                className="w-full bg-muted/80 hover:bg-primary hover:text-white border border-border hover:border-primary text-muted-foreground font-bold py-2.5 rounded-md text-xs flex items-center justify-center gap-1.5 transition-all duration-200 cursor-pointer shadow-xs active:scale-[0.98]"
+                              >
+                                <Building2 className="w-3.5 h-3.5" />
+                                <span>{t("விவரங்கள் காண்க", "View Details")}</span>
+                              </Link>
+                            </div>
+                          </div>
+                        );
+                      })}
+
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
           </motion.div>
         </AnimatePresence>
       </div>
@@ -2200,6 +2750,7 @@ function Dashboard() {
           </div>
         )}
       </AnimatePresence>
+
     </div>
   );
 }
