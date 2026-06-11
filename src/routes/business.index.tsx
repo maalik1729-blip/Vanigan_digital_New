@@ -1045,6 +1045,12 @@ function getBusinessImage(b: Business): string {
   if (b.img?.trim()) return b.img.trim();
   if (b.imageUrl?.trim()) return b.imageUrl.trim();
 
+  // Try to use a specific subcategory image first
+  if (b.subCategory) {
+    const subImg = getSubcategoryImage(b.subCategory);
+    if (subImg) return subImg;
+  }
+
   // Pick a unique image from the category pool using hash of combined unique fields
   // Using _id + name + listingCode ensures different images even for similar IDs
   const seed = `${b._id || ""}|${b.name || ""}|${b.listingCode || ""}|${b.phone || ""}`;

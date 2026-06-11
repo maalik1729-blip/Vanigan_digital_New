@@ -293,6 +293,7 @@ function getSubcategoryImage(subCategory: string): string | null {
 }
 
 const CATEGORY_META: Record<string, { icon: string; image: string; color: string }> = {
+  "Bills & Recharge":           { icon: "📱", image: UNS("1556742049-0cfed4f6a45d"), color: "from-blue-600 to-indigo-600" },
   "Hotels & Restaurants":       { icon: "🍽️", image: UNS("1517248135467-4c7edcad34c4"), color: "from-orange-500 to-red-500" },
   "Caterers":                   { icon: "🥘", image: UNS("1555244162-803834f70033"), color: "from-amber-500 to-orange-500" },
   "Daily Needs":                { icon: "🛒", image: UNS("1542838132-92c53300491e"), color: "from-green-500 to-emerald-500" },
@@ -632,6 +633,12 @@ function getBusinessImage(b: Business): string {
   if (b.img?.trim()) return b.img.trim();
   if (b.imageUrl?.trim()) return b.imageUrl.trim();
 
+  // Try to use a specific subcategory image first
+  if (b.subCategory) {
+    const subImg = getSubcategoryImage(b.subCategory);
+    if (subImg) return subImg;
+  }
+
   // Pick a unique image from the category pool using hash of combined unique fields
   // Using _id + name + listingCode + phone ensures different images even for similar IDs
   const seed = `${b._id || ""}|${b.name || ""}|${b.listingCode || ""}|${b.phone || ""}`;
@@ -751,71 +758,9 @@ function BusinessDetailPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* ── Hero Section ─────────────────────────────────────────────────────── */}
-      <div className="relative h-64 sm:h-80 md:h-96 overflow-hidden bg-black">
-        <img
-          src={heroImg}
-          alt={business.name}
-          className="w-full h-full object-cover opacity-70"
-          onError={() => setImgError(true)}
-        />
-        <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/30 to-transparent" />
-
-        {/* Back button on hero */}
-        <div className="absolute top-4 left-4">
-          <Link
-            to="/members"
-            search={{ tab: "businesses", category: business.category }}
-            className="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-black/40 backdrop-blur-sm text-white text-sm font-semibold hover:bg-black/60 transition"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            {t("திரும்பு", "Back")}
-          </Link>
-        </div>
-
-        {/* Share button */}
-        <div className="absolute top-4 right-4">
-          <button
-            onClick={handleShare}
-            className="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-black/40 backdrop-blur-sm text-white text-sm font-semibold hover:bg-black/60 transition"
-          >
-            {copied ? <CheckCircle2 className="w-4 h-4 text-emerald-400" /> : <Share2 className="w-4 h-4" />}
-            {copied ? t("நகலெடுக்கப்பட்டது!", "Copied!") : t("பகிர்", "Share")}
-          </button>
-        </div>
-
-        {/* Business name on hero */}
-        <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6">
-          {/* Category badge */}
-          {business.category && (
-            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-white bg-linear-to-r ${meta.color} mb-3 shadow`}>
-              <span>{meta.icon}</span>
-              {business.category}
-              {business.subCategory && (
-                <>
-                  <ChevronRight className="w-3 h-3 opacity-70" />
-                  {business.subCategory}
-                </>
-              )}
-            </span>
-          )}
-          <h1 className="font-display font-bold text-2xl sm:text-3xl md:text-4xl text-white leading-tight drop-shadow-xs">
-            {business.name}
-          </h1>
-          {(business.city || business.district) && (
-            <div className="flex items-center gap-1.5 mt-2 text-white/80 text-sm">
-              <MapPin className="w-4 h-4" />
-              <span>{[business.city, business.district].filter(Boolean).join(", ")}</span>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* ── Content Area ─────────────────────────────────────────────────────── */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
-
-        {/* Breadcrumb */}
-        <nav className="flex items-center gap-1.5 text-xs text-muted-foreground mb-8 flex-wrap" aria-label="Breadcrumb">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-6">
+        {/* Breadcrumb (moved above hero) */}
+        <nav className="flex items-center gap-1.5 text-xs text-muted-foreground/85 mb-4 flex-wrap font-medium border-b border-border/40 pb-3" aria-label="Breadcrumb">
           <Link to="/" className="hover:text-primary transition">{t("முகப்பு", "Home")}</Link>
           <ChevronRight className="w-3 h-3" />
           <Link to="/members" search={{ tab: "businesses" }} className="hover:text-primary transition">{t("வணிகர் பட்டியல்", "Business Directory")}</Link>
@@ -836,113 +781,188 @@ function BusinessDetailPage() {
             </>
           )}
           <ChevronRight className="w-3 h-3" />
-          <span className="text-muted-foreground font-medium truncate max-w-[180px]">{business.name}</span>
+          <span className="text-muted-foreground font-semibold truncate max-w-[180px]">{business.name}</span>
         </nav>
 
+        {/* ── Hero Section (Redesigned with floating container, rounded corners & shadow) ─────────────────────────────────────────────────────── */}
+        <div className="relative h-64 sm:h-80 md:h-[400px] overflow-hidden rounded-2xl sm:rounded-3xl bg-black group/hero shadow-md border border-border/10">
+          <img
+            src={heroImg}
+            alt={business.name}
+            className="w-full h-full object-cover opacity-70 group-hover/hero:scale-[1.02] transition-transform duration-700"
+            onError={() => setImgError(true)}
+          />
+          <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/40 to-black/10" />
+
+          {/* Back button on hero */}
+          <div className="absolute top-4 left-4">
+            <Link
+              to="/members"
+              search={{ tab: "businesses", category: business.category }}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/20 bg-white/15 backdrop-blur-md text-white text-sm font-medium hover:bg-white/25 hover:border-white/35 active:scale-95 transition-all duration-200 shadow-sm"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              {t("திரும்பு", "Back")}
+            </Link>
+          </div>
+
+          {/* Share button */}
+          <div className="absolute top-4 right-4">
+            <button
+              onClick={handleShare}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/20 bg-white/15 backdrop-blur-md text-white text-sm font-medium hover:bg-white/25 hover:border-white/35 active:scale-95 transition-all duration-200 shadow-sm"
+            >
+              {copied ? <CheckCircle2 className="w-4 h-4 text-emerald-400" /> : <Share2 className="w-4 h-4" />}
+              {copied ? t("நகலெடுக்கப்பட்டது!", "Copied!") : t("பகிர்", "Share")}
+            </button>
+          </div>
+
+          {/* Business name on hero */}
+          <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8">
+            {/* Category badge */}
+            {business.category && (
+              <span className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold text-white bg-linear-to-r ${meta.color} mb-3.5 shadow-md border border-white/10`}>
+                <span>{meta.icon}</span>
+                {business.category}
+                {business.subCategory && (
+                  <>
+                    <ChevronRight className="w-3 h-3 opacity-70" />
+                    {business.subCategory}
+                  </>
+                )}
+              </span>
+            )}
+            <h1 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl text-white leading-tight tracking-tight drop-shadow-md">
+              {business.name}
+            </h1>
+            {(business.city || business.district) && (
+              <div className="flex items-center gap-1.5 mt-2.5 text-white/80 text-sm font-medium">
+                <MapPin className="w-4 h-4 text-white/90" />
+                <span>{[business.city, business.district].filter(Boolean).join(", ")}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Content Area ─────────────────────────────────────────────────────── */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
 
           {/* Left: Main Info */}
           <div className="md:col-span-2 space-y-6">
 
-            {/* Rating */}
-            {business.avgRating && business.avgRating > 0 && (
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1.5 bg-primary/10 border border-amber-200 px-3 py-1.5 rounded-md">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`w-4 h-4 ${i < Math.round(business.avgRating!) ? "text-amber-400 fill-amber-400" : "text-foreground fill-slate-200"}`}
-                    />
-                  ))}
-                  <span className="font-bold text-amber-700 text-sm ml-1">{business.avgRating.toFixed(1)}</span>
-                </div>
-                {business.reviewCount && business.reviewCount > 0 && (
-                  <span className="text-xs text-muted-foreground">
-                    {business.reviewCount} {t("மதிப்புரைகள்", "reviews")}
-                  </span>
+            {/* About & Basic Details Card */}
+            {(business.description || (business.avgRating && business.avgRating > 0)) && (
+              <div className="card-base p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-xs space-y-6">
+                
+                {/* Rating */}
+                {business.avgRating !== undefined && business.avgRating > 0 && (
+                  <div className="flex items-center gap-3 pb-4 border-b border-border/50">
+                    <div className="flex items-center gap-1.5 bg-amber-500/10 border border-amber-300 px-3 py-1.5 rounded-lg">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`w-4 h-4 ${i < Math.round(business.avgRating!) ? "text-amber-500 fill-amber-500" : "text-slate-300 fill-slate-100"}`}
+                        />
+                      ))}
+                      <span className="font-bold text-amber-700 text-sm ml-1">{business.avgRating.toFixed(1)}</span>
+                    </div>
+                    {business.reviewCount && business.reviewCount > 0 && (
+                      <span className="text-sm font-medium text-muted-foreground">
+                        ({business.reviewCount} {t("மதிப்புரைகள்", "reviews")})
+                      </span>
+                    )}
+                  </div>
+                )}
+
+                {/* About Description */}
+                {business.description && (
+                  <div>
+                    <h2 className="font-display font-bold text-xl text-ink mb-3 flex items-center gap-2">
+                      <span className="w-1 h-5 bg-primary rounded-full"></span>
+                      {t("பற்றி", "About")}
+                    </h2>
+                    <p className="text-foreground/80 text-sm sm:text-base leading-relaxed whitespace-pre-line">
+                      {business.description}
+                    </p>
+                  </div>
+                )}
+
+                {/* Direct category tags inside about card */}
+                {(business.category || business.subCategory) && (
+                  <div className="flex flex-wrap gap-2 pt-4 border-t border-border/50">
+                    {business.category && (
+                      <Link
+                        to="/members"
+                        search={{ tab: "businesses", category: business.category }}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-white bg-linear-to-r ${meta.color} hover:opacity-90 transition shadow-xs`}
+                      >
+                        <Tag className="w-3 h-3" />
+                        {business.category}
+                      </Link>
+                    )}
+                    {business.subCategory && (
+                      <Link
+                        to="/members"
+                        search={{ tab: "businesses", category: business.category, subCategory: business.subCategory }}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-primary border border-primary/20 bg-primary/5 hover:bg-primary/10 transition shadow-xs"
+                      >
+                        <Tag className="w-3 h-3" />
+                        {business.subCategory}
+                      </Link>
+                    )}
+                  </div>
                 )}
               </div>
             )}
 
-            {/* Description */}
-            {business.description && (
-              <div>
-                <h2 className="font-display font-semibold text-lg text-ink mb-2">
-                  {t("பற்றி", "About")}
-                </h2>
-                <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
-                  {business.description}
-                </p>
-              </div>
-            )}
-
-            {/* Category tags */}
-            <div className="flex flex-wrap gap-2">
-              {business.category && (
-                <Link
-                  to="/members"
-                  search={{ tab: "businesses", category: business.category }}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-white bg-linear-to-r ${meta.color} hover:opacity-90 transition`}
-                >
-                  <Tag className="w-3 h-3" />
-                  {business.category}
-                </Link>
-              )}
-              {business.subCategory && (
-                <Link
-                  to="/members"
-                  search={{ tab: "businesses", category: business.category, subCategory: business.subCategory }}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-primary border border-primary/30 bg-primary/5 hover:bg-primary/10 transition"
-                >
-                  <Tag className="w-3 h-3" />
-                  {business.subCategory}
-                </Link>
-              )}
-            </div>
-
-            {/* Gallery */}
+            {/* Gallery Section */}
             {gallery.length > 0 && (
-              <div>
-                <h2 className="font-display font-semibold text-lg text-ink mb-3">
+              <div className="card-base p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-xs">
+                <h2 className="font-display font-bold text-xl text-ink mb-4 flex items-center gap-2">
+                  <span className="w-1 h-5 bg-primary rounded-full"></span>
                   {t("படங்கள்", "Gallery")}
                 </h2>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                   {gallery.slice(0, 6).map((g, i) => (
-                    <div key={i} className="aspect-square rounded-md overflow-hidden bg-muted">
+                    <div key={i} className="group/gallery aspect-square rounded-xl overflow-hidden bg-muted border border-border/50 shadow-xs relative">
                       <img
                         src={g.url}
                         alt={`${business.name} ${i + 1}`}
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                        className="w-full h-full object-cover group-hover/gallery:scale-110 transition-transform duration-500"
                         loading="lazy"
                       />
+                      <div className="absolute inset-0 bg-black/10 opacity-0 group-hover/gallery:opacity-100 transition-opacity duration-300 pointer-events-none" />
                     </div>
                   ))}
                 </div>
               </div>
             )}
 
-            {/* Location Map placeholder */}
+            {/* Location Section */}
             {fullAddress && (
-              <div>
-                <h2 className="font-display font-semibold text-lg text-ink mb-3">
+              <div className="card-base p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-xs">
+                <h2 className="font-display font-bold text-xl text-ink mb-4 flex items-center gap-2">
+                  <span className="w-1 h-5 bg-primary rounded-full"></span>
                   {t("இடம்", "Location")}
                 </h2>
-                <div className="rounded-md overflow-hidden border border-border">
+                <div className="rounded-xl overflow-hidden border border-border shadow-xs hover:border-primary/30 transition-colors duration-300">
                   {/* Google Maps direction link */}
                   <a
                     href={`https://www.google.com/maps/search/${encodeURIComponent(fullAddress)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 p-4 bg-muted hover:bg-muted transition group"
+                    className="flex items-center gap-4 p-5 bg-muted/30 hover:bg-muted/50 transition group"
                   >
-                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <MapPin className="w-5 h-5 text-primary" />
+                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors duration-300">
+                      <MapPin className="w-6 h-6 text-primary" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="text-sm font-semibold text-foreground truncate">{fullAddress}</div>
-                      <div className="text-xs text-primary mt-0.5 flex items-center gap-1">
+                      <div className="text-sm font-semibold text-foreground leading-snug group-hover:text-primary transition-colors duration-200">{fullAddress}</div>
+                      <div className="text-xs text-primary mt-1.5 flex items-center gap-1 font-medium">
                         {t("Google Maps-ல் திற", "Open in Google Maps")}
-                        <ExternalLink className="w-3 h-3" />
+                        <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-200" />
                       </div>
                     </div>
                   </a>
@@ -951,36 +971,39 @@ function BusinessDetailPage() {
             )}
           </div>
 
-          {/* Right: Contact Card ─────────────────────────────────────────────── */}
-          <div className="space-y-4">
+          {/* Right: Contact & Details Sidebar */}
+          <div className="space-y-6">
 
             {/* Contact Card */}
-            <div className="rounded-md border border-border overflow-hidden bg-card shadow-xs">
-              <div className={`px-5 py-4 bg-linear-to-r ${meta.color} text-white`}>
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl" aria-hidden="true">{meta.icon}</span>
+            <div className="rounded-2xl border border-border overflow-hidden bg-card shadow-sm hover:shadow-md transition-shadow duration-300">
+              <div className={`px-6 py-5 bg-linear-to-br from-primary via-primary to-secondary text-white relative overflow-hidden`}>
+                <div className="absolute right-0 bottom-0 w-24 h-24 bg-white/5 rounded-full blur-xl translate-x-8 translate-y-8 pointer-events-none" />
+                <div className="flex items-center gap-3 relative z-10">
+                  <span className="text-3xl" aria-hidden="true">{meta.icon}</span>
                   <div>
-                    <div className="font-bold text-sm">{t("தொடர்பு கொள்ளவும்", "Contact Business")}</div>
-                    <div className="text-white/70 text-xs">{t("நேரடியாக தொடர்பு கொள்ளுங்கள்", "Get in touch directly")}</div>
+                    <div className="font-bold text-base tracking-tight">{t("தொடர்பு கொள்ளவும்", "Contact Business")}</div>
+                    <div className="text-white/70 text-xs mt-0.5 font-medium">{t("நேரடியாக தொடர்பு கொள்ளுங்கள்", "Get in touch directly")}</div>
                   </div>
                 </div>
               </div>
 
-              <div className="p-4 space-y-3">
+              <div className="p-5 space-y-4">
                 {/* Phone */}
                 {business.phone && (
                   <a
                     href={`tel:${business.phone}`}
-                    className="flex items-center gap-3 p-3 rounded-md bg-green-50 border border-green-100 hover:bg-green-100 transition group"
+                    className="flex items-center gap-3 p-3.5 rounded-xl bg-emerald-500/4 border border-emerald-500/10 hover:bg-emerald-500/8 hover:border-emerald-500/20 transition-all duration-200 group"
                   >
-                    <div className="w-9 h-9 rounded-full bg-green-500 flex items-center justify-center shrink-0">
+                    <div className="w-10 h-10 rounded-lg bg-emerald-500 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-200 shadow-sm">
                       <Phone className="w-4 h-4 text-white" />
                     </div>
-                    <div>
-                      <div className="text-[10px] text-green-600 font-semibold uppercase tracking-wide">
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[10px] text-emerald-600 font-bold uppercase tracking-wider">
                         {t("தொலைபேசி", "Phone")}
                       </div>
-                      <div className="text-sm font-semibold text-foreground">{maskPhone(business.phone)}</div>
+                      <div className="text-sm font-bold text-foreground font-mono mt-0.5 tracking-wide group-hover:text-emerald-700 transition-colors">
+                        {maskPhone(business.phone)}
+                      </div>
                     </div>
                   </a>
                 )}
@@ -989,16 +1012,18 @@ function BusinessDetailPage() {
                 {business.phone2 && (
                   <a
                     href={`tel:${business.phone2}`}
-                    className="flex items-center gap-3 p-3 rounded-md bg-green-50 border border-green-100 hover:bg-green-100 transition"
+                    className="flex items-center gap-3 p-3.5 rounded-xl bg-primary/4 border border-primary/10 hover:bg-primary/8 hover:border-primary/20 transition-all duration-200 group"
                   >
-                    <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center shrink-0">
+                    <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-200 shadow-sm">
                       <Phone className="w-4 h-4 text-white" />
                     </div>
-                    <div>
-                      <div className="text-[10px] text-emerald-600 font-semibold uppercase tracking-wide">
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[10px] text-primary font-bold uppercase tracking-wider">
                         {t("மாற்று தொலைபேசி", "Alt. Phone")}
                       </div>
-                      <div className="text-sm font-semibold text-foreground">{maskPhone(business.phone2)}</div>
+                      <div className="text-sm font-bold text-foreground font-mono mt-0.5 tracking-wide group-hover:text-primary-700 transition-colors">
+                        {maskPhone(business.phone2)}
+                      </div>
                     </div>
                   </a>
                 )}
@@ -1007,16 +1032,18 @@ function BusinessDetailPage() {
                 {business.email && (
                   <a
                     href={`mailto:${business.email}`}
-                    className="flex items-center gap-3 p-3 rounded-md bg-blue-50 border border-blue-100 hover:bg-blue-100 transition"
+                    className="flex items-center gap-3 p-3.5 rounded-xl bg-blue-500/4 border border-blue-500/10 hover:bg-blue-500/8 hover:border-blue-500/20 transition-all duration-200 group"
                   >
-                    <div className="w-9 h-9 rounded-full bg-blue-500 flex items-center justify-center shrink-0">
+                    <div className="w-10 h-10 rounded-lg bg-blue-500 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-200 shadow-sm">
                       <Mail className="w-4 h-4 text-white" />
                     </div>
-                    <div className="min-w-0">
-                      <div className="text-[10px] text-blue-600 font-semibold uppercase tracking-wide">
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[10px] text-blue-600 font-bold uppercase tracking-wider">
                         {t("மின்னஞ்சல்", "Email")}
                       </div>
-                      <div className="text-sm font-semibold text-foreground truncate">{business.email}</div>
+                      <div className="text-sm font-bold text-foreground truncate mt-0.5 group-hover:text-blue-700 transition-colors">
+                        {business.email}
+                      </div>
                     </div>
                   </a>
                 )}
@@ -1027,77 +1054,92 @@ function BusinessDetailPage() {
                     href={business.website.startsWith("http") ? business.website : `https://${business.website}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 p-3 rounded-md bg-purple-50 border border-purple-100 hover:bg-purple-100 transition"
+                    className="flex items-center gap-3 p-3.5 rounded-xl bg-purple-500/4 border border-purple-500/10 hover:bg-purple-500/8 hover:border-purple-500/20 transition-all duration-200 group"
                   >
-                    <div className="w-9 h-9 rounded-full bg-purple-500 flex items-center justify-center shrink-0">
+                    <div className="w-10 h-10 rounded-lg bg-purple-500 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-200 shadow-sm">
                       <Globe className="w-4 h-4 text-white" />
                     </div>
-                    <div className="min-w-0">
-                      <div className="text-[10px] text-purple-600 font-semibold uppercase tracking-wide flex items-center gap-1">
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[10px] text-purple-600 font-bold uppercase tracking-wider flex items-center gap-1">
                         {t("இணையதளம்", "Website")}
                         <ExternalLink className="w-2.5 h-2.5" />
                       </div>
-                      <div className="text-sm font-semibold text-foreground truncate">{business.website}</div>
+                      <div className="text-sm font-bold text-foreground truncate mt-0.5 group-hover:text-purple-700 transition-colors">
+                        {business.website}
+                      </div>
                     </div>
                   </a>
                 )}
 
                 {!business.phone && !business.email && !business.website && (
-                  <p className="text-xs text-muted-foreground text-center py-2">
-                    {t("தொடர்பு விவரங்கள் இல்லை", "No contact details available")}
-                  </p>
+                  <div className="text-center py-6 text-muted-foreground">
+                    <p className="text-sm font-medium">{t("தொடர்பு விவரங்கள் இல்லை", "No contact details available")}</p>
+                  </div>
                 )}
               </div>
             </div>
 
             {/* Business Info Card */}
-            <div className="rounded-md border border-border bg-card shadow-xs p-4 space-y-3">
-              <h3 className="font-display font-semibold text-sm text-ink">
+            <div className="rounded-2xl border border-border bg-card shadow-sm p-5 space-y-4">
+              <h3 className="font-display font-bold text-sm text-ink border-b border-border/50 pb-2">
                 {t("வணிக தகவல்", "Business Info")}
               </h3>
 
-              {business.listingCode && (
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-muted-foreground">{t("பட்டியல் குறியீடு", "Listing Code")}</span>
-                  <span className="font-semibold text-foreground font-mono">{business.listingCode}</span>
-                </div>
-              )}
+              <div className="space-y-3">
+                {business.listingCode && (
+                  <div className="flex items-center justify-between text-xs py-1">
+                    <span className="text-muted-foreground flex items-center gap-1.5 font-medium">
+                      <Tag className="w-3.5 h-3.5 text-muted-foreground/60" />
+                      {t("பட்டியல் குறியீடு", "Listing Code")}
+                    </span>
+                    <span className="font-bold text-foreground font-mono bg-muted px-2 py-0.5 rounded-sm border border-border/50">{business.listingCode}</span>
+                  </div>
+                )}
 
-              {business.district && (
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-muted-foreground">{t("மாவட்டம்", "District")}</span>
-                  <span className="font-semibold text-foreground">{business.district}</span>
-                </div>
-              )}
+                {business.district && (
+                  <div className="flex items-center justify-between text-xs py-1">
+                    <span className="text-muted-foreground flex items-center gap-1.5 font-medium">
+                      <MapPin className="w-3.5 h-3.5 text-muted-foreground/60" />
+                      {t("மாவட்டம்", "District")}
+                    </span>
+                    <span className="font-bold text-foreground">{business.district}</span>
+                  </div>
+                )}
 
-              {business.assembly && (
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-muted-foreground">{t("சட்டமன்றம்", "Assembly")}</span>
-                  <span className="font-semibold text-foreground">{business.assembly}</span>
-                </div>
-              )}
+                {business.assembly && (
+                  <div className="flex items-center justify-between text-xs py-1">
+                    <span className="text-muted-foreground flex items-center gap-1.5 font-medium">
+                      <Building2 className="w-3.5 h-3.5 text-muted-foreground/60" />
+                      {t("சட்டமன்றம்", "Assembly")}
+                    </span>
+                    <span className="font-bold text-foreground">{business.assembly}</span>
+                  </div>
+                )}
 
-              {business.createdAt && (
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-muted-foreground flex items-center gap-1">
-                    <Clock className="w-3 h-3" />
-                    {t("பதிவு தேதி", "Registered")}
-                  </span>
-                  <span className="font-semibold text-foreground">
-                    {new Date(business.createdAt).toLocaleDateString("en-IN", { year: "numeric", month: "short" })}
-                  </span>
-                </div>
-              )}
+                {business.createdAt && (
+                  <div className="flex items-center justify-between text-xs py-1">
+                    <span className="text-muted-foreground flex items-center gap-1.5 font-medium">
+                      <Clock className="w-3.5 h-3.5 text-muted-foreground/60" />
+                      {t("பதிவு தேதி", "Registered")}
+                    </span>
+                    <span className="font-bold text-foreground">
+                      {new Date(business.createdAt).toLocaleDateString("en-IN", { year: "numeric", month: "short" })}
+                    </span>
+                  </div>
+                )}
 
-              {business.active !== undefined && (
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-muted-foreground">{t("நிலை", "Status")}</span>
-                  <span className={`font-semibold flex items-center gap-1 ${business.active ? "text-emerald-600" : "text-muted-foreground"}`}>
-                    <div className={`w-1.5 h-1.5 rounded-full ${business.active ? "bg-primary" : "bg-slate-300"}`} />
-                    {business.active ? t("செயலில்", "Active") : t("செயலற்றது", "Inactive")}
-                  </span>
-                </div>
-              )}
+                {business.active !== undefined && (
+                  <div className="flex items-center justify-between text-xs py-1">
+                    <span className="text-muted-foreground flex items-center gap-1.5 font-medium">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-muted-foreground/60" />
+                      {t("நிலை", "Status")}
+                    </span>
+                    <span className={`status-pill ${business.active ? "status-success" : "status-error"}`}>
+                      {business.active ? t("செயலில்", "Active") : t("செயலற்றது", "Inactive")}
+                    </span>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Browse more CTA */}
@@ -1105,17 +1147,17 @@ function BusinessDetailPage() {
               <Link
                 to="/members"
                 search={{ tab: "businesses", category: business.category }}
-                className="flex items-center justify-between w-full p-4 rounded-md border border-primary/20 bg-primary/5 hover:bg-primary/10 transition group"
+                className="flex items-center justify-between w-full p-5 rounded-2xl border border-primary/20 bg-primary/3 hover:bg-primary/8 hover:border-primary/40 transition-all duration-300 group shadow-xs"
               >
                 <div>
-                  <div className="text-xs font-semibold text-primary">
+                  <div className="text-[10px] font-bold text-primary uppercase tracking-wider">
                     {t("மேலும் காண்க", "Browse More")}
                   </div>
-                  <div className="text-sm font-bold text-foreground mt-0.5">
+                  <div className="text-base font-bold text-foreground mt-0.5 group-hover:text-primary transition-colors">
                     {business.category}
                   </div>
                 </div>
-                <ChevronRight className="w-5 h-5 text-primary" />
+                <ChevronRight className="w-5 h-5 text-primary group-hover:translate-x-1.5 transition-transform duration-300" />
               </Link>
             )}
           </div>
