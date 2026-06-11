@@ -131,7 +131,7 @@ export function VoterIdCard({ voter, template }: { voter: Voter; template: Templ
         }
 
         #page1-div {
-          background-image: url(https://res.cloudinary.com/dqndhcmu2/image/upload/v1773232516/vanigan/templates/ID_Front.png);
+          background-image: url(/templates/ID_Front.png);
           background-repeat: no-repeat;
           background-size: 421px 590px;
           background-position: center;
@@ -139,7 +139,7 @@ export function VoterIdCard({ voter, template }: { voter: Voter; template: Templ
         }
 
         #page2-div {
-          background-image: url(https://res.cloudinary.com/dqndhcmu2/image/upload/v1773232519/vanigan/templates/ID_Back.png);
+          background-image: url(/templates/ID_Back.png);
           background-repeat: no-repeat;
           background-size: 421px 590px;
           background-position: center;
