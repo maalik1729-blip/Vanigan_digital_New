@@ -3,6 +3,10 @@ import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Section, SectionLabel } from "@/components/Section";
 import templeLogo from "@/assets/temple-logo.png";
+import templeLogoAvif from "@/assets/temple-logo.avif";
+import templeLogoAvif2x from "@/assets/temple-logo@2x.avif";
+import templeLogoWebp from "@/assets/temple-logo.webp";
+import templeLogoWebp2x from "@/assets/temple-logo@2x.webp";
 import {
   Award, ShieldCheck, Users, IdCard, ArrowRight,
   CheckCircle, CheckCircle2, Sparkles, Phone, Coins, Play, Search,
@@ -303,8 +307,8 @@ function Home() {
 
           <div className="lg:col-span-5 flex items-center justify-center animate-fade-in">
             <picture>
-              <source type="image/avif" srcSet="/assets/temple-logo.avif 400w, /assets/temple-logo@2x.avif 800w" />
-              <source type="image/webp" srcSet="/assets/temple-logo.webp 400w, /assets/temple-logo@2x.webp 800w" />
+              <source type="image/avif" srcSet={`${templeLogoAvif} 400w, ${templeLogoAvif2x} 800w`} />
+              <source type="image/webp" srcSet={`${templeLogoWebp} 400w, ${templeLogoWebp2x} 800w`} />
               <img
                 src={templeLogo}
                 alt="Tamil Nadu Vanigargalin Sangamam emblem"
