@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { useLanguage } from "@/hooks/useLanguage";
 import { Section, SectionLabel } from "@/components/Section";
 
-const API = import.meta.env.VITE_API_BASE_URL ?? "";
+const API = "";
 
 export const Route = createFileRoute("/business/new")({
   head: () => ({

@@ -73,7 +73,7 @@ export function Hero() {
   const { data: categories, isLoading: isLoadingCategories } = useQuery({
     queryKey: ['categories'],
     queryFn: async () => {
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/categories`);
+      const res = await fetch(`/api/categories`);
       if (!res.ok) throw new Error();
       return await res.json();
     }
@@ -82,7 +82,7 @@ export function Hero() {
   const { data: districts, isLoading: isLoadingDistricts } = useQuery({
     queryKey: ['districts'],
     queryFn: async () => {
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/districts`);
+      const res = await fetch(`/api/districts`);
       if (!res.ok) throw new Error();
       return await res.json();
     }
@@ -91,7 +91,7 @@ export function Hero() {
   const { data: assemblies, isLoading: isLoadingAssemblies } = useQuery({
     queryKey: ['assemblies'],
     queryFn: async () => {
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/assemblies`);
+      const res = await fetch(`/api/assemblies`);
       if (!res.ok) throw new Error();
       return await res.json();
     }

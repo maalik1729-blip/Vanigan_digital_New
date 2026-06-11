@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const API = import.meta.env.VITE_API_BASE_URL ?? "";
+const API = "";
 
 export const Route = createFileRoute("/business/$id")({
   head: () => ({
