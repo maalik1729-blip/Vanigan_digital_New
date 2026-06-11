@@ -393,19 +393,7 @@ function Home() {
       {/* QUICK ACTIONS — WhatsApp Bot Flow Icons */}
       <Section className="py-14 border-t border-border bg-linear-to-br from-slate-50 to-white">
         <ScrollReveal direction="up" blur className="text-center mb-10">
-          {/* Welcome banner from admin flow images (optimized) */}
-          <div className="mb-6 rounded-md overflow-hidden max-w-3xl mx-auto shadow-xs">
-            <picture>
-              <source type="image/webp" srcSet="/flow-images/flow_welcome_banner_1775048805.webp" />
-              <img
-                src="/flow-images/flow_welcome_banner_1775048805.jpg"
-                alt="Vanigan Digital - Official TNVS Portal"
-                className="w-full object-cover"
-                loading="lazy"
-                decoding="async"
-              />
-            </picture>
-          </div>
+
           <SectionLabel>{t("விரைவு சேவைகள்", "Quick Actions")}</SectionLabel>
           <h2 className="mt-3 font-display text-2xl md:text-3xl font-semibold text-ink">
             {t("WhatsApp வழியாக இந்த சேவைகளை பயன்படுத்துங்கள்", "Access our services instantly")}
