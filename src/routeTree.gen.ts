@@ -15,14 +15,12 @@ import { Route as TermsConditionsRouteImport } from './routes/terms-conditions'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as OrganizersRouteImport } from './routes/organizers'
-import { Route as OrganizerRouteImport } from './routes/organizer'
 import { Route as MembershipRouteImport } from './routes/membership'
 import { Route as MembersRouteImport } from './routes/members'
 import { Route as LoadingRouteImport } from './routes/loading'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as BusinessesRouteImport } from './routes/businesses'
-import { Route as BusinessRouteImport } from './routes/business'
 import { Route as AssistantRouteImport } from './routes/assistant'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as AboutRouteImport } from './routes/about'
@@ -69,11 +67,6 @@ const OrganizersRoute = OrganizersRouteImport.update({
   path: '/organizers',
   getParentRoute: () => rootRouteImport,
 } as any)
-const OrganizerRoute = OrganizerRouteImport.update({
-  id: '/organizer',
-  path: '/organizer',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const MembershipRoute = MembershipRouteImport.update({
   id: '/membership',
   path: '/membership',
@@ -104,11 +97,6 @@ const BusinessesRoute = BusinessesRouteImport.update({
   path: '/businesses',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BusinessRoute = BusinessRouteImport.update({
-  id: '/business',
-  path: '/business',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AssistantRoute = AssistantRouteImport.update({
   id: '/assistant',
   path: '/assistant',
@@ -130,19 +118,19 @@ const IndexRoute = IndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const BusinessIndexRoute = BusinessIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => BusinessRoute,
+  id: '/business/',
+  path: '/business/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const BusinessNewRoute = BusinessNewRouteImport.update({
-  id: '/new',
-  path: '/new',
-  getParentRoute: () => BusinessRoute,
+  id: '/business/new',
+  path: '/business/new',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const BusinessIdRoute = BusinessIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => BusinessRoute,
+  id: '/business/$id',
+  path: '/business/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ApiVoterSearchRoute = ApiVoterSearchRouteImport.update({
   id: '/api/voter-search',
@@ -191,14 +179,12 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/analytics': typeof AnalyticsRoute
   '/assistant': typeof AssistantRoute
-  '/business': typeof BusinessRouteWithChildren
   '/businesses': typeof BusinessesRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/loading': typeof LoadingRoute
   '/members': typeof MembersRoute
   '/membership': typeof MembershipRoute
-  '/organizer': typeof OrganizerRoute
   '/organizers': typeof OrganizersRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/services': typeof ServicesRoute
@@ -228,7 +214,6 @@ export interface FileRoutesByTo {
   '/loading': typeof LoadingRoute
   '/members': typeof MembersRoute
   '/membership': typeof MembershipRoute
-  '/organizer': typeof OrganizerRoute
   '/organizers': typeof OrganizersRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/services': typeof ServicesRoute
@@ -253,14 +238,12 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/analytics': typeof AnalyticsRoute
   '/assistant': typeof AssistantRoute
-  '/business': typeof BusinessRouteWithChildren
   '/businesses': typeof BusinessesRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/loading': typeof LoadingRoute
   '/members': typeof MembersRoute
   '/membership': typeof MembershipRoute
-  '/organizer': typeof OrganizerRoute
   '/organizers': typeof OrganizersRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/services': typeof ServicesRoute
@@ -286,14 +269,12 @@ export interface FileRouteTypes {
     | '/about'
     | '/analytics'
     | '/assistant'
-    | '/business'
     | '/businesses'
     | '/contact'
     | '/dashboard'
     | '/loading'
     | '/members'
     | '/membership'
-    | '/organizer'
     | '/organizers'
     | '/privacy-policy'
     | '/services'
@@ -323,7 +304,6 @@ export interface FileRouteTypes {
     | '/loading'
     | '/members'
     | '/membership'
-    | '/organizer'
     | '/organizers'
     | '/privacy-policy'
     | '/services'
@@ -347,14 +327,12 @@ export interface FileRouteTypes {
     | '/about'
     | '/analytics'
     | '/assistant'
-    | '/business'
     | '/businesses'
     | '/contact'
     | '/dashboard'
     | '/loading'
     | '/members'
     | '/membership'
-    | '/organizer'
     | '/organizers'
     | '/privacy-policy'
     | '/services'
@@ -379,14 +357,12 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AnalyticsRoute: typeof AnalyticsRoute
   AssistantRoute: typeof AssistantRoute
-  BusinessRoute: typeof BusinessRouteWithChildren
   BusinessesRoute: typeof BusinessesRoute
   ContactRoute: typeof ContactRoute
   DashboardRoute: typeof DashboardRoute
   LoadingRoute: typeof LoadingRoute
   MembersRoute: typeof MembersRoute
   MembershipRoute: typeof MembershipRoute
-  OrganizerRoute: typeof OrganizerRoute
   OrganizersRoute: typeof OrganizersRoute
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   ServicesRoute: typeof ServicesRoute
@@ -395,6 +371,9 @@ export interface RootRouteChildren {
   WingsRoute: typeof WingsRoute
   ApiCategoriesRoute: typeof ApiCategoriesRoute
   ApiVoterSearchRoute: typeof ApiVoterSearchRoute
+  BusinessIdRoute: typeof BusinessIdRoute
+  BusinessNewRoute: typeof BusinessNewRoute
+  BusinessIndexRoute: typeof BusinessIndexRoute
   ApiPublicBusinessRoute: typeof ApiPublicBusinessRouteWithChildren
   ApiPublicCategoriesRoute: typeof ApiPublicCategoriesRouteWithChildren
   ApiPublicMembersRoute: typeof ApiPublicMembersRoute
@@ -445,13 +424,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrganizersRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/organizer': {
-      id: '/organizer'
-      path: '/organizer'
-      fullPath: '/organizer'
-      preLoaderRoute: typeof OrganizerRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/membership': {
       id: '/membership'
       path: '/membership'
@@ -494,13 +466,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BusinessesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/business': {
-      id: '/business'
-      path: '/business'
-      fullPath: '/business'
-      preLoaderRoute: typeof BusinessRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/assistant': {
       id: '/assistant'
       path: '/assistant'
@@ -531,24 +496,24 @@ declare module '@tanstack/react-router' {
     }
     '/business/': {
       id: '/business/'
-      path: '/'
+      path: '/business'
       fullPath: '/business/'
       preLoaderRoute: typeof BusinessIndexRouteImport
-      parentRoute: typeof BusinessRoute
+      parentRoute: typeof rootRouteImport
     }
     '/business/new': {
       id: '/business/new'
-      path: '/new'
+      path: '/business/new'
       fullPath: '/business/new'
       preLoaderRoute: typeof BusinessNewRouteImport
-      parentRoute: typeof BusinessRoute
+      parentRoute: typeof rootRouteImport
     }
     '/business/$id': {
       id: '/business/$id'
-      path: '/$id'
+      path: '/business/$id'
       fullPath: '/business/$id'
       preLoaderRoute: typeof BusinessIdRouteImport
-      parentRoute: typeof BusinessRoute
+      parentRoute: typeof rootRouteImport
     }
     '/api/voter-search': {
       id: '/api/voter-search'
@@ -609,22 +574,6 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface BusinessRouteChildren {
-  BusinessIdRoute: typeof BusinessIdRoute
-  BusinessNewRoute: typeof BusinessNewRoute
-  BusinessIndexRoute: typeof BusinessIndexRoute
-}
-
-const BusinessRouteChildren: BusinessRouteChildren = {
-  BusinessIdRoute: BusinessIdRoute,
-  BusinessNewRoute: BusinessNewRoute,
-  BusinessIndexRoute: BusinessIndexRoute,
-}
-
-const BusinessRouteWithChildren = BusinessRoute._addFileChildren(
-  BusinessRouteChildren,
-)
-
 interface ApiPublicBusinessRouteChildren {
   ApiPublicBusinessIdRoute: typeof ApiPublicBusinessIdRoute
 }
@@ -653,14 +602,12 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AnalyticsRoute: AnalyticsRoute,
   AssistantRoute: AssistantRoute,
-  BusinessRoute: BusinessRouteWithChildren,
   BusinessesRoute: BusinessesRoute,
   ContactRoute: ContactRoute,
   DashboardRoute: DashboardRoute,
   LoadingRoute: LoadingRoute,
   MembersRoute: MembersRoute,
   MembershipRoute: MembershipRoute,
-  OrganizerRoute: OrganizerRoute,
   OrganizersRoute: OrganizersRoute,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
   ServicesRoute: ServicesRoute,
@@ -669,6 +616,9 @@ const rootRouteChildren: RootRouteChildren = {
   WingsRoute: WingsRoute,
   ApiCategoriesRoute: ApiCategoriesRoute,
   ApiVoterSearchRoute: ApiVoterSearchRoute,
+  BusinessIdRoute: BusinessIdRoute,
+  BusinessNewRoute: BusinessNewRoute,
+  BusinessIndexRoute: BusinessIndexRoute,
   ApiPublicBusinessRoute: ApiPublicBusinessRouteWithChildren,
   ApiPublicCategoriesRoute: ApiPublicCategoriesRouteWithChildren,
   ApiPublicMembersRoute: ApiPublicMembersRoute,

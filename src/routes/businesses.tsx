@@ -5,7 +5,7 @@ import {
   Search, MapPin, ChevronRight, Building2,
   Phone, Mail, Globe, Star, Filter, X,
   ArrowLeft, Loader2, AlertCircle, Store,
-  Grid3x3, List, ChevronLeft, ChevronDown
+  Grid3x3, List, ChevronLeft, ChevronDown, Plus
 } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 
@@ -1393,8 +1393,8 @@ function BusinessesPage() {
           </p>
 
           {/* Search bar */}
-          <div className="flex gap-3 max-w-2xl">
-            <div className="relative flex-1">
+          <div className="flex flex-wrap sm:flex-nowrap gap-3 max-w-3xl">
+            <div className="relative flex-1 min-w-[200px]">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
               <input
                 id="business-search"
@@ -1413,13 +1413,22 @@ function BusinessesPage() {
                 </button>
               )}
             </div>
-            <button
-              onClick={() => setShowFilters(f => !f)}
-              className={`flex items-center gap-2 px-4 py-3 rounded-md font-semibold text-sm transition shadow-xs border ${showFilters ? "bg-gold text-gold-foreground border-gold" : "bg-primary/10 text-white hover:bg-primary/20 border-white/10"}`}
-            >
-              <Filter className="w-4 h-4" />
-              {t("வடிகட்டு", "Filter")}
-            </button>
+            <div className="flex gap-2 shrink-0 w-full sm:w-auto">
+              <button
+                onClick={() => setShowFilters(f => !f)}
+                className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-3 rounded-md font-semibold text-sm transition shadow-xs border ${showFilters ? "bg-gold text-gold-foreground border-gold" : "bg-primary/10 text-white hover:bg-primary/20 border-white/10"}`}
+              >
+                <Filter className="w-4 h-4" />
+                {t("வடிகட்டு", "Filter")}
+              </button>
+              <Link
+                to="/business/new"
+                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-3 rounded-md font-semibold text-sm bg-gold text-gold-foreground hover:bg-gold/90 transition shadow-xs border border-gold no-underline"
+              >
+                <Plus className="w-4 h-4" />
+                {t("வணிகம் சேர்க்கை", "Add Business")}
+              </Link>
+            </div>
           </div>
 
           {/* District Filter Panel */}

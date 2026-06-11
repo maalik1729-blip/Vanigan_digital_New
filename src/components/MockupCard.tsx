@@ -34,7 +34,7 @@ export function MockupCard() {
         </div>
       </div>
       {/* Footer stripe */}
-      <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-gradient-to-r from-primary via-gold to-primary" />
+      <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-linear-to-r from-primary via-gold to-primary" />
     </div>
   );
 }

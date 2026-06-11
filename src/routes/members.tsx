@@ -1350,7 +1350,7 @@ function MembersPage() {
 
           {/* Quick Metrics Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 max-w-3xl">
-            <div className="bg-muted/40 backdrop-blur-xs rounded-md border border-primary/30 bg-primary/5 p-4 flex items-center gap-3">
+            <div className="backdrop-blur-xs rounded-md border border-primary/30 bg-primary/5 p-4 flex items-center gap-3">
               <div className="w-10 h-10 rounded-md bg-primary text-white flex items-center justify-center shrink-0">
                 <Users className="w-5 h-5" />
               </div>
