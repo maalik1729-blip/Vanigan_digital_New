@@ -1,9 +1,13 @@
-require("dotenv").config();
-const express = require("express");
-const cors    = require("cors");
-const { getPool } = require("./db");
+import "dotenv/config";
+import express, { Request, Response } from "express";
+import cors from "cors";
 
-const app  = express();
+import membersRouter from "./routes/members.js";
+import organizersRouter from "./routes/organizers.js";
+import businessesRouter from "./routes/businesses.js";
+import votersRouter from "./routes/voters.js";
+
+const app = express();
 const PORT = process.env.PORT || 4000;
 
 // ── Middleware ────────────────────────────────────────────────────────────────
@@ -19,16 +23,11 @@ app.use(cors({
 app.use(express.json({ limit: "10mb" }));
 
 // ── Health check ──────────────────────────────────────────────────────────────
-app.get("/health", (_req, res) => {
+app.get("/health", (_req: Request, res: Response) => {
   res.json({ status: "ok", time: new Date().toISOString() });
 });
 
 // ── Routes ────────────────────────────────────────────────────────────────────
-const membersRouter = require("./routes/members");
-const organizersRouter = require("./routes/organizers");
-const businessesRouter = require("./routes/businesses");
-const votersRouter = require("./routes/voters");
-
 app.use("/api/public/members", membersRouter);
 app.use("/api/public/organizer", organizersRouter);
 app.use("/api/public", businessesRouter);
