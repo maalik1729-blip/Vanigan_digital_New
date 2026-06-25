@@ -2,7 +2,7 @@
 cmds = ["npm install"]
 
 [phases.build]
-cmds = []
+cmds = ["npx prisma generate", "npm run build"]
 
 [start]
-cmd = "node server.js"
+cmd = "node dist/server.js"
