@@ -3,6 +3,10 @@ import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Section, SectionLabel } from "@/components/Section";
 import templeLogo from "@/assets/temple-logo.png";
+import templeLogoAvif from "@/assets/temple-logo.avif";
+import templeLogoAvif2x from "@/assets/temple-logo@2x.avif";
+import templeLogoWebp from "@/assets/temple-logo.webp";
+import templeLogoWebp2x from "@/assets/temple-logo@2x.webp";
 import {
   Award, ShieldCheck, Users, IdCard, ArrowRight,
   CheckCircle, CheckCircle2, Sparkles, Phone, Coins, Play, Search,
@@ -303,8 +307,8 @@ function Home() {
 
           <div className="lg:col-span-5 flex items-center justify-center animate-fade-in">
             <picture>
-              <source type="image/avif" srcSet="/assets/temple-logo.avif 400w, /assets/temple-logo@2x.avif 800w" />
-              <source type="image/webp" srcSet="/assets/temple-logo.webp 400w, /assets/temple-logo@2x.webp 800w" />
+              <source type="image/avif" srcSet={`${templeLogoAvif} 400w, ${templeLogoAvif2x} 800w`} />
+              <source type="image/webp" srcSet={`${templeLogoWebp} 400w, ${templeLogoWebp2x} 800w`} />
               <img
                 src={templeLogo}
                 alt="Tamil Nadu Vanigargalin Sangamam emblem"
@@ -393,19 +397,7 @@ function Home() {
       {/* QUICK ACTIONS — WhatsApp Bot Flow Icons */}
       <Section className="py-14 border-t border-border bg-linear-to-br from-slate-50 to-white">
         <ScrollReveal direction="up" blur className="text-center mb-10">
-          {/* Welcome banner from admin flow images (optimized) */}
-          <div className="mb-6 rounded-md overflow-hidden max-w-3xl mx-auto shadow-xs">
-            <picture>
-              <source type="image/webp" srcSet="/flow-images/flow_welcome_banner_1775048805.webp" />
-              <img
-                src="/flow-images/flow_welcome_banner_1775048805.jpg"
-                alt="Vanigan Digital - Official TNVS Portal"
-                className="w-full object-cover"
-                loading="lazy"
-                decoding="async"
-              />
-            </picture>
-          </div>
+
           <SectionLabel>{t("விரைவு சேவைகள்", "Quick Actions")}</SectionLabel>
           <h2 className="mt-3 font-display text-2xl md:text-3xl font-semibold text-ink">
             {t("WhatsApp வழியாக இந்த சேவைகளை பயன்படுத்துங்கள்", "Access our services instantly")}

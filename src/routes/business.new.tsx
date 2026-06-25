@@ -578,8 +578,7 @@ function BusinessNewPage() {
                     {t("மற்றொரு வணிகம்", "Add Another")}
                   </button>
                   <Link
-                    to="/members"
-                    search={{ tab: "businesses" }}
+                    to="/businesses"
                     className="bg-card hover:bg-muted text-foreground font-bold py-2.5 rounded-md text-xs transition duration-200 flex items-center justify-center cursor-pointer border border-border"
                   >
                     {t("கோப்பகத்திற்கு திரும்ப", "Back to Directory")}
@@ -600,8 +599,7 @@ function BusinessNewPage() {
         <div className="max-w-5xl mx-auto px-5 sm:px-6 w-full text-left">
           <div className="mb-4">
             <Link
-              to="/members"
-              search={{ tab: "businesses" }}
+              to="/businesses"
               className="inline-flex items-center gap-2 text-xs font-bold text-muted-foreground hover:text-foreground transition-colors"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
@@ -971,8 +969,7 @@ function BusinessNewPage() {
             </div>
             <div className="flex items-center gap-3 w-full sm:w-auto">
               <Link
-                to="/members"
-                search={{ tab: "businesses" }}
+                to="/businesses"
                 className="w-1/2 sm:w-auto bg-muted hover:bg-muted/80 text-foreground font-bold py-2.5 px-6 rounded-md text-xs transition duration-200 text-center border border-border cursor-pointer select-none"
               >
                 {t("ரத்து செய்", "Cancel")}

@@ -1143,7 +1143,7 @@ function Membership() {
       // Load Background & Photo
       const imgBg = new Image();
       imgBg.crossOrigin = "anonymous";
-      imgBg.src = "https://res.cloudinary.com/dqndhcmu2/image/upload/v1773232516/vanigan/templates/ID_Front.png";
+      imgBg.src = "/templates/ID_Front.png";
 
       const imgPhoto = new Image();
       imgPhoto.crossOrigin = "anonymous";
@@ -1285,7 +1285,7 @@ function Membership() {
       // Load Background, QR Code and Signature
       const imgBg = new Image();
       imgBg.crossOrigin = "anonymous";
-      imgBg.src = "https://res.cloudinary.com/dqndhcmu2/image/upload/v1773232519/vanigan/templates/ID_Back.png";
+      imgBg.src = "/templates/ID_Back.png";
 
       const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=96x88&data=${encodeURIComponent(mno)}`;
       const imgQr = new Image();

@@ -5,7 +5,7 @@ import {
   Search, MapPin, ChevronRight, Building2,
   Phone, Mail, Globe, Star, Filter, X,
   ArrowLeft, Loader2, AlertCircle, Store,
-  Grid3x3, List, ChevronLeft, ChevronDown
+  Grid3x3, List, ChevronLeft, ChevronDown, Plus
 } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
 
@@ -1045,6 +1045,12 @@ function getBusinessImage(b: Business): string {
   if (b.img?.trim()) return b.img.trim();
   if (b.imageUrl?.trim()) return b.imageUrl.trim();
 
+  // Try to use a specific subcategory image first
+  if (b.subCategory) {
+    const subImg = getSubcategoryImage(b.subCategory);
+    if (subImg) return subImg;
+  }
+
   // Pick a unique image from the category pool using hash of combined unique fields
   // Using _id + name + listingCode ensures different images even for similar IDs
   const seed = `${b._id || ""}|${b.name || ""}|${b.listingCode || ""}|${b.phone || ""}`;
@@ -1194,7 +1200,7 @@ async function fetchBusinesses(params: {
 
 // ─── Main Page Component ──────────────────────────────────────────────────────
 function BusinessesPage() {
-  const navigate = useNavigate({ from: "/business" });
+  const navigate = useNavigate({ from: "/business/" });
   const search = Route.useSearch();
   const { language } = useLanguage();
 
@@ -1286,7 +1292,7 @@ function BusinessesPage() {
     debounceRef.current = setTimeout(() => {
       if (localSearch !== searchText) {
         navigate({
-          search: (prev) => ({ ...prev, search: localSearch || undefined, page: 1 }),
+          search: (prev: any) => ({ ...prev, search: localSearch || undefined, page: 1 }),
         });
       }
     }, 500);
@@ -1313,12 +1319,12 @@ function BusinessesPage() {
 
   const selectSubCategory = useCallback((sub: string) => {
     navigate({
-      search: (prev) => ({ ...prev, subCategory: sub === selectedSubCategory ? undefined : sub, page: 1 }),
+      search: (prev: any) => ({ ...prev, subCategory: sub === selectedSubCategory ? undefined : sub, page: 1 }),
     });
   }, [navigate, selectedSubCategory]);
 
   const setPage = useCallback((p: number) => {
-    navigate({ search: (prev) => ({ ...prev, page: p }) });
+    navigate({ search: (prev: any) => ({ ...prev, page: p }) });
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [navigate]);
 
@@ -1405,8 +1411,8 @@ function BusinessesPage() {
           </p>
 
           {/* Search bar */}
-          <div className="flex gap-3 max-w-2xl">
-            <div className="relative flex-1">
+          <div className="flex flex-wrap sm:flex-nowrap gap-3 max-w-3xl">
+            <div className="relative flex-1 min-w-[200px]">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
               <input
                 id="business-search"
@@ -1418,20 +1424,29 @@ function BusinessesPage() {
               />
               {localSearch && (
                 <button
-                  onClick={() => { setLocalSearch(""); navigate({ search: (p) => ({ ...p, search: undefined, page: 1 }) }); }}
+                  onClick={() => { setLocalSearch(""); navigate({ search: (p: any) => ({ ...p, search: undefined, page: 1 }) }); }}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground"
                 >
                   <X className="w-4 h-4" />
                 </button>
               )}
             </div>
-            <button
-              onClick={() => setShowFilters(f => !f)}
-              className={`flex items-center gap-2 px-4 py-3 rounded-md font-semibold text-sm transition shadow-xs border ${showFilters ? "bg-gold text-gold-foreground border-gold" : "bg-primary/10 text-white hover:bg-primary/20 border-white/10"}`}
-            >
-              <Filter className="w-4 h-4" />
-              {t("வடிகட்டு", "Filter")}
-            </button>
+            <div className="flex gap-2 shrink-0 w-full sm:w-auto">
+              <button
+                onClick={() => setShowFilters(f => !f)}
+                className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-3 rounded-md font-semibold text-sm transition shadow-xs border ${showFilters ? "bg-gold text-gold-foreground border-gold" : "bg-primary/10 text-white hover:bg-primary/20 border-white/10"}`}
+              >
+                <Filter className="w-4 h-4" />
+                {t("வடிகட்டு", "Filter")}
+              </button>
+              <Link
+                to="/business/new"
+                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-3 rounded-md font-semibold text-sm bg-gold text-gold-foreground hover:bg-gold/90 transition shadow-xs border border-gold no-underline"
+              >
+                <Plus className="w-4 h-4" />
+                {t("வணிகம் சேர்க்கை", "Add Business")}
+              </Link>
+            </div>
           </div>
 
           {/* District Filter Panel */}
@@ -1442,7 +1457,7 @@ function BusinessesPage() {
               </label>
               <div className="flex flex-wrap gap-2">
                 <button
-                  onClick={() => navigate({ search: (p) => ({ ...p, district: undefined, page: 1 }) })}
+                  onClick={() => navigate({ search: (p: any) => ({ ...p, district: undefined, page: 1 }) })}
                   className={`px-3 py-1.5 rounded-sm text-xs font-semibold transition border ${!selectedDistrict ? "bg-gold text-gold-foreground border-gold" : "bg-primary/10 text-white hover:bg-primary/20 border-white/10"}`}
                 >
                   {t("அனைத்தும்", "All Districts")}
@@ -1450,7 +1465,7 @@ function BusinessesPage() {
                 {TN_DISTRICTS.map(d => (
                   <button
                     key={d.en}
-                    onClick={() => navigate({ search: (p) => ({ ...p, district: d.en === selectedDistrict ? undefined : d.en, page: 1 }) })}
+                    onClick={() => navigate({ search: (p: any) => ({ ...p, district: d.en === selectedDistrict ? undefined : d.en, page: 1 }) })}
                     className={`px-3 py-1.5 rounded-sm text-xs font-semibold transition border ${selectedDistrict === d.en ? "bg-gold text-gold-foreground border-gold" : "bg-primary/10 text-white hover:bg-primary/20 border-white/10"}`}
                   >
                     {d.ta} / {d.en}
@@ -1599,7 +1614,7 @@ function BusinessesPage() {
               </h3>
               <div className="flex flex-wrap gap-2">
                 <button
-                  onClick={() => navigate({ search: (p) => ({ ...p, subCategory: undefined, page: 1 }) })}
+                  onClick={() => navigate({ search: (p: any) => ({ ...p, subCategory: undefined, page: 1 }) })}
                   className={`px-4 py-2 rounded-full text-sm font-semibold border transition ${!selectedSubCategory ? "bg-primary text-white border-primary shadow-xs" : "bg-card text-muted-foreground border-border hover:border-primary/40 hover:text-primary"}`}
                 >
                   {t("அனைத்தும்", "All")}

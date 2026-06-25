@@ -70,7 +70,7 @@ export function WordSwapper() {
                 initial="enter"
                 animate="center"
                 exit="exit"
-                className="absolute left-0 top-0 w-full text-left font-display animate-text-gradient bg-clip-text text-transparent bg-gradient-to-r from-gold via-amber-500 to-orange-500 bg-[length:200%_auto]"
+                className="absolute left-0 top-0 w-full text-left font-display animate-text-gradient bg-clip-text text-transparent bg-linear-to-r from-gold via-amber-500 to-orange-500 bg-size-[200%_auto]"
               >
                 {currentWord}
               </m.span>
@@ -92,7 +92,7 @@ export function WordSwapper() {
                   initial="enter"
                   animate="center"
                   exit="exit"
-                  className="absolute left-0 top-0 w-full text-left font-display animate-text-gradient bg-clip-text text-transparent bg-gradient-to-r from-gold via-amber-500 to-orange-500 bg-[length:200%_auto]"
+                  className="absolute left-0 top-0 w-full text-left font-display animate-text-gradient bg-clip-text text-transparent bg-linear-to-r from-gold via-amber-500 to-orange-500 bg-size-[200%_auto]"
                 >
                   {currentWord}
                 </m.span>

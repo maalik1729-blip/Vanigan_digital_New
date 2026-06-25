@@ -11,18 +11,79 @@ export const dbConfig = {
 
 let pool: mysql.Pool | null = null;
 
+function cleanObject(obj: any): any {
+  if (!obj || typeof obj !== "object") return obj;
+  for (const key of Object.keys(obj)) {
+    const val = obj[key];
+    if (typeof val === "string" && val.includes("cloudinary.com")) {
+      obj[key] = cleanCloudinaryUrl(val);
+    } else if (val && typeof val === "object") {
+      cleanObject(val);
+    }
+  }
+  return obj;
+}
+
+function cleanCloudinaryUrl(urlStr: string): string {
+  if (!urlStr || typeof urlStr !== "string") return urlStr;
+  if (!urlStr.includes("cloudinary.com")) return urlStr;
+  try {
+    const url = new URL(urlStr);
+    const pathname = url.pathname;
+    const parts = pathname.split("/");
+    const uploadIndex = parts.indexOf("upload");
+
+    if (uploadIndex === -1) {
+      const filename = pathname.substring(pathname.lastIndexOf("/") + 1);
+      return `/uploads/misc/${filename}`;
+    }
+
+    let subParts = parts.slice(uploadIndex + 1);
+    if (subParts.length > 0 && /^v\d+$/.test(subParts[0])) {
+      subParts = subParts.slice(1);
+    }
+
+    return `/uploads/${subParts.join("/")}`;
+  } catch (error) {
+    return urlStr;
+  }
+}
+
+function wrapPool(originalPool: mysql.Pool): mysql.Pool {
+  const originalExecute = originalPool.execute;
+  originalPool.execute = async function(...args: any[]) {
+    const result = await originalExecute.apply(originalPool, args as any);
+    if (result && Array.isArray(result[0])) {
+      (result[0] as any[]).forEach(row => cleanObject(row));
+    }
+    return result;
+  } as any;
+  
+  const originalQuery = originalPool.query;
+  originalPool.query = async function(...args: any[]) {
+    const result = await originalQuery.apply(originalPool, args as any);
+    if (result && Array.isArray(result[0])) {
+      (result[0] as any[]).forEach(row => cleanObject(row));
+    }
+    return result;
+  } as any;
+  return originalPool;
+}
+
 export function getDbPool(): mysql.Pool {
   if (!pool) {
-    pool = mysql.createPool(dbConfig);
+    const rawPool = mysql.createPool(dbConfig);
     // Dynamically set max_allowed_packet size to 64MB in local development if privileges allow
-    pool.query("SET GLOBAL max_allowed_packet = 67108864;").catch((err: any) => {
+    rawPool.query("SET GLOBAL max_allowed_packet = 67108864;").catch((err: any) => {
       if (import.meta.env.DEV) {
         console.warn("Could not set GLOBAL max_allowed_packet dynamically:", err.message);
       }
     });
+    pool = wrapPool(rawPool);
   }
   return pool;
 }
+
 
 export async function upsertBusinesses(pool: mysql.Pool, list: any[]) {
   if (!list || list.length === 0) return;

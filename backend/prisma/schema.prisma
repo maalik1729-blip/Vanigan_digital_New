@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model business_list {
+  id            Int      @id @default(autoincrement())
+  uid           String?  @map("_id") @db.VarChar(50)
+  name          String   @db.VarChar(255)
+  listingCode   String?  @db.VarChar(50)
+  description   String?  @db.Text
+  category      String?  @db.VarChar(255)
+  subCategory   String?  @db.VarChar(255)
+  phone         String?  @db.VarChar(50)
+  phone2        String?  @db.VarChar(50)
+  email         String?  @db.VarChar(255)
+  website       String?  @db.VarChar(255)
+  rating        Decimal? @default(0.00) @db.Decimal(3, 2)
+  city          String?  @db.VarChar(255)
+  district      String?  @db.VarChar(255)
+  assembly      String?  @db.VarChar(255)
+  address       String?  @db.Text
+  pincode       String?  @db.VarChar(20)
+  landmark      String?  @db.VarChar(255)
+  lat           String?  @db.VarChar(50)
+  lng           String?  @db.VarChar(50)
+  coverImage    String?  @db.Text
+  img           String?  @db.Text
+  image         String?  @db.Text
+  imageUrl      String?  @db.Text
+  imagePublicId String?  @db.VarChar(100)
+  openDays      String?  @db.VarChar(255)
+  openTime      String?  @db.VarChar(50)
+  closeTime     String?  @db.VarChar(50)
+  created_at    DateTime @default(now()) @db.Timestamp(0)
+}
+
+model member_list {
+  id         Int      @id @default(autoincrement())
+  name       String   @db.VarChar(255)
+  epic       String   @unique(map: "idx_member_epic") @db.VarChar(50)
+  mobile     String   @db.VarChar(50)
+  email      String?  @db.VarChar(255)
+  dob        String?  @db.VarChar(20)
+  age        Int?
+  gender     String?  @db.VarChar(20)
+  bloodGroup String?  @db.VarChar(20)
+  assembly   String?  @db.VarChar(255)
+  district   String?  @db.VarChar(255)
+  shop       String?  @db.VarChar(255)
+  type       String?  @db.VarChar(50)
+  address    String?  @db.Text
+  years      String?  @db.VarChar(50)
+  wing       String?  @db.VarChar(100)
+  selfie     String?  @db.LongText
+  idProof    String?  @db.LongText
+  shopPhoto  String?  @db.LongText
+  bizProof   String?  @db.LongText
+  pin        String   @db.VarChar(4)
+  created_at DateTime @default(now()) @db.Timestamp(0)
+
+  @@index([mobile], map: "idx_member_mobile")
+}
+
+model organizer_list {
+  id             Int      @id @default(autoincrement())
+  organizer_code String   @unique(map: "idx_organizer_code") @db.VarChar(50)
+  name           String   @db.VarChar(255)
+  mobile         String   @db.VarChar(50)
+  email          String?  @db.VarChar(255)
+  role           String?  @default("Coordinator") @db.VarChar(100)
+  district       String?  @db.VarChar(255)
+  assembly       String?  @db.VarChar(255)
+  pin            String   @db.VarChar(4)
+  status         String?  @default("active") @db.VarChar(20)
+  created_at     DateTime @default(now()) @db.Timestamp(0)
+
+  @@index([mobile], map: "idx_org_mobile")
+}
